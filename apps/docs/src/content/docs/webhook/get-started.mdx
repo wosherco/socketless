@@ -1,0 +1,25 @@
+---
+title: Get Started with Webhooks
+description: Learn how to receive messages from websockets to a http server.
+
+sidebar:
+  order: 0
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+## Setting up webhooks
+
+Let's see how to setup webhooks with Socketles:
+
+<Steps>
+
+1. [Create a project](https://socketless.ws/dashboard) or [go to your existing project](https://socketless.ws/dashboard), and head to the `Settings` page. There you will see the `Webhook` section.
+
+2. Now, you'll need to set an endpoint to your server. If you're developing locally, you can use [ngrok](https://ngrok.com/) to create a public url.
+
+3. You'd want to verify that the requests coming though your endpoint are really from Socketless. For that, Socketless send an `Authentication` header with the Webhook Secret. Store it in a safe place an verify it for each request.
+
+4. You're done! For more information, check out the API Reference about webhooks.
+
+</Steps>

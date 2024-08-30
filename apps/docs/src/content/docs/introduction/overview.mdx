@@ -1,0 +1,124 @@
+---
+title: Overview
+description: Learn how to get stuff done with Socketless.
+---
+
+import { Aside, Code, Steps } from "@astrojs/starlight/components";
+
+## Client Connection
+
+Let's see a simple flow for Socketless to connect to a channel.
+
+<Steps>
+
+1. [Create a project](https://socketless.ws/dashboard) and get your `clientId` and `clientSecret`. You'll need both to create connections.
+
+   {/* prettier-ignore */}
+   <Code
+     code={`
+     SOCKETLESS_CLIENT_ID="<your client id>"
+     SOCKETLESS_CLIENT_SECRET="<your client secret>"
+     `}
+     lang="toml"
+     title=".env"
+   />
+
+2. From your server, make a request to obtain a connection. This will provide an identifier for the connection (this is unique for this connection and can be stored in your database) and the token to actually connect the WebSocket.
+
+   ```ts
+   const payload = {
+     clientId: process.env.SOCKETLESS_CLIENT_ID!,
+     channel: "YourChannelName",
+     connectionData: {
+       something:
+         "Maybe you want to store some data here to retrieve it later or to identify the user.",
+     },
+   };
+
+   const connectionRequest = await fetch(
+     "https://socketless.ws/api/generateConnection",
+     {
+       method: "POST",
+       headers: {
+         Authorization: `Bearer ${process.env.SOCKETLESS_CLIENT_SECRET!}`,
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify(payload),
+     },
+   );
+
+   const { identifier, token, url } = await connectionRequest.json();
+   ```
+
+3. Now you just need to connect the client to the WebSocket:
+
+   ```ts
+   const socket = new WebSocket(url);
+
+   // Event handler for connection open
+   socket.on("open", () => console.log("WebSocket connection opened"));
+
+   // Event handler for receiving messages from the server
+   socket.on("message", (data) =>
+     console.log("Message received from server:", data),
+   );
+   ```
+
+4. You're done!
+
+</Steps>
+
+## Publishing Messages
+
+Supposing you already have your `clientId` and `clientSecret` stored:
+
+<Steps>
+
+1. Create a payload to send:
+
+   ```js
+   const payload = {
+     channel: "YourChannelName",
+     message: "Hello!",
+   };
+   ```
+
+   <Aside type="caution">
+     Right now, the message **must** always be a string. This may change in the
+     future.
+   </Aside>
+
+2. (Optional) Filter the connections that are going to receive the message:
+
+   ```js
+   payload.connections = ["Connection Identifiers"];
+   ```
+
+   > In the future, you'll be able to set connections filter in reverse.
+
+3. Send the request:
+
+   ```js
+   const connectionRequest = await fetch("https://socketless.ws/api/broadcast", {
+     method: "POST",
+     headers: {
+     "Authorization": `Bearer ${process.env.SOCKETLESS_CLIENT_SECRET!}`,
+     "Content-Type": "application/json"
+     },
+     body: JSON.stringify(payload),
+   });
+   ```
+
+4. Handle the response:
+
+   ```js
+   if (connectionRequest.status === 204) {
+     console.log("No clients connected to the channel");
+   } else if (connectionRequest.status === 200) {
+     console.log("At least one client received the message");
+   } else {
+     console.log("Something went wrong :(", connectionRequest.status);
+   }
+   ```
+
+</Steps>

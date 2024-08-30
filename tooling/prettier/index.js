@@ -45,6 +45,10 @@ const config = {
       },
     },
   ],
+  useTabs: false,
+  semi: true,
+  singleQuote: false,
+  trailingComma: "all",
 };
 
 export default config;

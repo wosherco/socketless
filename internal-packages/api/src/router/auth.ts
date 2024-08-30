@@ -1,20 +1,26 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { invalidateSessionToken } from "@socketless/auth";
 
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc";
 
 export const authRouter = {
-  getSession: publicProcedure.query(({ ctx }) => {
-    return ctx.session;
+  getUser: protectedProcedure.query(({ ctx }) => {
+    return {
+      id: ctx.user.id,
+      email: ctx.user.email,
+      username: ctx.user.username,
+    };
   }),
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can see this secret message!";
-  }),
-  signOut: protectedProcedure.mutation(async (opts) => {
-    if (!opts.ctx.token) {
-      return { success: false };
-    }
-    await invalidateSessionToken(opts.ctx.token);
-    return { success: true };
-  }),
+
+  // logout: protectedProcedure.query(async ({ ctx }) => {
+  //   const lucia = luciacustom(ctx.db);
+  //   await lucia.invalidateSession(ctx.session.id);
+  //   const sessionCookie = lucia.createBlankSessionCookie();
+
+  //   setCookie(
+  //     ctx.resHeaders,
+  //     sessionCookie.name,
+  //     sessionCookie.value,
+  //     sessionCookie.attributes,
+  //   );
+  // }),
 } satisfies TRPCRouterRecord;

@@ -1,92 +1,177 @@
-import { relations, sql } from "drizzle-orm";
 import {
+  bigint,
+  bigserial,
+  boolean,
+  index,
   integer,
+  json,
   pgTable,
-  primaryKey,
+  serial,
   text,
   timestamp,
-  uuid,
-  varchar,
+  unique,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { nanoid } from "nanoid";
 
-export const Post = pgTable("post", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  title: varchar("name", { length: 256 }).notNull(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
+import type { ProjectConfigType } from "@socketless/validators";
+import { EWebhookActions } from "@socketless/validators";
+
+export const userTable = pgTable("user", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  username: text("username").notNull(),
+  githubId: integer("github_id").notNull().unique(),
+  profilePicture: text("profile_picture"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const sessionTable = pgTable("session", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id),
+  expiresAt: timestamp("expires_at", {
     withTimezone: true,
-  }).$onUpdateFn(() => sql`now()`),
-});
-
-export const CreatePostSchema = createInsertSchema(Post, {
-  title: z.string().max(256),
-  content: z.string().max(256),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const User = pgTable("user", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
     mode: "date",
-    withTimezone: true,
-  }),
-  image: varchar("image", { length: 255 }),
+  }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
-export const UserRelations = relations(User, ({ many }) => ({
-  accounts: many(Account),
-}));
-
-export const Account = pgTable(
-  "account",
+export const projectTable = pgTable(
+  "project",
   {
-    userId: uuid("userId")
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    clientId: text("client_id").notNull().unique(),
+    clientSecret: text("client_secret").notNull().unique(),
+    stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+    stripePlan: text("stripe_plan", { enum: ["FREE", "PAID", "CUSTOM"] })
       .notNull()
-      .references(() => User.id, { onDelete: "cascade" }),
-    type: varchar("type", { length: 255 })
-      .$type<"email" | "oauth" | "oidc" | "webauthn">()
+      .default("FREE"),
+    stripeSubscriptionId: text("stripe_subscription_id").unique(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => userTable.id),
+    config: json("config")
+      .$type<ProjectConfigType>()
+      .$defaultFn(
+        () =>
+          ({
+            webhookUrl: null,
+            webhookSecret: nanoid(40),
+            webhookEvents: [
+              EWebhookActions.CONNECTION_CLOSE,
+              EWebhookActions.CONNECTION_CLOSE,
+              EWebhookActions.MESSAGE,
+            ],
+            messagePrivacyLevel: "ALWAYS",
+          }) satisfies ProjectConfigType,
+      )
       .notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
-    refresh_token: varchar("refresh_token", { length: 255 }),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
-    id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 255 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    deleted: boolean("deleted").notNull().default(false),
   },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
+  (t) => ({
+    project__ownedId_idx: index("project__ownedId_idx").on(t.ownerId),
+    project__ownedId_deleted_idx: index("project__ownedId_deleted_idx").on(
+      t.ownerId,
+      t.deleted,
+    ),
+    project__ownedId_id_idx: index("project__ownedId_id_deleted_idx").on(
+      t.ownerId,
+      t.id,
+      t.deleted,
+    ),
   }),
 );
 
-export const AccountRelations = relations(Account, ({ one }) => ({
-  user: one(User, { fields: [Account.userId], references: [User.id] }),
-}));
+export const feedTable = pgTable(
+  "feed",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    name: text("name").notNull(),
+    displayName: text("display_name").notNull(),
+    projectId: integer("project_id")
+      .notNull()
+      .references(() => projectTable.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    feed__projectId_name_idx: unique("feed__projectId_name_idx").on(
+      t.name,
+      t.projectId,
+    ),
+    feed__projectId_idx: index("feed__projectId_idx").on(t.projectId),
+  }),
+);
 
-export const Session = pgTable("session", {
-  sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
-  userId: uuid("userId")
+export const connectionTable = pgTable(
+  "connection",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    // feedId: bigint("feed_id", { mode: "number" })
+    //   .notNull()
+    //   .references(() => feedTable.id),
+    projectId: integer("project_id")
+      .notNull()
+      .references(() => projectTable.id),
+    token: text("token").notNull(),
+    identifier: text("identifier").notNull(),
+    data: text("data"),
+    // data: json<ConnectionDataType>("data").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    connection__identifier_projectId_idx: unique(
+      "connection__identifier_projectId_idx",
+    ).on(t.identifier, t.projectId),
+    connection__token_idx: unique("connection__token_idx").on(t.token),
+  }),
+);
+
+export const clientTable = pgTable(
+  "client",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    connectionId: bigint("connection_id", { mode: "number" })
+      .notNull()
+      .references(() => connectionTable.id),
+    connectedAt: timestamp("connected_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    feed: text("feed").notNull(),
+    disconnected: boolean("disconnected").notNull().default(false),
+  },
+  (t) => ({
+    client__feed_disconnected_idx: index("client__feed_disconnected_idx").on(
+      t.feed,
+      t.disconnected,
+    ),
+  }),
+);
+
+type LogDataType = unknown;
+
+export const logsTable = pgTable("logs", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  projectId: integer("project_id")
     .notNull()
-    .references(() => User.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", {
-    mode: "date",
-    withTimezone: true,
+    .references(() => projectTable.id),
+  action: text("action", {
+    enum: ["INCOMING", "OUTGOING", "CONNECTION", "DISCONNECT"],
   }).notNull(),
+  data: json("data").$type<LogDataType>(),
+  timestamp: timestamp("timestamp", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
-
-export const SessionRelations = relations(Session, ({ one }) => ({
-  user: one(User, { fields: [Session.userId], references: [User.id] }),
-}));

@@ -1,0 +1,50 @@
+---
+title: Concepts
+description: Learn a few basic concepts of Socketless.
+sidebar:
+  order: 1
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Let's talk about some of our concepts:
+
+## Project
+
+A project is what the name implies: your project. Here you'll manage your channels, connections, and billing.
+
+## Channel
+
+A channel is an available server where clients can connect. You can broadcast to a channel for all clients or to specific clients connected to a channel. Clients can also publish messages to a channel for other clients to receive.
+
+A channel name cannot be longer than 50 characters and can only contain `a-z`, `A-Z`, `0-9`, `-`, and `.`.
+
+<Aside>
+  Although the channel name can contain capitalization, internally channel names
+  are case-insensitive.
+</Aside>
+
+## Connection
+
+A connection is a client connected to a server. A connection doesn't start with an open socket; it starts by requesting a connection to our servers. The workflow follows this map:
+
+- First, you send a request to our servers with a project authorization token to create a connection. This request returns an identifier and a token. **This is what counts as a connection**.
+- After you receive your connection token, you can connect as many times as you want to that connection with a WebSocket. **While the client is connected, it counts as a current connection**.
+
+If you configure a webhook, you will receive a request once a client is connected. Responding to that request with a 200 status code will send the message to that specific connection rather than the whole channel. Check out our webhook documentation for more information.
+
+### Connection Data
+
+Connection data is a payload limited to `1024 bytes` that can be used to store information about the connection. This connection data is sent to webhooks.
+
+## Outgoing Messages (Published Messages)
+
+An outgoing message is a message from outside that gets pushed to a channel (and to specific connections). If no clients receive the message, it is not counted (less worry for you 😉).
+
+To learn more about publishing messages, read our documentation related to pushing.
+
+## Incoming Messages (Channel Messages)
+
+An incoming message is a message sent from a WebSocket. Messages sent from a WebSocket will be pushed to other WebSockets connected to the same channel and will count towards this meter.
+
+If you configure a webhook, you will receive a request when a message is sent. Responding to that request with a 200 status code will send the message to that specific connection rather than the whole channel. Check out our webhook documentation for more information.

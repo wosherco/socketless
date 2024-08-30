@@ -22,16 +22,12 @@ import { cn } from "@socketless/ui";
 
 import { Label } from "./label";
 
-const useForm = <
-  TOut extends FieldValues,
-  TDef extends ZodTypeDef,
-  TIn extends FieldValues,
->(
+const useForm = <TOut, TDef extends ZodTypeDef, TIn extends FieldValues>(
   props: Omit<UseFormProps<TIn>, "resolver"> & {
     schema: ZodType<TOut, TDef, TIn>;
   },
 ) => {
-  const form = __useForm<TIn, unknown, TOut>({
+  const form = __useForm<TIn>({
     ...props,
     resolver: zodResolver(props.schema, undefined),
   });

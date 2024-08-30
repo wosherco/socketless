@@ -1,0 +1,16 @@
+---
+title: Limits
+description: Know how limits work in Socketless.
+---
+
+## Connections
+
+Connection tokens are created and currently last for 24 hours (subject to change). Once a connection token expires, the client will be disconnected. You have the option to renew a token _(more info soon)_.
+
+## Incoming Messages
+
+Messages sent by clients through the websocket are not billed if they are ignored (no webhook, etc.).
+
+## Outgoing Messages
+
+Messages published to the channel or to an individual client are billed. Responses to a webhook message aren't counted towards this meter. If the channel is empty (no one is listening), it won't be counted towards this meter.

@@ -1,0 +1,31 @@
+---
+title: Connection Event
+description: Information about the Connection Event send through Socketless Webhook.
+
+sidebar:
+  order: 1
+---
+
+This event is sent when a client connects to a Websocket through a Connection.
+
+## Data Schema
+
+```ts
+{
+  // ...
+  "data": {
+    "channel": string;
+    "projectClientId": string;
+    "projectId": number;
+    "identifier": string;
+    "data": string; // This is the data you sent when creating the connection
+  }
+}
+```
+
+## Response
+
+You can respond to this event to send a message to the recently connected client.
+
+- Code `200`: If the response contains a body, it will be sent to the websocket.
+- Code `204`: Nothing will be sent to the client.

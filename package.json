@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@socketless/prettier-config": "*",
-    "@turbo/gen": "^2.0.13",
+    "@turbo/gen": "2.0.13",
     "prettier": "3.3.3",
-    "turbo": "^2.0.13",
+    "turbo": "2.0.13",
     "typescript": "5.5.4"
   },
   "prettier": "@socketless/prettier-config",
