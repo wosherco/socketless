@@ -1,8 +1,7 @@
-import { appRouter, createTRPCContext } from "@socketless/api";
-import { auth } from "@socketless/auth";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-export const runtime = "edge";
+import { appRouter, createTRPCContext } from "@socketless/api";
+import { auth } from "@socketless/auth";
 
 /**
  * Configure basic CORS headers
