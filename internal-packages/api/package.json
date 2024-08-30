@@ -1,0 +1,38 @@
+{
+  "name": "@socketless/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@socketless/auth": "*",
+    "@socketless/db": "*",
+    "@socketless/validators": "*",
+    "@trpc/server": "^11.0.0-rc.477",
+    "superjson": "2.2.1",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@socketless/eslint-config": "*",
+    "@socketless/prettier-config": "*",
+    "@socketless/tsconfig": "*",
+    "eslint": "9.9.1",
+    "prettier": "3.3.3",
+    "typescript": "5.5.4"
+  },
+  "prettier": "@socketless/prettier-config"
+}

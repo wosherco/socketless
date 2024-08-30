@@ -1,9 +1,9 @@
 "use client";
 
-import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
+import type { RouterOutputs } from "@socketless/api";
+import { CreatePostSchema } from "@socketless/db/schema";
+import { cn } from "@socketless/ui";
+import { Button } from "@socketless/ui/button";
 import {
   Form,
   FormControl,
@@ -11,9 +11,9 @@ import {
   FormItem,
   FormMessage,
   useForm,
-} from "@acme/ui/form";
-import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
+} from "@socketless/ui/form";
+import { Input } from "@socketless/ui/input";
+import { toast } from "@socketless/ui/toast";
 
 import { api } from "~/trpc/react";
 

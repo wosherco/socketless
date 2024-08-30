@@ -8,31 +8,32 @@
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
-    "db:push": "turbo -F @acme/db push",
-    "db:studio": "turbo -F @acme/db studio",
+    "db:push": "turbo -F @socketless/db push",
+    "db:studio": "turbo -F @socketless/db studio",
     "dev": "turbo watch dev",
-    "dev:next": "turbo watch dev -F @acme/nextjs...",
+    "dev:next": "turbo watch dev -F @socketless/nextjs...",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
-    "lint:ws": "pnpm dlx sherif@latest",
-    "postinstall": "pnpm lint:ws",
+    "lint:ws": "bunx sherif@latest",
+    "postinstall": "bun run lint:ws",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add"
   },
   "devDependencies": {
-    "@acme/prettier-config": "*",
+    "@socketless/prettier-config": "*",
     "@turbo/gen": "^2.0.13",
-    "prettier": "catalog:",
+    "prettier": "3.3.3",
     "turbo": "^2.0.13",
-    "typescript": "catalog:"
+    "typescript": "5.5.4"
   },
-  "prettier": "@acme/prettier-config",
+  "prettier": "@socketless/prettier-config",
   "packageManager": "bun@1.1.20",
   "workspaces": [
     "apps/*",
     "packages/*",
+    "internal-packages/*",
     "tooling/*"
   ]
 }
