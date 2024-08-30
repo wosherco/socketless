@@ -4,17 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm with-env astro dev",
-    "start": "pnpm with-env astro dev",
-    "build": "pnpm with-env astro build",
+    "dev": "bun with-env astro dev",
+    "start": "bun with-env astro dev",
+    "build": "bun with-env astro build",
     "build:cf": "astro build",
-    "preview": "pnpm with-env astro preview",
+    "preview": "bun with-env astro preview",
     "astro": "astro",
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint && astro check",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .next .turbo node_modules",
-    "with-env": "doppler run --"
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@astrojs/check": "0.9.3",
