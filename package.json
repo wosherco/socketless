@@ -4,7 +4,6 @@
   "engines": {
     "node": ">=20.16.0"
   },
-  "packageManager": "pnpm@9.7.1",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
@@ -23,11 +22,17 @@
     "ui-add": "turbo run ui-add"
   },
   "devDependencies": {
-    "@acme/prettier-config": "workspace:*",
+    "@acme/prettier-config": "*",
     "@turbo/gen": "^2.0.13",
     "prettier": "catalog:",
     "turbo": "^2.0.13",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@acme/prettier-config",
+  "packageManager": "bun@1.1.20",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ]
 }
