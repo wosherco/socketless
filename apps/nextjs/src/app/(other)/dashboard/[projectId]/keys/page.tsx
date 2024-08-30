@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Input } from "@socketless/ui/input";
 
-import ClientSecret from "~/components/dashboard/ClientSecret";
+// import ClientSecret from "~/components/dashboard/ClientSecret";
 import CopyButton from "~/components/utility/CopyButton";
 import { api } from "~/trpc/server";
 
@@ -21,14 +21,7 @@ export default async function Page({
     notFound();
   }
 
-  const project = await api.projects.getProject.query({
-    projectId: parsedProjectId,
-    includeSecret: true,
-  });
-
-  if (!project) {
-    return notFound();
-  }
+  const project = await api.project.getProject({ projectId: parsedProjectId });
 
   return (
     <>
@@ -45,7 +38,7 @@ export default async function Page({
         </div>
       </div>
       <div>
-        <ClientSecret project={project} />
+        {/* <ClientSecret project={project} /> */}
       </div>
     </>
   );

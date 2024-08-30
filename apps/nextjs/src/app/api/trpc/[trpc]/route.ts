@@ -1,7 +1,8 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@socketless/api";
-import { auth } from "@socketless/auth";
+
+import PostHogClient from "~/server/posthog";
 
 /**
  * Configure basic CORS headers
@@ -22,14 +23,16 @@ export const OPTIONS = () => {
   return response;
 };
 
-const handler = auth(async (req) => {
+const handler = async (req: Request) => {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     router: appRouter,
     req,
-    createContext: () =>
+    createContext: ({ req }) =>
       createTRPCContext({
-        session: req.auth,
+        posthog: PostHogClient(),
+        // req,
+        // resHeaders,
         headers: req.headers,
       }),
     onError({ error, path }) {
@@ -39,6 +42,6 @@ const handler = auth(async (req) => {
 
   setCorsHeaders(response);
   return response;
-});
+};
 
 export { handler as GET, handler as POST };

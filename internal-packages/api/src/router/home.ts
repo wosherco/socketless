@@ -22,12 +22,12 @@ export const homeRouter = {
             fields: [
               {
                 name: "Ip",
-                value: `${ctx.req.headers.get("CF-Connecting-IP")}`,
+                value: `${ctx.headers.get("CF-Connecting-IP")}`,
                 inline: true,
               },
               {
                 name: "UA",
-                value: `${ctx.req.headers.get("User-Agent")}`,
+                value: `${ctx.headers.get("User-Agent")}`,
                 inline: true,
               },
               {

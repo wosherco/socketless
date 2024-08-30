@@ -10,14 +10,11 @@ import {
   CardTitle,
 } from "@socketless/ui/card";
 
-import WebhookSettings from "~/components/dashboard/WebhookSettings";
-import { api } from "~/trpc/server";
-
 export const metadata: Metadata = {
   title: "Settings",
 };
 
-export default async function Page({
+export default function Page({
   params,
 }: {
   params: { projectId: string };
@@ -27,14 +24,10 @@ export default async function Page({
     notFound();
   }
 
-  const project = await api.projects.getProject.query({
-    projectId: parsedProjectId,
-    includeConfig: true,
-  });
+  // const project = await api.project.getProject({
+  //   projectId: parsedProjectId,
+  // });
 
-  if (!project?.config) {
-    notFound();
-  }
 
   // const edgeLimits = await api.projectLimits.getEdgeLimits.query({
   //   projectId: parsedProjectId,
@@ -54,8 +47,6 @@ export default async function Page({
           projectId={parsedProjectId}
           free={isFree}
         /> */}
-
-        <WebhookSettings config={project.config} projectId={parsedProjectId} />
 
         <Card>
           <CardHeader>

@@ -44,7 +44,7 @@ function ProjectSkeleton() {
 }
 
 async function Projects() {
-  const projects = await api.projects.getProjects.query();
+  const projects = await api.project.getProjects();
 
   return projects.map((p) => <Project project={p} />);
 }

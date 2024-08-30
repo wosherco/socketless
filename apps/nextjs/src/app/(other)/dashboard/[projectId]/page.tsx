@@ -114,7 +114,7 @@ export default async function Page({
     notFound();
   }
 
-  const project = await api.projects.getProject.query({
+  const project = await api.project.getProject({
     projectId: parsedProjectId,
   });
 

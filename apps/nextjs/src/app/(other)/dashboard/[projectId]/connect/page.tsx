@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import ConnectTesting from "~/components/dashboard/ConnectTesting";
 import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {

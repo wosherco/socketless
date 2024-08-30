@@ -13,6 +13,7 @@ import { z, ZodError } from "zod";
 
 import type { DBType } from "@socketless/db/client";
 import { lucia, validateRawRequest } from "@socketless/auth";
+import { db } from "@socketless/db/client";
 
 import { getProjectFromUser } from "./logic/project";
 import { getCookie } from "./utils/cookies";
@@ -35,17 +36,15 @@ export interface EnvSecrets {
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: {
-  db: DBType;
-  req: Request;
-  resHeaders: Headers;
-  envsecrets: EnvSecrets;
+  headers: Headers;
   posthog: PostHog;
 }) => {
-  const source = opts.req.headers.get("x-trpc-source") ?? "unknown";
+  const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
   const { user, session } = await validateRawRequest(
-    opts.req.headers.get("Authorization"),
-    getCookie(opts.req, lucia.createBlankSessionCookie().name),
+    opts.headers.get("Authorization"),
+    // getCookie(opts.req, lucia.createBlankSessionCookie().name),
+    null,
   );
 
   console.log(">>> tRPC Request from", source, "by", user?.id);
@@ -53,10 +52,11 @@ export const createTRPCContext = async (opts: {
   return {
     user,
     session,
-    db: opts.db,
-    req: opts.req,
-    resHeaders: opts.resHeaders,
-    envsecrets: opts.envsecrets,
+    /// Deprecated
+    db: db,
+    // req: opts.req,
+    // resHeaders: opts.resHeaders,
+    headers: opts.headers,
     posthog: opts.posthog,
   };
 };

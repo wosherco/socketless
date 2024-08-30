@@ -16,14 +16,6 @@ export default async function Layout({
     notFound();
   }
 
-  const project = await api.projects.getProject.query({
-    projectId: parsedProjectId,
-  });
-
-  if (!project) {
-    notFound();
-  }
-
   return (
     <div className="flex min-w-0 grow flex-col sm:flex-row">
       <ProjectMenu projectId={parsedProjectId} />

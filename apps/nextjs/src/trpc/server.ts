@@ -1,10 +1,11 @@
-import type { AppRouter } from "@socketless/api";
 import { cache } from "react";
 import { headers } from "next/headers";
-import { createCaller, createTRPCContext } from "@socketless/api";
-import { auth } from "@socketless/auth";
 import { createHydrationHelpers } from "@trpc/react-query/rsc";
 
+import type { AppRouter } from "@socketless/api";
+import { createCaller, createTRPCContext } from "@socketless/api";
+
+import PostHogClient from "~/server/posthog";
 import { createQueryClient } from "./query-client";
 
 /**
@@ -16,7 +17,7 @@ const createContext = cache(async () => {
   heads.set("x-trpc-source", "rsc");
 
   return createTRPCContext({
-    session: await auth(),
+    posthog: PostHogClient(),
     headers: heads,
   });
 });
