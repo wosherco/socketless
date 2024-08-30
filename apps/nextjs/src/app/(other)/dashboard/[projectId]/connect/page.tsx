@@ -13,26 +13,25 @@ export default async function Page({
 }: {
   params: { projectId: string };
 }) {
-  const parsedProjectId = parseInt(params.projectId);
-  if (isNaN(parsedProjectId)) {
-    notFound();
-  }
+  // const parsedProjectId = parseInt(params.projectId);
+  // if (isNaN(parsedProjectId)) {
+  //   notFound();
+  // }
 
-  const project = await api.projects.getProject.query({
-    projectId: parsedProjectId,
-    includeSecret: true,
-  });
+  // const project = await api.project.getProject({
+  //   projectId: parsedProjectId,
+  // });
 
-  if (!project) {
-    notFound();
-  }
+  // if (!project) {
+  //   notFound();
+  // }
 
   return (
     <>
       <em>Coming soon...</em>
 
       <p>Test your websocket right here.</p>
-      <ConnectTesting project={project} />
+      {/* <ConnectTesting project={project} /> */}
     </>
   );
 }
