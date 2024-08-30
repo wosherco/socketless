@@ -2,6 +2,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@socketless/api";
 
+import { validateRequest } from "~/server/auth";
 import PostHogClient from "~/server/posthog";
 
 /**
@@ -24,6 +25,7 @@ export const OPTIONS = () => {
 };
 
 const handler = async (req: Request) => {
+  const { user, session } = await validateRequest();
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     router: appRouter,
@@ -34,6 +36,8 @@ const handler = async (req: Request) => {
         // req,
         // resHeaders,
         headers: req.headers,
+        user,
+        session,
       }),
     onError({ error, path }) {
       console.error(`>>> tRPC Error on '${path}'`, error);

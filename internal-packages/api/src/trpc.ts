@@ -11,12 +11,11 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z, ZodError } from "zod";
 
-import type { DBType } from "@socketless/db/client";
-import { lucia, validateRawRequest } from "@socketless/auth";
+import type { Session, User } from "@socketless/auth";
+import { validateRawRequest } from "@socketless/auth";
 import { db } from "@socketless/db/client";
 
 import { getProjectFromUser } from "./logic/project";
-import { getCookie } from "./utils/cookies";
 
 export interface EnvSecrets {
   STRIPE_PUBLIC_KEY: string;
@@ -35,23 +34,19 @@ export interface EnvSecrets {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: {
+export const createTRPCContext = (opts: {
   headers: Headers;
   posthog: PostHog;
+  user: User | null;
+  session: Session | null;
 }) => {
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
-  const { user, session } = await validateRawRequest(
-    opts.headers.get("Authorization"),
-    // getCookie(opts.req, lucia.createBlankSessionCookie().name),
-    null,
-  );
-
-  console.log(">>> tRPC Request from", source, "by", user?.id);
+  console.log(">>> tRPC Request from", source, "by", opts.user?.id);
 
   return {
-    user,
-    session,
+    user: opts.user,
+    session: opts.session,
     /// Deprecated
     db: db,
     // req: opts.req,

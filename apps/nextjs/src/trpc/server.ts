@@ -5,6 +5,7 @@ import { createHydrationHelpers } from "@trpc/react-query/rsc";
 import type { AppRouter } from "@socketless/api";
 import { createCaller, createTRPCContext } from "@socketless/api";
 
+import { validateRequest } from "~/server/auth";
 import PostHogClient from "~/server/posthog";
 import { createQueryClient } from "./query-client";
 
@@ -16,9 +17,13 @@ const createContext = cache(async () => {
   const heads = new Headers(headers());
   heads.set("x-trpc-source", "rsc");
 
+  const { user, session } = await validateRequest();
+
   return createTRPCContext({
     posthog: PostHogClient(),
     headers: heads,
+    user,
+    session,
   });
 });
 
