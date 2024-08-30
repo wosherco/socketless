@@ -16,8 +16,6 @@ import ContactForm from "~/components/home/ContactForm";
 // import Faq from "~/components/home/Faq";
 import Features from "~/components/home/Features";
 
-export const runtime = "edge";
-
 function Cross({ className }: { className: string }) {
   return (
     <svg

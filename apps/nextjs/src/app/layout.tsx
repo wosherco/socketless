@@ -18,8 +18,6 @@ import UserMenu from "~/components/UserMenu";
 import { PHProvider } from "~/providers/posthogProvider";
 import { validateRequest } from "~/server/auth";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://socketless.ws"),
   title: {
