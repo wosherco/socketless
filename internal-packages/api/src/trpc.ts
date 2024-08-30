@@ -9,11 +9,12 @@
 import type { PostHog } from "posthog-node";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
-import type { DBType } from "@socketless/db";
-import { luciacustom, validateRawRequest } from "@socketless/auth";
+import type { DBType } from "@socketless/db/client";
+import { lucia, validateRawRequest } from "@socketless/auth";
 
+import { getProjectFromUser } from "./logic/project";
 import { getCookie } from "./utils/cookies";
 
 export interface EnvSecrets {
@@ -43,9 +44,8 @@ export const createTRPCContext = async (opts: {
   const source = opts.req.headers.get("x-trpc-source") ?? "unknown";
 
   const { user, session } = await validateRawRequest(
-    opts.db,
     opts.req.headers.get("Authorization"),
-    getCookie(opts.req, luciacustom(opts.db).createBlankSessionCookie().name),
+    getCookie(opts.req, lucia.createBlankSessionCookie().name),
   );
 
   console.log(">>> tRPC Request from", source, "by", user?.id);
@@ -127,3 +127,30 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+/**
+ * Protected (authenticated) procedure w/ Project Verification
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const projectProcedure = protectedProcedure
+  .input(z.object({ projectId: z.number() }))
+  .use(async ({ ctx, input, next }) => {
+    const project = await getProjectFromUser(
+      ctx.db,
+      ctx.user.id,
+      input.projectId,
+    );
+
+    if (!project) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+      });
+    }
+
+    return next({
+      ctx: {
+        project: project,
+      },
+    });
+  });

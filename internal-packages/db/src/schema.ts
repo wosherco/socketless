@@ -1,31 +1,40 @@
 import {
-  bigint,
   bigserial,
   boolean,
   index,
   integer,
   json,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
-import { nanoid } from "nanoid";
-
-import type { ProjectConfigType } from "@socketless/validators";
-import { EWebhookActions } from "@socketless/validators";
 
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   username: text("username").notNull(),
-  githubId: integer("github_id").notNull().unique(),
   profilePicture: text("profile_picture"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
+
+export const oauthAccountTable = pgTable(
+  "oauth_account",
+  {
+    providerId: text("provider_id", { enum: ["github"] }).notNull(),
+    providerUserId: text("provider_user_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.providerId, t.providerUserId] }),
+  }),
+);
 
 export const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),
@@ -56,22 +65,6 @@ export const projectTable = pgTable(
     ownerId: text("owner_id")
       .notNull()
       .references(() => userTable.id),
-    config: json("config")
-      .$type<ProjectConfigType>()
-      .$defaultFn(
-        () =>
-          ({
-            webhookUrl: null,
-            webhookSecret: nanoid(40),
-            webhookEvents: [
-              EWebhookActions.CONNECTION_CLOSE,
-              EWebhookActions.CONNECTION_CLOSE,
-              EWebhookActions.MESSAGE,
-            ],
-            messagePrivacyLevel: "ALWAYS",
-          }) satisfies ProjectConfigType,
-      )
-      .notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -91,8 +84,35 @@ export const projectTable = pgTable(
   }),
 );
 
-export const feedTable = pgTable(
-  "feed",
+export const projectTokenTable = pgTable("project_token", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id")
+    .notNull()
+    .references(() => projectTable.id),
+  name: text("name").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const projectWebhookTable = pgTable("project_webhook", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id")
+    .notNull()
+    .references(() => projectTable.id),
+  url: text("url").notNull(),
+  secret: text("text").notNull(),
+  sendOnConnect: boolean("send_on_connect").notNull().default(false),
+  sendOnMessage: boolean("send_on_message").notNull().default(true),
+  sendOnDisconnect: boolean("send_on_disconnect").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const roomTable = pgTable(
+  "room",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
     name: text("name").notNull(),
@@ -105,11 +125,11 @@ export const feedTable = pgTable(
       .defaultNow(),
   },
   (t) => ({
-    feed__projectId_name_idx: unique("feed__projectId_name_idx").on(
+    room__projectId_name_idx: unique("room__projectId_name_idx").on(
       t.name,
       t.projectId,
     ),
-    feed__projectId_idx: index("feed__projectId_idx").on(t.projectId),
+    room__projectId_idx: index("room__projectId_idx").on(t.projectId),
   }),
 );
 
@@ -136,27 +156,6 @@ export const connectionTable = pgTable(
       "connection__identifier_projectId_idx",
     ).on(t.identifier, t.projectId),
     connection__token_idx: unique("connection__token_idx").on(t.token),
-  }),
-);
-
-export const clientTable = pgTable(
-  "client",
-  {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
-    connectionId: bigint("connection_id", { mode: "number" })
-      .notNull()
-      .references(() => connectionTable.id),
-    connectedAt: timestamp("connected_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    feed: text("feed").notNull(),
-    disconnected: boolean("disconnected").notNull().default(false),
-  },
-  (t) => ({
-    client__feed_disconnected_idx: index("client__feed_disconnected_idx").on(
-      t.feed,
-      t.disconnected,
-    ),
   }),
 );
 

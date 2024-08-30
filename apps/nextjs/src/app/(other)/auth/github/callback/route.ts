@@ -3,13 +3,13 @@ import { OAuth2RequestError } from "arctic";
 import { generateIdFromEntropySize } from "lucia";
 import { z } from "zod";
 
+import { lucia } from "@socketless/auth";
 import { github } from "@socketless/auth/providers";
-import { eq } from "@socketless/db";
-import { userTable } from "@socketless/db/schema";
+import { and, eq } from "@socketless/db";
+import { db } from "@socketless/db/client";
+import { oauthAccountTable, userTable } from "@socketless/db/schema";
 
 import { env } from "~/env";
-import { lucia } from "~/server/auth";
-import { db } from "~/server/db";
 import PostHogClient from "~/server/posthog";
 
 // TODO: Maybe update avatar and username?
@@ -19,7 +19,12 @@ export async function GET(request: Request): Promise<Response> {
   const state = url.searchParams.get("state");
   const storedState = cookies().get("github_state")?.value ?? null;
 
-  if (!code || !state || !storedState || state !== storedState) {
+  if (
+    code == null ||
+    state == null ||
+    storedState == null ||
+    state !== storedState
+  ) {
     return new Response(null, {
       status: 400,
     });
@@ -64,15 +69,20 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     // Replace this with your own DB client.
-    const [existingUser] = await db()
+    const [existingUser] = await db
       .select()
-      .from(userTable)
-      .where(eq(userTable.githubId, githubUser.id));
+      .from(oauthAccountTable)
+      .where(
+        and(
+          eq(oauthAccountTable.providerId, "github"),
+          eq(oauthAccountTable.providerUserId, `${githubUser.id}`),
+        ),
+      );
 
     if (existingUser) {
-      const session = await lucia().createSession(existingUser.id, {});
+      const session = await lucia.createSession(existingUser.userId, {});
 
-      const sessionCookie = lucia().createSessionCookie(session.id);
+      const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
         sessionCookie.name,
         sessionCookie.value,
@@ -90,12 +100,18 @@ export async function GET(request: Request): Promise<Response> {
     const userId = generateIdFromEntropySize(10); // 16 characters long
 
     // Replace this with your own DB client.
-    await db().insert(userTable).values({
-      id: userId,
-      email: email.toLowerCase(),
-      username: githubUser.login,
-      githubId: githubUser.id,
-      profilePicture: githubUser.avatar_url,
+    await db.transaction(async (tx) => {
+      await tx.insert(userTable).values({
+        id: userId,
+        email: email.toLowerCase(),
+        username: githubUser.login,
+        profilePicture: githubUser.avatar_url,
+      });
+      await tx.insert(oauthAccountTable).values({
+        providerId: "github",
+        providerUserId: `${githubUser.id}`,
+        userId,
+      });
     });
 
     PostHogClient().capture({
@@ -107,9 +123,9 @@ export async function GET(request: Request): Promise<Response> {
       },
     });
 
-    const session = await lucia().createSession(userId, {});
+    const session = await lucia.createSession(userId, {});
 
-    const sessionCookie = lucia().createSessionCookie(session.id);
+    const sessionCookie = lucia.createSessionCookie(session.id);
 
     cookies().set(
       sessionCookie.name,

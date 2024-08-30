@@ -1,11 +1,12 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+import { env as apiEnv } from "@socketless/api/env";
 import { env as authEnv } from "@socketless/auth/env";
 import { env as dbEnv } from "@socketless/db/env";
 
 export const env = createEnv({
-  extends: [authEnv, dbEnv],
+  extends: [authEnv, dbEnv, apiEnv],
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
