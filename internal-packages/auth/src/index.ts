@@ -2,20 +2,18 @@ import type { Session, User } from "lucia";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { Lucia } from "lucia";
 
-import type { DBType } from "@socketless/db";
+import { db } from "@socketless/db/client";
 import { sessionTable, userTable } from "@socketless/db/schema";
 
 import { env } from "../env";
 
 export { User, Session };
 
-const adaptercustom = (db: DBType) =>
-  new DrizzlePostgreSQLAdapter(db, sessionTable, userTable); // your adapter
-
 type LuciaType = Lucia<Record<never, never>, DatabaseUserAttributes>;
 
-export const luciacustom = (db: DBType) =>
-  new Lucia(adaptercustom(db), {
+export const lucia = new Lucia(
+  new DrizzlePostgreSQLAdapter(db, sessionTable, userTable),
+  {
     sessionCookie: {
       // this sets cookies with super long expiration
       // since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages
@@ -34,7 +32,8 @@ export const luciacustom = (db: DBType) =>
         profilePicture: attributes.profilePicture,
       };
     },
-  });
+  },
+);
 
 // IMPORTANT!
 declare module "lucia" {
@@ -52,26 +51,23 @@ interface DatabaseUserAttributes {
 }
 
 export const validateRawRequest = async (
-  db: DBType,
   authorizationHeader?: string | null,
   authorizationCookie?: string | null,
 ) => {
-  const luciainst = luciacustom(db);
+  let sessionId = lucia.readBearerToken(authorizationHeader ?? "");
 
-  let sessionId = luciainst.readBearerToken(authorizationHeader ?? "");
-
-  if (!sessionId || sessionId == "null") {
+  if (sessionId == null || sessionId == "null") {
     sessionId = authorizationCookie ?? null;
   }
 
-  if (!sessionId) {
+  if (sessionId == null) {
     return {
       user: null,
       session: null,
     };
   }
 
-  const result = await luciainst.validateSession(sessionId);
+  const result = await lucia.validateSession(sessionId);
 
   // TODO: Refresh session id
   // // next.js throws when you attempt to set cookie when rendering page

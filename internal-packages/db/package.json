@@ -15,7 +15,8 @@
     "./schema": {
       "types": "./dist/schema.d.ts",
       "default": "./src/schema.ts"
-    }
+    },
+    "./env": "./env.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -30,9 +31,10 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@vercel/postgres": "0.9.0",
+    "@t3-oss/env-nextjs": "0.11.0",
     "drizzle-orm": "0.33.0",
     "drizzle-zod": "0.5.1",
+    "postgres": "^3.4.4",
     "zod": "3.23.8"
   },
   "devDependencies": {
