@@ -18,7 +18,7 @@ import { projectProcedure } from "../trpc";
 
 const urlSchema = z.string().url().max(1000);
 
-export const projectTokenRouter = {
+export const projectWebhookRouter = {
   createWebhook: projectProcedure
     .input(z.object({ url: urlSchema }))
     .mutation(async ({ ctx, input }) => {
