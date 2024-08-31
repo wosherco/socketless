@@ -7,6 +7,7 @@ import { projectTable } from "@socketless/db/schema";
 
 import { env } from "../../env";
 import { generateClientSecret } from "../utils";
+import { createProjectToken } from "./projectToken";
 
 export async function getProjects(db: DBType, userId: string) {
   return await db
@@ -66,6 +67,8 @@ export async function createProject(
     if (!project) {
       throw new Error("Failed to create project");
     }
+
+    await createProjectToken(db, project.id, "Secret Token");
 
     return project;
   } catch (e) {
