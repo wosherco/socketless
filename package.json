@@ -35,5 +35,8 @@
     "packages/*",
     "internal-packages/*",
     "tooling/*"
+  ],
+  "trustedDependencies": [
+    "@sentry/cli"
   ]
 }
