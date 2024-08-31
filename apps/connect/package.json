@@ -1,0 +1,29 @@
+{
+  "name": "@socketless/connect",
+  "scripts": {
+    "clean": "git clean -xdf .cache .next .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun with-env run --hot src/index.ts",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@socketless/api": "*",
+    "@socketless/db": "*",
+    "hono": "^4.5.10",
+    "ioredis": "^5.4.1",
+    "posthog-node": "4.0.1"
+  },
+  "devDependencies": {
+    "@socketless/eslint-config": "*",
+    "@socketless/prettier-config": "*",
+    "dotenv-cli": "7.4.2",
+    "@socketless/tsconfig": "*",
+    "eslint": "9.9.1",
+    "prettier": "3.3.3",
+    "@types/bun": "latest",
+    "typescript": "5.5.4"
+  },
+  "prettier": "@socketless/prettier-config"
+}
