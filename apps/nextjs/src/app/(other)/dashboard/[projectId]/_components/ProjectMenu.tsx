@@ -63,9 +63,9 @@ export default function ProjectMenu({ projectId }: { projectId: number }) {
 
       <ProjectMenuButton
         icon={<List width={20} />}
-        href={`/dashboard/${projectId}/channels`}
+        href={`/dashboard/${projectId}/rooms`}
       >
-        Channels
+        Rooms
       </ProjectMenuButton>
 
       <ProjectMenuButton
