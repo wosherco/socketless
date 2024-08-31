@@ -29,7 +29,7 @@ async function ClientIdSection({ projectId }: { projectId: number }) {
 
 
 async function ProjectTokens({ projectId }: { projectId: number }) {
-  const keys = await api.projectToken.getTokens({ projectId });
+  const tokens = await api.projectToken.getTokens({ projectId });
 
   return <div className="flex flex-col gap-4">
     <CreateTokenDialog projectId={projectId}>
@@ -37,7 +37,7 @@ async function ProjectTokens({ projectId }: { projectId: number }) {
         + Create Token
       </Button>
     </CreateTokenDialog>
-    {keys.map((token) => (<div className="p-2 rounded-lg border-[1px] flex flex-row items-center" key={token.id}>
+    {tokens.map((token) => (<div className="p-2 rounded-lg border-[1px] flex flex-row items-center" key={token.id}>
       <p>{token.name}</p>
       <div className="flex flex-row flex-grow px-4 gap-4">
         <HidableInput value={token.token} />

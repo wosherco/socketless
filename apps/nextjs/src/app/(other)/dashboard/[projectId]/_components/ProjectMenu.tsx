@@ -84,9 +84,9 @@ export default function ProjectMenu({ projectId }: { projectId: number }) {
 
       <ProjectMenuButton
         icon={<KeyRound width={20} />}
-        href={`/dashboard/${projectId}/keys`}
+        href={`/dashboard/${projectId}/tokens`}
       >
-        Keys
+        Tokens
       </ProjectMenuButton>
 
       <ProjectMenuButton
