@@ -1,4 +1,5 @@
 {
   "extends": ["astro/tsconfigs/strict", "@socketless/tsconfig/base.json"],
-  "exclude": ["dist/", "node_modules/", ".astro/"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", ".astro"]
 }
