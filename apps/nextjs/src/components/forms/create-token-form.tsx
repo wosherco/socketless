@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@socketless/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useForm } from "@socketless/ui/form";
-import { CreateProjectSchema } from "@socketless/validators";
+import { ProjectTokenCreateFormSchema } from "@socketless/validators";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "@socketless/ui/toast";
@@ -23,42 +23,40 @@ import { Input } from "@socketless/ui/input";
 import { Button } from "@socketless/ui/button";
 
 
-export function CreateProjectDialog({ children }: { children: ReactNode }) {
+export function CreateTokenDialog({ children, projectId }: { children: ReactNode; projectId: number; }) {
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{children}</DialogTrigger>
+      <DialogTrigger className="text-left">{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a Project</DialogTitle>
+          <DialogTitle>Create a Token</DialogTitle>
           <DialogDescription>
-            Create a new project to start using Socketless. Note that billing is
-            attached to projects, not to your account.
+            Create a new token to your for your Socketless Project.
           </DialogDescription>
         </DialogHeader>
-        <CreateProjectForm close={() => setOpen(false)} />
+        <CreateTokenForm close={() => setOpen(false)} projectId={projectId} />
       </DialogContent>
     </Dialog>
   );
 }
 
-export default function CreateProjectForm({ close }: { close?: () => void }) {
+export default function CreateTokenForm({ close, projectId }: { close?: () => void; projectId: number; }) {
+  const router = useRouter();
   const form = useForm({
-    schema: CreateProjectSchema,
+    schema: ProjectTokenCreateFormSchema,
     defaultValues: {
       name: "",
     },
   });
-  const router = useRouter();
 
-  const createPost = api.project.createProject.useMutation({
-    onSuccess: (data) => {
+  const createToken = api.projectToken.createToken.useMutation({
+    onSuccess: () => {
       if (close) {
         close()
       }
       router.refresh();
-      router.push(`/dashboard/${data.id}`);
     },
     onError: () => {
       toast.error("Failed to create project.");
@@ -70,7 +68,7 @@ export default function CreateProjectForm({ close }: { close?: () => void }) {
       <form
         className="flex w-full max-w-2xl flex-col gap-4"
         onSubmit={form.handleSubmit((data) => {
-          createPost.mutate(data);
+          createToken.mutate({ ...data, projectId });
         })}
       >
         <FormField
@@ -78,7 +76,7 @@ export default function CreateProjectForm({ close }: { close?: () => void }) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name</FormLabel>
+              <FormLabel>Token Name</FormLabel>
               <FormControl>
                 <Input {...field} placeholder="Name" />
               </FormControl>
@@ -87,8 +85,8 @@ export default function CreateProjectForm({ close }: { close?: () => void }) {
           )}
         />
 
-        <Button disabled={createPost.isPending} className="ml-auto w-fit">
-          Create Project
+        <Button disabled={createToken.isPending} className="ml-auto w-fit">
+          Create Token
         </Button>
       </form>
     </Form>

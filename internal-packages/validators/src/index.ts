@@ -2,11 +2,13 @@ import { z } from "zod";
 
 // Fields
 
-export const ChannelNameValidator = z
+export const RoomNameValidator = z
   .string()
   .min(1)
-  .max(50)
+  .max(100)
   .regex(/^[-.a-zA-Z0-9]+$/);
+
+export const TokenNameSchema = z.string().min(1).max(100);
 
 // Other
 
@@ -118,3 +120,7 @@ export const ProjectEdgeLimitsFormSchema = z
     projectId: z.number(),
   })
   .and(ProjectEdgeLimitsSchema);
+
+export const ProjectTokenCreateFormSchema = z.object({
+  name: TokenNameSchema,
+});

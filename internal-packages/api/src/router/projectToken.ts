@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { db } from "@socketless/db/client";
+import { ProjectTokenCreateFormSchema } from "@socketless/validators";
 
 import {
   createProjectToken,
@@ -13,11 +14,9 @@ import {
 } from "../logic/projectToken";
 import { projectProcedure } from "../trpc";
 
-const tokenSchema = z.string().min(1).max(100);
-
 export const projectTokenRouter = {
   createToken: projectProcedure
-    .input(z.object({ name: tokenSchema }))
+    .input(ProjectTokenCreateFormSchema)
     .mutation(async ({ ctx, input }) => {
       const newToken = await createProjectToken(db, ctx.project.id, input.name);
 
