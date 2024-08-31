@@ -9,7 +9,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
   dragonfly:
     image: "docker.dragonflydb.io/dragonflydb/dragonfly"
     ulimits:
@@ -21,6 +21,7 @@ services:
     # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
     # network_mode: "host"
     volumes:
-      - dragonflydata:/data
+      - dragonfly-data:/data
 volumes:
-  dragonflydata:
+  dragonfly-data:
+  postgres-data:
