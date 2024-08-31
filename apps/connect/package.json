@@ -5,7 +5,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "dev": "bun with-env run --hot src/index.ts",
+    "dev": "bun with-env bun run --hot src/index.ts",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
