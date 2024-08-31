@@ -26,6 +26,8 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "push": "bun with-env drizzle-kit push",
+    "generate": "bun with-env drizzle-kit generate",
+    "migrate": "bun with-env drizzle-kit migrate",
     "studio": "bun with-env drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --"

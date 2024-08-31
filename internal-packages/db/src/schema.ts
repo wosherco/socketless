@@ -161,16 +161,22 @@ export const connectionTable = pgTable(
 
 type LogDataType = unknown;
 
-export const logsTable = pgTable("logs", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  projectId: integer("project_id")
-    .notNull()
-    .references(() => projectTable.id),
-  action: text("action", {
-    enum: ["INCOMING", "OUTGOING", "CONNECTION", "DISCONNECT"],
-  }).notNull(),
-  data: json("data").$type<LogDataType>(),
-  timestamp: timestamp("timestamp", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const logsTable = pgTable(
+  "logs",
+  {
+    id: bigserial("id", { mode: "number" }),
+    projectId: integer("project_id")
+      .notNull()
+      .references(() => projectTable.id),
+    action: text("action", {
+      enum: ["INCOMING", "OUTGOING", "CONNECTION", "DISCONNECT"],
+    }).notNull(),
+    data: json("data").$type<LogDataType>(),
+    timestamp: timestamp("timestamp", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.id, t.timestamp] }),
+  }),
+);
