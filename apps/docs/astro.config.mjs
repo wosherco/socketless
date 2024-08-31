@@ -1,5 +1,6 @@
 import starlight from "@astrojs/starlight";
 import { defineConfig, passthroughImageService } from "astro/config";
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,6 +11,15 @@ export default defineConfig({
       social: {
         github: "https://github.com/wosherco",
       },
+      plugins: [
+        starlightOpenAPI([
+          {
+            base: 'api',
+            label: 'My API',
+            schema: 'http://localhost:3000/api/doc',
+          },
+        ]),
+      ],
       sidebar: [
         {
           label: "Introduction",
@@ -35,12 +45,7 @@ export default defineConfig({
             directory: "billing",
           },
         },
-        {
-          label: "API Reference",
-          autogenerate: {
-            directory: "api",
-          },
-        },
+        ...openAPISidebarGroups,
       ],
     }),
   ],
