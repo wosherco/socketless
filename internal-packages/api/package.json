@@ -8,6 +8,10 @@
       "types": "./dist/src/index.d.ts",
       "default": "./src/index.ts"
     },
+    "./logic": {
+      "types": "./dist/src/logic/index.d.ts",
+      "default": "./src/logic/index.ts"
+    },
     "./env": "./env.ts"
   },
   "license": "MIT",
