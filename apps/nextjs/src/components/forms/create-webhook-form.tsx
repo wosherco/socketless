@@ -88,7 +88,7 @@ function CreateTokenForm({ close, projectId }: { close?: () => void; projectId: 
 
         <FormField
           control={form.control}
-          name="name"
+          name="url"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Webhook URL</FormLabel>

@@ -9,12 +9,11 @@ import { api } from "~/trpc/server";
 
 import { Button } from "@socketless/ui/button";
 import HidableInput from "~/components/dashboard/HidableInput";
-import TokenMoreOptionsMenu from "~/components/dashboard/TokenMoreOptionsMenu";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@socketless/ui/card";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import AddWebhookButton from "~/components/dashboard/AddWebhookButton";
 import CreateWebhookDialog from "~/components/forms/create-webhook-form";
+import WebhookMoreOptionsMenu from "~/components/dashboard/WebhookMoreOptionsMenu";
 
 export const metadata: Metadata = {
   title: "Webhooks",
@@ -29,6 +28,7 @@ async function ProjectWebhooks({ projectId }: { projectId: number }) {
         + Create Webhook
       </Button>
     </CreateWebhookDialog>
+
     {tokens.map((webhook) => (
       <div className="p-2 rounded-lg border-[1px] flex flex-row items-center" key={webhook.id}>
         <p>{webhook.name}</p>
@@ -38,7 +38,7 @@ async function ProjectWebhooks({ projectId }: { projectId: number }) {
           <CopyButton value={webhook.secret} />
         </div>
 
-        <TokenMoreOptionsMenu projectId={projectId} tokenId={webhook.id} />
+        <WebhookMoreOptionsMenu projectId={projectId} webhookId={webhook.id} />
       </div>
     ))}
   </div>
@@ -78,8 +78,6 @@ export default function Page({
       </Card>
 
       <div className="mt-4">
-        <AddWebhookButton projectId={parsedProjectId} />
-
         <Suspense fallback={
           <Skeleton className="w-full" />
         }>

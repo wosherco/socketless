@@ -100,7 +100,7 @@ export const projectWebhookRouter = {
       return newSecret;
     }),
 
-  deleteToken: projectProcedure
+  deleteWebhook: projectProcedure
     .input(z.object({ webhookId: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const webhook = await getProjectWebhook(db, input.webhookId);
