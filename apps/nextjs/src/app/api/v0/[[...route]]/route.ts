@@ -14,16 +14,15 @@ import {
 
 // export const runtime = 'edge'
 
+type TokenValidationFunc = Exclude<
+  Awaited<ReturnType<typeof validateProjectToken>>,
+  undefined
+>;
+
 const app = new OpenAPIHono<{
   Variables: {
-    project: Exclude<
-      Awaited<ReturnType<typeof validateProjectToken>>,
-      undefined
-    >["project"];
-    token: Exclude<
-      Awaited<ReturnType<typeof validateProjectToken>>,
-      undefined
-    >["project_token"];
+    project: TokenValidationFunc["project"];
+    token: TokenValidationFunc["project_token"];
   };
 }>().basePath("/api/v0");
 app.use(
