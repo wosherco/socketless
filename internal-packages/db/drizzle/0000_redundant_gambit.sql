@@ -1,12 +1,8 @@
-CREATE TABLE IF NOT EXISTS "connection" (
-	"id" bigserial PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS "connection_rooms" (
+	"room" text NOT NULL,
 	"project_id" integer NOT NULL,
-	"token" text NOT NULL,
 	"identifier" text NOT NULL,
-	"data" text,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "connection__identifier_projectId_idx" UNIQUE("identifier","project_id"),
-	CONSTRAINT "connection__token_idx" UNIQUE("token")
+	CONSTRAINT "connection_rooms_room_project_id_identifier_pk" PRIMARY KEY("room","project_id","identifier")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "logs" (
@@ -54,6 +50,7 @@ CREATE TABLE IF NOT EXISTS "project_token" (
 CREATE TABLE IF NOT EXISTS "project_webhook" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"project_id" integer NOT NULL,
+	"name" text NOT NULL,
 	"url" text NOT NULL,
 	"text" text NOT NULL,
 	"send_on_connect" boolean DEFAULT false NOT NULL,
@@ -63,12 +60,10 @@ CREATE TABLE IF NOT EXISTS "project_webhook" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "room" (
-	"id" bigserial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"display_name" text NOT NULL,
 	"project_id" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "room__projectId_name_idx" UNIQUE("name","project_id")
+	CONSTRAINT "room_name_project_id_pk" PRIMARY KEY("name","project_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
@@ -88,7 +83,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "connection" ADD CONSTRAINT "connection_project_id_project_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."project"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "connection_rooms" ADD CONSTRAINT "connection_rooms_project_id_project_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."project"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -135,6 +130,7 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "connection_rooms__identifier_project_id_idx" ON "connection_rooms" USING btree ("identifier","project_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "project__ownedId_idx" ON "project" USING btree ("owner_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "project__ownedId_deleted_idx" ON "project" USING btree ("owner_id","deleted");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "project__ownedId_id_deleted_idx" ON "project" USING btree ("owner_id","id","deleted");--> statement-breakpoint

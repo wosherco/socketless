@@ -100,6 +100,7 @@ export const projectWebhookTable = pgTable("project_webhook", {
   projectId: integer("project_id")
     .notNull()
     .references(() => projectTable.id),
+  name: text("name").notNull(),
   url: text("url").notNull(),
   secret: text("text").notNull(),
   sendOnConnect: boolean("send_on_connect").notNull().default(false),

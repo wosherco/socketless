@@ -1,17 +1,17 @@
 {
-  "id": "2ca85ab2-30cb-491b-b68e-f13bd0382997",
+  "id": "0f4588da-0413-4341-8dca-655e130d40a6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.connection": {
-      "name": "connection",
+    "public.connection_rooms": {
+      "name": "connection_rooms",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigserial",
-          "primaryKey": true,
+        "room": {
+          "name": "room",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "project_id": {
@@ -20,37 +20,40 @@
           "primaryKey": false,
           "notNull": true
         },
-        "token": {
-          "name": "token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "identifier": {
           "name": "identifier",
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "data": {
-          "name": "data",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "connection_rooms__identifier_project_id_idx": {
+          "name": "connection_rooms__identifier_project_id_idx",
+          "columns": [
+            {
+              "expression": "identifier",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
-        "connection_project_id_project_id_fk": {
-          "name": "connection_project_id_project_id_fk",
-          "tableFrom": "connection",
+        "connection_rooms_project_id_project_id_fk": {
+          "name": "connection_rooms_project_id_project_id_fk",
+          "tableFrom": "connection_rooms",
           "tableTo": "project",
           "columnsFrom": [
             "project_id"
@@ -62,24 +65,17 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "connection__identifier_projectId_idx": {
-          "name": "connection__identifier_projectId_idx",
-          "nullsNotDistinct": false,
+      "compositePrimaryKeys": {
+        "connection_rooms_room_project_id_identifier_pk": {
+          "name": "connection_rooms_room_project_id_identifier_pk",
           "columns": [
-            "identifier",
-            "project_id"
-          ]
-        },
-        "connection__token_idx": {
-          "name": "connection__token_idx",
-          "nullsNotDistinct": false,
-          "columns": [
-            "token"
+            "room",
+            "project_id",
+            "identifier"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "public.logs": {
       "name": "logs",
@@ -453,6 +449,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "url": {
           "name": "url",
           "type": "text",
@@ -517,20 +519,8 @@
       "name": "room",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigserial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "name": {
           "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "display_name": {
-          "name": "display_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -581,17 +571,16 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "room__projectId_name_idx": {
-          "name": "room__projectId_name_idx",
-          "nullsNotDistinct": false,
+      "compositePrimaryKeys": {
+        "room_name_project_id_pk": {
+          "name": "room_name_project_id_pk",
           "columns": [
             "name",
             "project_id"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "public.session": {
       "name": "session",
