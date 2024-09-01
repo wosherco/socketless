@@ -2,9 +2,10 @@ import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
 
-import { verifyConnection } from "@socketless/api/logic";
+import { verifyToken } from "@socketless/connection-tokens";
+import { getMainChannelName, getRoomChannelName } from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
-import { RedisMessageType } from "@socketless/redis/schemas";
+import { RedisMessageSchema } from "@socketless/redis/schemas";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
@@ -24,7 +25,7 @@ const tokenValidationMiddleware = createMiddleware<{
   }
 
   try {
-    const payload = await verifyConnection(token);
+    const payload = await verifyToken(token);
 
     c.set("projectId", payload.projectId);
     c.set("identifier", payload.identifier);
@@ -42,9 +43,12 @@ app.get(
   upgradeWebSocket((c) => {
     const redis = createRedisClient();
 
-    const mainChannel = `connection:${c.get("projectId")}:${c.get("identifier")}`;
+    const mainChannel = getMainChannelName(
+      c.get("projectId"),
+      c.get("identifier"),
+    );
 
-    // TODO: Get rooms, and subscribe
+    // TODO: Get rooms from db, and subscribe
     const rooms: string[] = [];
 
     return {
@@ -53,26 +57,26 @@ app.get(
         redis.subscribe(mainChannel);
 
         for (const room of rooms) {
-          redis.subscribe(`room:${c.get("projectId")}:${room}`);
+          redis.subscribe(getRoomChannelName(c.get("projectId"), room));
         }
 
         redis.on("message", (channel, message) => {
           const messagePayload = JSON.parse(message);
 
           // TODO: Handle errors
-          const payload = RedisMessageType.parse(messagePayload);
+          const payload = RedisMessageSchema.parse(messagePayload);
 
           switch (payload.type) {
             case "join-room":
               rooms.push(payload.data.room);
               redis.subscribe(
-                `room:${c.get("projectId")}:${payload.data.room}`,
+                getRoomChannelName(c.get("projectId"), payload.data.room),
               );
               break;
             case "leave-room":
               rooms.splice(rooms.indexOf(payload.data.room), 1);
               redis.unsubscribe(
-                `room:${c.get("projectId")}:${payload.data.room}`,
+                getRoomChannelName(c.get("projectId"), payload.data.room),
               );
               break;
             case "send-message":
@@ -99,7 +103,7 @@ app.get(
         redis.unsubscribe(mainChannel);
 
         for (const room of rooms) {
-          redis.unsubscribe(`room:${c.get("projectId")}:${room}`);
+          redis.unsubscribe(getRoomChannelName(c.get("projectId"), room));
         }
 
         redis.quit(() => console.log("Redis closed"));

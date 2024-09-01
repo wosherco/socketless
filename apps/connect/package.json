@@ -9,7 +9,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@socketless/api": "*",
+    "@socketless/connection-tokens": "*",
     "@socketless/db": "*",
     "@socketless/redis": "*",
     "hono": "^4.5.10",

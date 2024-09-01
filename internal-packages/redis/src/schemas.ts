@@ -23,8 +23,10 @@ const SendMessage = z.object({
   }),
 });
 
-export const RedisMessageType = z.union([
+export const RedisMessageSchema = z.union([
   JoinRoomMessage,
   LeaveRoomMessage,
   SendMessage,
 ]);
+
+export type RedisMessageType = z.infer<typeof RedisMessageSchema>;

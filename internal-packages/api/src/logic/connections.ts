@@ -1,5 +1,8 @@
 import type { DBType } from "@socketless/db/client";
-import { createToken, verifyToken } from "@socketless/connection-tokens";
+import type { RedisType } from "@socketless/redis/client";
+import type { RedisMessageType } from "@socketless/redis/schemas";
+import { createToken } from "@socketless/connection-tokens";
+import { getMainChannelName } from "@socketless/redis";
 
 export async function createConnection(
   db: DBType,
@@ -13,40 +16,57 @@ export async function createConnection(
   return token;
 }
 
-export async function verifyConnection(token: string) {
-  const payload = await verifyToken(token);
-
-  return payload;
-}
-
 export async function connectionJoinRoom(
   db: DBType,
+  redis: RedisType,
   projectId: number,
   identifier: string,
   roomId: string,
 ) {
-  // TODO: Notify on redis or smth
   // TODO: Save to db
+
+  const message = {
+    type: "join-room",
+    data: {
+      room: roomId,
+    },
+  } satisfies RedisMessageType;
+
+  const res = await redis.publish(
+    getMainChannelName(projectId, identifier),
+    JSON.stringify(message),
+  );
+
+  const hasAnyoneReceived = res > 0;
+
+  return hasAnyoneReceived;
 }
 
 export async function connectionLeaveRoom(
   db: DBType,
+  redis: RedisType,
   projectId: number,
   identifier: string,
   roomId: string,
 ) {
-  // TODO: Notify on redis or smth
   // TODO: Save to db
-}
 
-export async function connectionSetRoom(
-  db: DBType,
-  projectId: number,
-  identifier: string,
-  roomId: string,
-) {
+  const message = {
+    type: "leave-room",
+    data: {
+      room: roomId,
+    },
+  } satisfies RedisMessageType;
+
+  const res = await redis.publish(
+    getMainChannelName(projectId, identifier),
+    JSON.stringify(message),
+  );
+
+  const hasAnyoneReceived = res > 0;
+
+  return hasAnyoneReceived;
   // TODO: Notify on redis or smth
-  // TODO: Save to db
 }
 
 export async function getConnectionRooms(
