@@ -3,6 +3,9 @@ import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
 
 import { verifyToken } from "@socketless/connection-tokens";
+import { and, eq } from "@socketless/db";
+import { db } from "@socketless/db/client";
+import { connectionRoomsTable } from "@socketless/db/schema";
 import { getMainChannelName, getRoomChannelName } from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
 import { RedisMessageSchema } from "@socketless/redis/schemas";
@@ -15,6 +18,10 @@ const tokenValidationMiddleware = createMiddleware<{
   Variables: {
     projectId: number;
     identifier: string;
+    // TODO: Standarize type
+    webhook?: {
+      url: string;
+    };
   };
 }>(async (c, next) => {
   const token = c.req.param("token");
@@ -29,6 +36,7 @@ const tokenValidationMiddleware = createMiddleware<{
 
     c.set("projectId", payload.projectId);
     c.set("identifier", payload.identifier);
+    c.set("webhook", payload.webhook);
 
     return next();
   } catch (e) {
@@ -43,12 +51,12 @@ app.get(
   upgradeWebSocket((c) => {
     const redis = createRedisClient();
 
-    const mainChannel = getMainChannelName(
-      c.get("projectId"),
-      c.get("identifier"),
-    );
+    const projectId = c.get("projectId");
+    const identifier = c.get("identifier");
+    const internalWebhook = c.get("webhook");
 
-    // TODO: Get rooms from db, and subscribe
+    const mainChannel = getMainChannelName(projectId, identifier);
+
     const rooms: string[] = [];
 
     return {
@@ -56,9 +64,20 @@ app.get(
         // TODO: Handle errors
         redis.subscribe(mainChannel);
 
-        for (const room of rooms) {
-          redis.subscribe(getRoomChannelName(c.get("projectId"), room));
-        }
+        db.select()
+          .from(connectionRoomsTable)
+          .where(
+            and(
+              eq(connectionRoomsTable.projectId, projectId),
+              eq(connectionRoomsTable.identifier, identifier),
+            ),
+          )
+          .then((dbRooms) =>
+            dbRooms.forEach((room) => {
+              rooms.push(room.room);
+              redis.subscribe(getRoomChannelName(projectId, room.room));
+            }),
+          );
 
         redis.on("message", (channel, message) => {
           const messagePayload = JSON.parse(message);
@@ -69,14 +88,12 @@ app.get(
           switch (payload.type) {
             case "join-room":
               rooms.push(payload.data.room);
-              redis.subscribe(
-                getRoomChannelName(c.get("projectId"), payload.data.room),
-              );
+              redis.subscribe(getRoomChannelName(projectId, payload.data.room));
               break;
             case "leave-room":
               rooms.splice(rooms.indexOf(payload.data.room), 1);
               redis.unsubscribe(
-                getRoomChannelName(c.get("projectId"), payload.data.room),
+                getRoomChannelName(projectId, payload.data.room),
               );
               break;
             case "send-message":
@@ -103,7 +120,7 @@ app.get(
         redis.unsubscribe(mainChannel);
 
         for (const room of rooms) {
-          redis.unsubscribe(getRoomChannelName(c.get("projectId"), room));
+          redis.unsubscribe(getRoomChannelName(projectId, room));
         }
 
         redis.quit(() => console.log("Redis closed"));
@@ -124,3 +141,5 @@ Bun.serve({
   websocket,
   port: 3100,
 });
+
+console.log("Server started at http://localhost:3100");
