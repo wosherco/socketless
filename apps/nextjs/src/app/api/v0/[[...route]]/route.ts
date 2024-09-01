@@ -2,8 +2,14 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { bearerAuth } from "hono/bearer-auth";
 import { handle } from "hono/vercel";
 
-import { createConnection, validateProjectToken } from "@socketless/api/logic";
+import {
+  createConnection,
+  processMessages,
+  processRoomActions,
+  validateProjectToken,
+} from "@socketless/api/logic";
 import { db } from "@socketless/db/client";
+import { createRedisClient } from "@socketless/redis/client";
 import {
   SimpleWebhookSchema,
   WebhookMessageResponseSchema,
@@ -213,6 +219,32 @@ app.openapi(postConnectionToken, async (c) => {
     },
     200,
   );
+});
+
+app.openapi(postRooms, async (c) => {
+  const project = c.var.project;
+  const payload = c.req.valid("json");
+
+  const redis = createRedisClient();
+
+  await processRoomActions(db, redis, project.id, payload.actions);
+
+  await redis.quit();
+
+  return c.text("", 204);
+});
+
+app.openapi(postMessage, async (c) => {
+  const project = c.var.project;
+  const payload = c.req.valid("json");
+
+  const redis = createRedisClient();
+
+  await processMessages(redis, project.id, payload.messages);
+
+  await redis.quit();
+
+  return c.text("", 204);
 });
 
 app.doc31("/doc", {

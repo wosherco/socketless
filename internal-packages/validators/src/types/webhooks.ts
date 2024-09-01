@@ -67,11 +67,21 @@ export const WebhookMessageResponseSchema = z.object({
   clients: z.array(z.string()).or(z.string()).optional(),
   rooms: z.array(RoomNameValidator).or(RoomNameValidator).optional(),
 });
+
+export type WebhookMessageResponseType = z.infer<
+  typeof WebhookMessageResponseSchema
+>;
+
 export const WebhookRoomsManageResponseSchema = z.object({
   rooms: z.array(RoomNameValidator).or(RoomNameValidator),
   action: z.enum(["join", "leave", "set"]),
   clients: z.array(z.string()).or(z.string()),
 });
+
+export type WebhookRoomsManageResponseType = z.infer<
+  typeof WebhookRoomsManageResponseSchema
+>;
+
 export const WebhookResponseSchema = z
   .object({
     messages: z
