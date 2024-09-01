@@ -95,21 +95,29 @@ export const projectTokenTable = pgTable("project_token", {
     .defaultNow(),
 });
 
-export const projectWebhookTable = pgTable("project_webhook", {
-  id: serial("id").primaryKey(),
-  projectId: integer("project_id")
-    .notNull()
-    .references(() => projectTable.id),
-  name: text("name").notNull(),
-  url: text("url").notNull(),
-  secret: text("text").notNull(),
-  sendOnConnect: boolean("send_on_connect").notNull().default(false),
-  sendOnMessage: boolean("send_on_message").notNull().default(true),
-  sendOnDisconnect: boolean("send_on_disconnect").notNull().default(false),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const projectWebhookTable = pgTable(
+  "project_webhook",
+  {
+    id: serial("id").primaryKey(),
+    projectId: integer("project_id")
+      .notNull()
+      .references(() => projectTable.id),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    secret: text("text").notNull(),
+    sendOnConnect: boolean("send_on_connect").notNull().default(false),
+    sendOnMessage: boolean("send_on_message").notNull().default(true),
+    sendOnDisconnect: boolean("send_on_disconnect").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    project_webhook__project_id_idx: index(
+      "project_webhook__project_id_idx",
+    ).on(t.projectId),
+  }),
+);
 
 export const roomTable = pgTable(
   "room",

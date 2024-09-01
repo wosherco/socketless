@@ -1,3 +1,4 @@
+import { z } from "@hono/zod-openapi";
 import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
@@ -5,10 +6,26 @@ import { createMiddleware } from "hono/factory";
 import { verifyToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
-import { connectionRoomsTable } from "@socketless/db/schema";
-import { getMainChannelName, getRoomChannelName } from "@socketless/redis";
+import {
+  connectionRoomsTable,
+  projectWebhookTable,
+} from "@socketless/db/schema";
+import {
+  getMainChannelName,
+  getRoomChannelName,
+  getWebhooksCacheName,
+} from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
 import { RedisMessageSchema } from "@socketless/redis/schemas";
+import {
+  EWebhookActions,
+  SimpleWebhook,
+  SimpleWebhookSchema,
+  WebhookPayloadType,
+  WebhookResponseSchema,
+} from "@socketless/validators/types";
+
+import { sendWebhook } from "./webhook";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
@@ -18,10 +35,8 @@ const tokenValidationMiddleware = createMiddleware<{
   Variables: {
     projectId: number;
     identifier: string;
-    // TODO: Standarize type
-    webhook?: {
-      url: string;
-    };
+    clientId: string;
+    webhook?: SimpleWebhook;
   };
 }>(async (c, next) => {
   const token = c.req.param("token");
@@ -36,6 +51,7 @@ const tokenValidationMiddleware = createMiddleware<{
 
     c.set("projectId", payload.projectId);
     c.set("identifier", payload.identifier);
+    c.set("clientId", payload.clientId);
     c.set("webhook", payload.webhook);
 
     return next();
@@ -52,12 +68,68 @@ app.get(
     const redis = createRedisClient();
 
     const projectId = c.get("projectId");
+    const clientId = c.get("clientId");
     const identifier = c.get("identifier");
     const internalWebhook = c.get("webhook");
 
     const mainChannel = getMainChannelName(projectId, identifier);
 
     const rooms: string[] = [];
+
+    const launchWebhooks = async (payload: WebhookPayloadType) => {
+      if (internalWebhook) {
+        // TODO: Put secret here
+        sendWebhook(internalWebhook, "", payload).then(processWebhookResponse);
+      }
+
+      const webhooks: SimpleWebhook[] = [];
+
+      const webhooksRds = await redis.get(getWebhooksCacheName(projectId));
+
+      if (webhooksRds) {
+        const parsed = JSON.parse(webhooksRds);
+        const zodParse = z.array(SimpleWebhookSchema).safeParse(parsed);
+        if (zodParse.success) {
+          webhooks.push(...zodParse.data);
+        }
+      } else {
+        const dbWebhooks = await db
+          .select()
+          .from(projectWebhookTable)
+          .where(eq(projectWebhookTable.projectId, projectId));
+
+        dbWebhooks.forEach((webhook) =>
+          webhooks.push({
+            url: webhook.url,
+            secret: webhook.secret,
+            options: {
+              sendOnConnect: webhook.sendOnConnect,
+              sendOnMessage: webhook.sendOnMessage,
+              sendOnDisconnect: webhook.sendOnDisconnect,
+            },
+          }),
+        );
+
+        redis.set(
+          getWebhooksCacheName(projectId),
+          JSON.stringify(webhooks),
+          "EX",
+          60,
+        );
+      }
+
+      webhooks.forEach((webhook) => {
+        sendWebhook(webhook, webhook.secret, payload).then(
+          processWebhookResponse,
+        );
+      });
+    };
+
+    const processWebhookResponse = async (
+      response: z.infer<typeof WebhookResponseSchema>,
+    ) => {
+      // TODO: Do something with responses
+    };
 
     return {
       onOpen(evt, ws) {
@@ -102,18 +174,30 @@ app.get(
           }
         });
 
-        // TODO: Fetch project data from redis (cache)
-        // TODO: Fetch project data from postgres if missing
-        // TODO: Send webhooks
-        // TODO: Do smth with webhook responses
+        launchWebhooks({
+          action: EWebhookActions.CONNECTION_OPEN,
+          data: {
+            connection: {
+              clientId,
+              identifier,
+            },
+          },
+        });
 
         console.log("Connection opened");
       },
       onMessage(event, ws) {
-        // TODO: Fetch project data from redis (cache)
-        // TODO: Fetch project data from postgres if missing
-        // TODO: Send webhooks
-        // TODO: Do smth with webhook responses
+        launchWebhooks({
+          action: EWebhookActions.MESSAGE,
+          data: {
+            connection: {
+              clientId,
+              identifier,
+            },
+            message: event.data,
+          },
+        });
+
         console.log(`Message from client: ${event.data}`);
       },
       onClose: () => {
@@ -123,12 +207,17 @@ app.get(
           redis.unsubscribe(getRoomChannelName(projectId, room));
         }
 
-        redis.quit(() => console.log("Redis closed"));
+        launchWebhooks({
+          action: EWebhookActions.CONNECTION_CLOSE,
+          data: {
+            connection: {
+              clientId,
+              identifier,
+            },
+          },
+        });
 
-        // TODO: Fetch project data from redis (cache)
-        // TODO: Fetch project data from postgres if missing
-        // TODO: Send webhooks
-        // TODO: Do smth with webhook responses
+        redis.quit(() => console.log("Redis closed"));
 
         console.log("Connection closed");
       },

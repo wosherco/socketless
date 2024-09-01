@@ -1,5 +1,7 @@
 import * as jose from "jose";
 
+import type { SimpleWebhook } from "@socketless/validators/types";
+
 import { env } from "../env";
 
 const secret = new TextEncoder().encode(env.JWT_SECRET);
@@ -7,14 +9,8 @@ const secret = new TextEncoder().encode(env.JWT_SECRET);
 export interface TokenPayload {
   identifier: string;
   projectId: number;
-  webhook?: {
-    url: string;
-    options: {
-      sendOnConnect: boolean;
-      sendOnMessage: boolean;
-      sendOnDisconnect: boolean;
-    };
-  };
+  clientId: string;
+  webhook?: SimpleWebhook;
 }
 
 export async function createToken(payload: TokenPayload) {

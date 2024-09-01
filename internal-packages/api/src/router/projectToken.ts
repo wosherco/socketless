@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { db } from "@socketless/db/client";
-import { ProjectTokenCreateFormSchema } from "@socketless/validators";
+import { ProjectTokenCreateFormSchema } from "@socketless/validators/forms";
 
 import {
   createProjectToken,

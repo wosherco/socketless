@@ -1,13 +1,24 @@
 import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import type { RedisMessageType } from "@socketless/redis/schemas";
+import type { SimpleWebhook } from "@socketless/validators/types";
 import { createToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
 import { connectionRoomsTable } from "@socketless/db/schema";
 import { getMainChannelName } from "@socketless/redis";
 
-export async function createConnection(projectId: number, identifier: string) {
-  const token = await createToken({ projectId, identifier });
+export async function createConnection(
+  projectId: number,
+  projectClientId: string,
+  identifier: string,
+  webhook?: SimpleWebhook,
+) {
+  const token = await createToken({
+    projectId,
+    clientId: projectClientId,
+    identifier,
+    webhook,
+  });
 
   return token;
 }

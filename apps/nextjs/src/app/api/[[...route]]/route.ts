@@ -1,6 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { handle } from "hono/vercel";
 
+import {
+  WebhookPayloadSchema,
+  WebhookResponseSchema,
+} from "@socketless/validators/types";
+
 // export const runtime = 'edge'
 
 const app = new OpenAPIHono().basePath("/api");
@@ -13,22 +18,19 @@ app.openAPIRegistry.registerWebhook({
     body: {
       content: {
         "application/json": {
-          schema: z.object({
-            projectId: z.number(),
-            identifier: z.string(),
-            room: z.string(),
-          }),
+          schema: WebhookPayloadSchema,
         },
       },
     },
+    headers: z.object({
+      Authorization: z.string(),
+    }),
   },
   responses: {
     200: {
       content: {
         "application/json": {
-          schema: z.object({
-            message: z.string(),
-          }),
+          schema: WebhookResponseSchema,
         },
       },
       description: "Webhook response",

@@ -12,6 +12,7 @@
     "@socketless/connection-tokens": "*",
     "@socketless/db": "*",
     "@socketless/redis": "*",
+    "@socketless/validators": "*",
     "hono": "^4.5.10",
     "ioredis": "^5.4.1",
     "posthog-node": "4.0.1"
