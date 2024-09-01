@@ -94,3 +94,34 @@ export async function processRoomAction(
       return Promise.resolve();
   }
 }
+
+export async function processMessages(
+  redis: RedisType,
+  projectId: number,
+  messages: WebhookMessageResponseType | WebhookMessageResponseType[],
+) {
+  if (!Array.isArray(messages)) {
+    messages = [messages];
+  }
+
+  return Promise.all(
+    messages.map((message) => processMessage(redis, projectId, message)),
+  );
+}
+
+export async function processRoomActions(
+  db: DBType,
+  redis: RedisType,
+  projectId: number,
+  roomActions:
+    | WebhookRoomsManageResponseType
+    | WebhookRoomsManageResponseType[],
+) {
+  if (!Array.isArray(roomActions)) {
+    roomActions = [roomActions];
+  }
+
+  return Promise.all(
+    roomActions.map((room) => processRoomAction(db, redis, projectId, room)),
+  );
+}

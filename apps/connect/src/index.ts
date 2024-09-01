@@ -4,19 +4,12 @@ import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
 
-import type { RedisMessageType } from "@socketless/redis/schemas";
 import type {
   SimpleWebhook,
   WebhookPayloadType,
   WebhookResponseSchema,
 } from "@socketless/validators/types";
-import {
-  connectionJoinRoom,
-  connectionLeaveRoom,
-  connectionSetRooms,
-  processMessage,
-  processRoomAction,
-} from "@socketless/api/logic";
+import { processMessages, processRoomActions } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
@@ -150,28 +143,14 @@ app.get(
     ) => {
       if (!response) return;
 
-      let { messages, rooms: roomActions } = response;
+      const { messages, rooms: roomActions } = response;
 
       if (messages) {
-        if (!Array.isArray(messages)) {
-          messages = [messages];
-        }
-
-        void Promise.all(
-          messages.map((message) => processMessage(redis, projectId, message)),
-        );
+        void processMessages(redis, projectId, messages);
       }
 
       if (roomActions) {
-        if (!Array.isArray(roomActions)) {
-          roomActions = [roomActions];
-        }
-
-        void Promise.all(
-          roomActions.map((room) =>
-            processRoomAction(db, redis, projectId, room),
-          ),
-        );
+        void processRoomActions(db, redis, projectId, roomActions);
       }
     };
 
