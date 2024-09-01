@@ -13,7 +13,7 @@ import type {
 import {
   connectionJoinRoom,
   connectionLeaveRoom,
-  getConnectionRooms,
+  connectionSetRooms,
 } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
@@ -221,32 +221,13 @@ app.get(
             case "set":
               {
                 identifiers.forEach((identifier) => {
-                  void getConnectionRooms(db, projectId, identifier)
-                    .then((rooms) => rooms.map((r) => r.room))
-                    .then((rooms) => {
-                      const toLeave = rooms.filter(
-                        (room) => !rooms.includes(room),
-                      );
-                      const toJoin = rooms.filter(
-                        (room) => !rooms.includes(room),
-                      );
-
-                      void connectionJoinRoom(
-                        db,
-                        redis,
-                        projectId,
-                        identifier,
-                        toJoin,
-                      );
-
-                      void connectionLeaveRoom(
-                        db,
-                        redis,
-                        projectId,
-                        identifier,
-                        toLeave,
-                      );
-                    });
+                  void connectionSetRooms(
+                    db,
+                    redis,
+                    projectId,
+                    identifier,
+                    rooms,
+                  );
                 });
               }
               break;

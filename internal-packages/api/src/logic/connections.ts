@@ -90,6 +90,26 @@ export async function connectionLeaveRoom(
   );
 }
 
+export async function connectionSetRooms(
+  db: DBType,
+  redis: RedisType,
+  projectId: number,
+  identifier: string,
+  roomNames: string[],
+) {
+  const currentRooms = await getConnectionRooms(db, projectId, identifier).then(
+    (rooms) => rooms.map((r) => r.room),
+  );
+
+  const toLeave = currentRooms.filter((room) => !roomNames.includes(room));
+  const toJoin = roomNames.filter((room) => !currentRooms.includes(room));
+
+  await Promise.all([
+    connectionJoinRoom(db, redis, projectId, identifier, toJoin),
+    connectionLeaveRoom(db, redis, projectId, identifier, toLeave),
+  ]);
+}
+
 export async function getConnectionRooms(
   db: DBType,
   projectId: number,
