@@ -3,7 +3,7 @@ import type { RedisType } from "@socketless/redis/client";
 import type { RedisMessageType } from "@socketless/redis/schemas";
 import type { SimpleWebhook } from "@socketless/validators/types";
 import { createToken } from "@socketless/connection-tokens";
-import { and, eq } from "@socketless/db";
+import { and, eq, inArray } from "@socketless/db";
 import { connectionRoomsTable } from "@socketless/db/schema";
 import { getMainChannelName } from "@socketless/redis";
 
@@ -28,29 +28,31 @@ export async function connectionJoinRoom(
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomName: string,
+  roomNames: string[],
 ) {
-  await db.insert(connectionRoomsTable).values({
-    projectId,
-    identifier,
-    room: roomName,
-  });
-
-  const message = {
-    type: "join-room",
-    data: {
-      room: roomName,
-    },
-  } satisfies RedisMessageType;
-
-  const res = await redis.publish(
-    getMainChannelName(projectId, identifier),
-    JSON.stringify(message),
+  await db.insert(connectionRoomsTable).values(
+    roomNames.map((room) => ({
+      projectId,
+      identifier,
+      room,
+    })),
   );
 
-  const hasAnyoneReceived = res > 0;
+  await Promise.all(
+    roomNames.map((room) => {
+      const message = {
+        type: "join-room",
+        data: {
+          room,
+        },
+      } satisfies RedisMessageType;
 
-  return hasAnyoneReceived;
+      return redis.publish(
+        getMainChannelName(projectId, identifier),
+        JSON.stringify(message),
+      );
+    }),
+  );
 }
 
 export async function connectionLeaveRoom(
@@ -58,7 +60,7 @@ export async function connectionLeaveRoom(
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomId: string,
+  roomNames: string[],
 ) {
   await db
     .delete(connectionRoomsTable)
@@ -66,26 +68,26 @@ export async function connectionLeaveRoom(
       and(
         eq(connectionRoomsTable.projectId, projectId),
         eq(connectionRoomsTable.identifier, identifier),
-        eq(connectionRoomsTable.room, roomId),
+        inArray(connectionRoomsTable.room, roomNames),
       ),
     );
   // .returning({count: count()})
 
-  const message = {
-    type: "leave-room",
-    data: {
-      room: roomId,
-    },
-  } satisfies RedisMessageType;
+  await Promise.all(
+    roomNames.map((room) => {
+      const message = {
+        type: "leave-room",
+        data: {
+          room,
+        },
+      } satisfies RedisMessageType;
 
-  const res = await redis.publish(
-    getMainChannelName(projectId, identifier),
-    JSON.stringify(message),
+      return redis.publish(
+        getMainChannelName(projectId, identifier),
+        JSON.stringify(message),
+      );
+    }),
   );
-
-  const hasAnyoneReceived = res > 0;
-
-  return hasAnyoneReceived;
 }
 
 export async function getConnectionRooms(

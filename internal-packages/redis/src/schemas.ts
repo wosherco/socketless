@@ -16,6 +16,13 @@ const LeaveRoomMessage = z.object({
   }),
 });
 
+const SetRoomsMessage = z.object({
+  type: z.literal("set-rooms"),
+  data: z.object({
+    rooms: z.array(RoomNameValidator),
+  }),
+});
+
 const SendMessage = z.object({
   type: z.literal("send-message"),
   data: z.object({
@@ -26,6 +33,7 @@ const SendMessage = z.object({
 export const RedisMessageSchema = z.union([
   JoinRoomMessage,
   LeaveRoomMessage,
+  SetRoomsMessage,
   SendMessage,
 ]);
 

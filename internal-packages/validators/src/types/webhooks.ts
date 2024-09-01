@@ -68,9 +68,9 @@ const WebhookMessageResponseSchema = z.object({
   rooms: z.array(RoomNameValidator).or(RoomNameValidator).optional(),
 });
 const WebhookRoomsManageResponseSchema = z.object({
-  rooms: z.array(RoomNameValidator).or(RoomNameValidator).optional(),
+  rooms: z.array(RoomNameValidator).or(RoomNameValidator),
   action: z.enum(["join", "leave", "set"]),
-  clients: z.array(z.string()).or(z.string()).optional(),
+  clients: z.array(z.string()).or(z.string()),
 });
 export const WebhookResponseSchema = z
   .object({
