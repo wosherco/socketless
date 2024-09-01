@@ -5,6 +5,7 @@ import { z } from "zod";
 import { count, eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { projectWebhookTable } from "@socketless/db/schema";
+import { ProjectWebhookCreateFormSchema } from "@socketless/validators";
 
 import {
   createProjectWebhook,
@@ -20,7 +21,7 @@ const urlSchema = z.string().url().max(1000);
 
 export const projectWebhookRouter = {
   createWebhook: projectProcedure
-    .input(z.object({ url: urlSchema }))
+    .input(ProjectWebhookCreateFormSchema)
     .mutation(async ({ ctx, input }) => {
       const webhook = await db.transaction(async (tx) => {
         const [webhooksNum] = await tx
@@ -39,6 +40,7 @@ export const projectWebhookRouter = {
         const webhook = await createProjectWebhook(
           tx,
           ctx.project.id,
+          input.name,
           input.url,
         );
 
@@ -57,6 +59,7 @@ export const projectWebhookRouter = {
 
     return webhooks.map((w) => ({
       id: w.id,
+      name: w.name,
       url: w.url,
       secret: w.secret,
       sendOnConnect: w.sendOnConnect,

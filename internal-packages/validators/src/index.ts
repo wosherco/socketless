@@ -69,3 +69,8 @@ export const CreateProjectSchema = z.object({
 export const ProjectTokenCreateFormSchema = z.object({
   name: TokenNameSchema,
 });
+
+export const ProjectWebhookCreateFormSchema = z.object({
+  name: TokenNameSchema,
+  url: z.string().url().max(1000),
+});

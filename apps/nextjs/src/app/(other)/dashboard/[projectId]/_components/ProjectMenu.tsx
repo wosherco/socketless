@@ -13,6 +13,7 @@ import {
   List,
   Rss,
   Settings,
+  Webhook,
 } from "lucide-react";
 
 import { cn } from "@socketless/ui";
@@ -62,6 +63,13 @@ export default function ProjectMenu({ projectId }: { projectId: number }) {
       </ProjectMenuButton>
 
       <ProjectMenuButton
+        icon={<GalleryVerticalEnd width={20} />}
+        href={`/dashboard/${projectId}/logs`}
+      >
+        Logs
+      </ProjectMenuButton>
+
+      <ProjectMenuButton
         icon={<List width={20} />}
         href={`/dashboard/${projectId}/rooms`}
       >
@@ -76,17 +84,17 @@ export default function ProjectMenu({ projectId }: { projectId: number }) {
       </ProjectMenuButton>
 
       <ProjectMenuButton
-        icon={<GalleryVerticalEnd width={20} />}
-        href={`/dashboard/${projectId}/logs`}
-      >
-        Logs
-      </ProjectMenuButton>
-
-      <ProjectMenuButton
         icon={<KeyRound width={20} />}
         href={`/dashboard/${projectId}/tokens`}
       >
         Tokens
+      </ProjectMenuButton>
+
+      <ProjectMenuButton
+        icon={<Webhook width={20} />}
+        href={`/dashboard/${projectId}/webhooks`}
+      >
+        Webhooks
       </ProjectMenuButton>
 
       <ProjectMenuButton

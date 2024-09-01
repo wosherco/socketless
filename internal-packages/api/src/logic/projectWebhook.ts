@@ -7,6 +7,7 @@ import { generateWebhookSecret } from "../utils";
 export async function createProjectWebhook(
   db: DBType,
   projectId: number,
+  name: string,
   url: string,
   sendOnConnect?: boolean,
   sendOnMessage?: boolean,
@@ -18,6 +19,7 @@ export async function createProjectWebhook(
     .insert(projectWebhookTable)
     .values({
       projectId,
+      name,
       url,
       secret,
       sendOnConnect,
@@ -26,6 +28,7 @@ export async function createProjectWebhook(
     })
     .returning({
       url: projectWebhookTable.url,
+      name: projectWebhookTable.name,
       secret: projectWebhookTable.secret,
       sendOnConnect: projectWebhookTable.sendOnConnect,
       sendOnMessage: projectWebhookTable.sendOnMessage,
