@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@socketless/ui/input";
-import { EyeIcon, EyeOff, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function HidableInput({ value }: { value: string }) {

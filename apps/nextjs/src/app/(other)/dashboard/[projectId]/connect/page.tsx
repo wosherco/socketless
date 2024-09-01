@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
-import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Connect",
 };
 
-export default async function Page({
-  params,
-}: {
+export default function Page(_: {
   params: { projectId: string };
 }) {
   // const parsedProjectId = parseInt(params.projectId);

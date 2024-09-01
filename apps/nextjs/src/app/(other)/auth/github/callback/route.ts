@@ -46,19 +46,18 @@ export async function GET(request: Request): Promise<Response> {
       }),
     ]);
 
-    const [rawGithub, rawGithubEmail] = await Promise.all([
-      githubUserResponse.json(),
-      githubEmailResponse.json(),
-    ]);
-
     const [githubUser, githubEmails] = await Promise.all([
-      GithubUserSchema.parseAsync(rawGithub),
-      GithubEmailsSchema.parseAsync(rawGithubEmail),
+      githubUserResponse
+        .json()
+        .then((data) => GithubUserSchema.parseAsync(data)),
+      githubEmailResponse
+        .json()
+        .then((data) => GithubEmailsSchema.parseAsync(data)),
     ]);
 
     const email = githubEmails.find((e) => e.primary)?.email;
 
-    if (!email) {
+    if (email == null) {
       // Redirecting to auth page
       return new Response(null, {
         status: 302,

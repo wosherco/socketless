@@ -118,9 +118,6 @@ export default async function Page({
     projectId: parsedProjectId,
   });
 
-  if (!project) {
-    return notFound();
-  }
 
   return (
     <>

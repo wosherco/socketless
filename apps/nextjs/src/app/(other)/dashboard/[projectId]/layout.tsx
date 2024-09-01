@@ -1,10 +1,9 @@
 import * as React from "react";
 import { notFound } from "next/navigation";
 
-import { api } from "~/trpc/server";
 import ProjectMenu from "./_components/ProjectMenu";
 
-export default async function Layout({
+export default function Layout({
   children,
   params,
 }: {

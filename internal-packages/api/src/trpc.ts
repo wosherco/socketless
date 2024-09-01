@@ -12,7 +12,6 @@ import superjson from "superjson";
 import { z, ZodError } from "zod";
 
 import type { Session, User } from "@socketless/auth";
-import { validateRawRequest } from "@socketless/auth";
 import { db } from "@socketless/db/client";
 
 import { getProjectFromUser } from "./logic/project";

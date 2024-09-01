@@ -8,9 +8,9 @@ import { toast } from "@socketless/ui/toast";
 export default function CopyButton({ value }: { value: string | undefined }) {
   return (
     <Button
-      disabled={!value}
+      disabled={value == null}
       onClick={async () => {
-        if (!value) return;
+        if (value == null) return;
         await navigator.clipboard.writeText(value);
         toast.info("Copied to clipboard!");
       }}
