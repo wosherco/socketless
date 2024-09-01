@@ -11,6 +11,7 @@
   "dependencies": {
     "@socketless/api": "*",
     "@socketless/db": "*",
+    "@socketless/redis": "*",
     "hono": "^4.5.10",
     "ioredis": "^5.4.1",
     "posthog-node": "4.0.1"

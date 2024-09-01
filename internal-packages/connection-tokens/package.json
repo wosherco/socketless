@@ -1,16 +1,12 @@
 {
-  "name": "@socketless/api",
-  "version": "0.1.0",
+  "name": "@socketless/connection-tokens",
   "private": true,
+  "version": "0.1.0",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./logic": {
-      "types": "./dist/src/logic/index.d.ts",
-      "default": "./src/logic/index.ts"
+      "default": "./src/src/index.ts"
     },
     "./env": "./env.ts"
   },
@@ -23,18 +19,6 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "dependencies": {
-    "@socketless/auth": "*",
-    "@socketless/connection-tokens": "*",
-    "@socketless/db": "*",
-    "@socketless/validators": "*",
-    "@t3-oss/env-nextjs": "0.11.0",
-    "@trpc/server": "11.0.0-rc.477",
-    "nanoid": "5.0.7",
-    "stripe": "^16.9.0",
-    "superjson": "2.2.1",
-    "zod": "3.23.8"
-  },
   "devDependencies": {
     "@socketless/eslint-config": "*",
     "@socketless/prettier-config": "*",
@@ -43,5 +27,9 @@
     "prettier": "3.3.3",
     "typescript": "5.5.4"
   },
-  "prettier": "@socketless/prettier-config"
+  "prettier": "@socketless/prettier-config",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "0.11.0",
+    "jose": "^5.8.0"
+  }
 }
