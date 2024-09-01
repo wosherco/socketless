@@ -13,7 +13,7 @@ import {
 import { Input } from "@socketless/ui/input";
 import { Textarea } from "@socketless/ui/textarea";
 import { toast } from "@socketless/ui/toast";
-import { HomeContactFormSchema } from "@socketless/validators";
+import { HomeContactFormSchema } from "@socketless/validators/forms";
 
 import { api } from "~/trpc/react";
 

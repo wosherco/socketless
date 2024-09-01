@@ -5,7 +5,7 @@ import { z } from "zod";
 import { count, eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { projectWebhookTable } from "@socketless/db/schema";
-import { ProjectWebhookCreateFormSchema } from "@socketless/validators";
+import { ProjectWebhookCreateFormSchema } from "@socketless/validators/forms";
 
 import {
   createProjectWebhook,

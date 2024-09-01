@@ -1,6 +1,6 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 
-import { HomeContactFormSchema } from "@socketless/validators";
+import { HomeContactFormSchema } from "@socketless/validators/forms";
 
 import { publicProcedure } from "../trpc";
 

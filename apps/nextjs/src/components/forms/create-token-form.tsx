@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@socketless/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useForm } from "@socketless/ui/form";
-import { ProjectTokenCreateFormSchema } from "@socketless/validators";
+import { ProjectTokenCreateFormSchema } from "@socketless/validators/forms";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "@socketless/ui/toast";

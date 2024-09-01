@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { and, count, eq, not } from "@socketless/db";
 import { projectTable } from "@socketless/db/schema";
-import { CreateProjectSchema } from "@socketless/validators";
+import { CreateProjectSchema } from "@socketless/validators/forms";
 
 import {
   createProject,
