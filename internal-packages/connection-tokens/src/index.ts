@@ -7,6 +7,14 @@ const secret = new TextEncoder().encode(env.JWT_SECRET);
 export interface TokenPayload {
   identifier: string;
   projectId: number;
+  webhook?: {
+    url: string;
+    options: {
+      sendOnConnect: boolean;
+      sendOnMessage: boolean;
+      sendOnDisconnect: boolean;
+    };
+  };
 }
 
 export async function createToken(payload: TokenPayload) {
