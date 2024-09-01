@@ -9,7 +9,6 @@ import {
   serial,
   text,
   timestamp,
-  unique,
 } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
@@ -114,9 +113,7 @@ export const projectWebhookTable = pgTable("project_webhook", {
 export const roomTable = pgTable(
   "room",
   {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
     name: text("name").notNull(),
-    displayName: text("display_name").notNull(),
     projectId: integer("project_id")
       .notNull()
       .references(() => projectTable.id),
@@ -125,37 +122,25 @@ export const roomTable = pgTable(
       .defaultNow(),
   },
   (t) => ({
-    room__projectId_name_idx: unique("room__projectId_name_idx").on(
-      t.name,
-      t.projectId,
-    ),
+    pk: primaryKey({ columns: [t.name, t.projectId] }),
     room__projectId_idx: index("room__projectId_idx").on(t.projectId),
   }),
 );
 
-export const connectionTable = pgTable(
-  "connection",
+export const connectionRoomsTable = pgTable(
+  "connection_rooms",
   {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
-    // feedId: bigint("feed_id", { mode: "number" })
-    //   .notNull()
-    //   .references(() => feedTable.id),
+    room: text("room").notNull(),
     projectId: integer("project_id")
       .notNull()
       .references(() => projectTable.id),
-    token: text("token").notNull(),
     identifier: text("identifier").notNull(),
-    data: text("data"),
-    // data: json<ConnectionDataType>("data").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
   },
   (t) => ({
-    connection__identifier_projectId_idx: unique(
-      "connection__identifier_projectId_idx",
+    pk: primaryKey({ columns: [t.room, t.projectId, t.identifier] }),
+    connection_rooms__identifier_project_id_idx: index(
+      "connection_rooms__identifier_project_id_idx",
     ).on(t.identifier, t.projectId),
-    connection__token_idx: unique("connection__token_idx").on(t.token),
   }),
 );
 

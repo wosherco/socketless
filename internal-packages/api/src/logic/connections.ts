@@ -2,16 +2,12 @@ import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import type { RedisMessageType } from "@socketless/redis/schemas";
 import { createToken } from "@socketless/connection-tokens";
+import { and, eq } from "@socketless/db";
+import { connectionRoomsTable } from "@socketless/db/schema";
 import { getMainChannelName } from "@socketless/redis";
 
-export async function createConnection(
-  db: DBType,
-  projectId: number,
-  identifier: string,
-) {
+export async function createConnection(projectId: number, identifier: string) {
   const token = await createToken({ projectId, identifier });
-
-  // TODO: Save to db
 
   return token;
 }
@@ -21,14 +17,18 @@ export async function connectionJoinRoom(
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomId: string,
+  roomName: string,
 ) {
-  // TODO: Save to db
+  await db.insert(connectionRoomsTable).values({
+    projectId,
+    identifier,
+    room: roomName,
+  });
 
   const message = {
     type: "join-room",
     data: {
-      room: roomId,
+      room: roomName,
     },
   } satisfies RedisMessageType;
 
@@ -49,7 +49,16 @@ export async function connectionLeaveRoom(
   identifier: string,
   roomId: string,
 ) {
-  // TODO: Save to db
+  await db
+    .delete(connectionRoomsTable)
+    .where(
+      and(
+        eq(connectionRoomsTable.projectId, projectId),
+        eq(connectionRoomsTable.identifier, identifier),
+        eq(connectionRoomsTable.room, roomId),
+      ),
+    );
+  // .returning({count: count()})
 
   const message = {
     type: "leave-room",
@@ -66,7 +75,6 @@ export async function connectionLeaveRoom(
   const hasAnyoneReceived = res > 0;
 
   return hasAnyoneReceived;
-  // TODO: Notify on redis or smth
 }
 
 export async function getConnectionRooms(
@@ -74,5 +82,15 @@ export async function getConnectionRooms(
   projectId: number,
   identifier: string,
 ) {
-  // TODO: Get from db
+  const channels = await db
+    .select()
+    .from(connectionRoomsTable)
+    .where(
+      and(
+        eq(connectionRoomsTable.projectId, projectId),
+        eq(connectionRoomsTable.identifier, identifier),
+      ),
+    );
+
+  return channels;
 }

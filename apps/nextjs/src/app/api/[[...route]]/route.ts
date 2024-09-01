@@ -5,6 +5,37 @@ import { handle } from "hono/vercel";
 
 const app = new OpenAPIHono().basePath("/api");
 
+// Adding webhook information
+app.openAPIRegistry.registerWebhook({
+  method: "post",
+  path: "Webhook",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            projectId: z.number(),
+            identifier: z.string(),
+            room: z.string(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Webhook response",
+    },
+  },
+});
+
 const route = createRoute({
   method: "get",
   path: "/users",
@@ -29,8 +60,8 @@ app.openapi(route, (c) => {
   });
 });
 
-app.doc("/doc", {
-  openapi: "3.0.0",
+app.doc31("/doc", {
+  openapi: "3.1.0",
   info: {
     version: "1.0.0",
     title: "My API",
