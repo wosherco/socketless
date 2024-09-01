@@ -1,6 +1,6 @@
 import type { DBType } from "@socketless/db/client";
 import { eq } from "@socketless/db";
-import { projectTokenTable } from "@socketless/db/schema";
+import { projectTable, projectTokenTable } from "@socketless/db/schema";
 
 import { generateClientSecret } from "../utils";
 
@@ -51,4 +51,14 @@ export async function rotateProjectToken(db: DBType, tokenId: number) {
 
 export async function deleteProjectToken(db: DBType, tokenId: number) {
   await db.delete(projectTokenTable).where(eq(projectTokenTable.id, tokenId));
+}
+
+export async function validateProjectToken(db: DBType, token: string) {
+  const [dbToken] = await db
+    .select()
+    .from(projectTokenTable)
+    .innerJoin(projectTable, eq(projectTokenTable.projectId, projectTable.id))
+    .where(eq(projectTokenTable.token, token));
+
+  return dbToken;
 }

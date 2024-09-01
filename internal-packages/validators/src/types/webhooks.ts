@@ -62,12 +62,12 @@ export const SimpleWebhookSchema = z.object({
 
 export type SimpleWebhook = z.infer<typeof SimpleWebhookSchema>;
 
-const WebhookMessageResponseSchema = z.object({
+export const WebhookMessageResponseSchema = z.object({
   message: z.any(),
   clients: z.array(z.string()).or(z.string()).optional(),
   rooms: z.array(RoomNameValidator).or(RoomNameValidator).optional(),
 });
-const WebhookRoomsManageResponseSchema = z.object({
+export const WebhookRoomsManageResponseSchema = z.object({
   rooms: z.array(RoomNameValidator).or(RoomNameValidator),
   action: z.enum(["join", "leave", "set"]),
   clients: z.array(z.string()).or(z.string()),
