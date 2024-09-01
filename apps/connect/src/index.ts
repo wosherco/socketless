@@ -14,6 +14,8 @@ import {
   connectionJoinRoom,
   connectionLeaveRoom,
   connectionSetRooms,
+  processMessage,
+  processRoomAction,
 } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
@@ -155,42 +157,9 @@ app.get(
           messages = [messages];
         }
 
-        messages.forEach((message) => {
-          const clients = Array.isArray(message.clients)
-            ? message.clients
-            : message.clients === undefined
-              ? []
-              : [message.clients];
-          const rooms = Array.isArray(message.rooms)
-            ? message.rooms
-            : message.rooms === undefined
-              ? []
-              : [message.rooms];
-
-          clients.forEach((client) => {
-            void redis.publish(
-              getMainChannelName(projectId, client),
-              JSON.stringify({
-                type: "send-message",
-                data: {
-                  message: message.message,
-                },
-              } satisfies RedisMessageType),
-            );
-          });
-
-          rooms.forEach((room) => {
-            void redis.publish(
-              getRoomChannelName(projectId, room),
-              JSON.stringify({
-                type: "send-message",
-                data: {
-                  message: message.message,
-                },
-              } satisfies RedisMessageType),
-            );
-          });
-        });
+        void Promise.all(
+          messages.map((message) => processMessage(redis, projectId, message)),
+        );
       }
 
       if (roomActions) {
@@ -198,54 +167,11 @@ app.get(
           roomActions = [roomActions];
         }
 
-        roomActions.forEach((room) => {
-          const rooms = Array.isArray(room.rooms) ? room.rooms : [room.rooms];
-          const identifiers = Array.isArray(room.clients)
-            ? room.clients
-            : [room.clients];
-
-          switch (room.action) {
-            case "join":
-              {
-                identifiers.forEach((identifier) => {
-                  void connectionJoinRoom(
-                    db,
-                    redis,
-                    projectId,
-                    identifier,
-                    rooms,
-                  );
-                });
-              }
-              break;
-            case "set":
-              {
-                identifiers.forEach((identifier) => {
-                  void connectionSetRooms(
-                    db,
-                    redis,
-                    projectId,
-                    identifier,
-                    rooms,
-                  );
-                });
-              }
-              break;
-            case "leave":
-              {
-                identifiers.forEach((identifier) => {
-                  void connectionLeaveRoom(
-                    db,
-                    redis,
-                    projectId,
-                    identifier,
-                    rooms,
-                  );
-                });
-              }
-              break;
-          }
-        });
+        void Promise.all(
+          roomActions.map((room) =>
+            processRoomAction(db, redis, projectId, room),
+          ),
+        );
       }
     };
 
