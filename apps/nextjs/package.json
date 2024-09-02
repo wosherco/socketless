@@ -18,6 +18,7 @@
     "@hono/zod-openapi": "^0.16.0",
     "@hono/zod-validator": "^0.2.2",
     "@sentry/nextjs": "8",
+    "@socketless/shared": "*",
     "@socketless/api": "*",
     "@socketless/auth": "*",
     "@socketless/db": "*",

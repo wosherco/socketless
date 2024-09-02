@@ -11,7 +11,10 @@ import {
 import { db } from "@socketless/db/client";
 import { createRedisClient } from "@socketless/redis/client";
 import {
-  SimpleWebhookSchema,
+  ApiPostConnectRequestSchema,
+  ApiPostConnectResponseSchema,
+} from "@socketless/shared";
+import {
   WebhookMessageResponseSchema,
   WebhookPayloadSchema,
   WebhookResponseSchema,
@@ -122,10 +125,7 @@ const postConnectionToken = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: z.object({
-            identifier: z.string(),
-            webhook: SimpleWebhookSchema.optional(),
-          }),
+          schema: ApiPostConnectRequestSchema,
         },
       },
     },
@@ -134,11 +134,7 @@ const postConnectionToken = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: z.object({
-            token: z.string(),
-            identifier: z.string(),
-            url: z.string(),
-          }),
+          schema: ApiPostConnectResponseSchema,
         },
       },
       description: "Retrieve the connection token for the client",
