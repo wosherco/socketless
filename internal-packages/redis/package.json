@@ -33,16 +33,16 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@socketless/shared": "*",
-    "@socketless/validators": "*",
+    "@socketless/shared": "workspace:*",
+    "@socketless/validators": "workspace:*",
     "@t3-oss/env-nextjs": "0.11.0",
     "ioredis": "^5.4.1",
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "dotenv-cli": "7.4.2",
     "eslint": "9.9.1",
     "prettier": "3.3.3",

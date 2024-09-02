@@ -27,13 +27,13 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@socketless/shared": "*",
+    "@socketless/shared": "workspace:*",
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "eslint": "9.9.1",
     "prettier": "3.3.3",
     "typescript": "5.5.4"

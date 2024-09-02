@@ -23,7 +23,7 @@
     "@auth/core": "0.34.2",
     "@auth/drizzle-adapter": "1.4.2",
     "@lucia-auth/adapter-drizzle": "1.0.7",
-    "@socketless/db": "*",
+    "@socketless/db": "workspace:*",
     "@t3-oss/env-nextjs": "0.11.0",
     "arctic": "1.8.1",
     "lucia": "3.2.0",
@@ -31,9 +31,9 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "eslint": "9.9.1",
     "prettier": "3.3.3",
     "typescript": "5.5.4"

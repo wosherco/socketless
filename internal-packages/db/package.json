@@ -40,9 +40,9 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "dotenv-cli": "7.4.2",
     "drizzle-kit": "0.24.0",
     "eslint": "9.9.1",

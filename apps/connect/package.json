@@ -11,20 +11,20 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@socketless/api": "*",
-    "@socketless/connection-tokens": "*",
-    "@socketless/db": "*",
-    "@socketless/redis": "*",
+    "@socketless/api": "workspace:*",
+    "@socketless/connection-tokens": "workspace:*",
+    "@socketless/db": "workspace:*",
+    "@socketless/redis": "workspace:*",
     "@socketless/shared": "workspace:*",
-    "@socketless/validators": "*",
+    "@socketless/validators": "workspace:*",
     "hono": "^4.5.10",
     "ioredis": "^5.4.1",
     "posthog-node": "4.0.1"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "@types/bun": "latest",
     "dotenv-cli": "7.4.2",
     "eslint": "9.9.1",

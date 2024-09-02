@@ -22,7 +22,7 @@
     "ui-add": "turbo run ui-add"
   },
   "devDependencies": {
-    "@socketless/prettier-config": "*",
+    "@socketless/prettier-config": "workspace:*",
     "@turbo/gen": "2.1.1",
     "prettier": "3.3.3",
     "turbo": "2.1.1",

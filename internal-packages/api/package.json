@@ -24,11 +24,11 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@socketless/auth": "*",
-    "@socketless/connection-tokens": "*",
-    "@socketless/db": "*",
-    "@socketless/redis": "*",
-    "@socketless/validators": "*",
+    "@socketless/auth": "workspace:*",
+    "@socketless/connection-tokens": "workspace:*",
+    "@socketless/db": "workspace:*",
+    "@socketless/redis": "workspace:*",
+    "@socketless/validators": "workspace:*",
     "@t3-oss/env-nextjs": "0.11.0",
     "@trpc/server": "11.0.0-rc.477",
     "nanoid": "5.0.7",
@@ -37,9 +37,9 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@socketless/eslint-config": "*",
-    "@socketless/prettier-config": "*",
-    "@socketless/tsconfig": "*",
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
     "eslint": "9.9.1",
     "prettier": "3.3.3",
     "typescript": "5.5.4"
