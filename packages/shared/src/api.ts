@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { SimpleWebhookSchema } from "./webhooks";
+import {
+  SimpleWebhookSchema,
+  WebhookMessageResponseSchema,
+  WebhookRoomsManageResponseSchema,
+} from "./webhooks";
 
 export const RoomNameValidator = z
   .string()
@@ -17,4 +21,16 @@ export const ApiPostConnectResponseSchema = z.object({
   token: z.string(),
   identifier: z.string(),
   url: z.string(),
+});
+
+export const ApiPostRoomsRequestSchema = z.object({
+  actions: z
+    .array(WebhookRoomsManageResponseSchema)
+    .or(WebhookRoomsManageResponseSchema),
+});
+
+export const ApiPostMessageRequestSchema = z.object({
+  messages: z
+    .array(WebhookMessageResponseSchema)
+    .or(WebhookMessageResponseSchema),
 });

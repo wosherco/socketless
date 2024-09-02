@@ -13,10 +13,10 @@ import { createRedisClient } from "@socketless/redis/client";
 import {
   ApiPostConnectRequestSchema,
   ApiPostConnectResponseSchema,
-  WebhookMessageResponseSchema,
+  ApiPostMessageRequestSchema,
+  ApiPostRoomsRequestSchema,
   WebhookPayloadSchema,
   WebhookResponseSchema,
-  WebhookRoomsManageResponseSchema,
 } from "@socketless/shared";
 
 // export const runtime = 'edge'
@@ -154,11 +154,7 @@ const postRooms = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: z.object({
-            actions: z
-              .array(WebhookRoomsManageResponseSchema)
-              .or(WebhookRoomsManageResponseSchema),
-          }),
+          schema: ApiPostRoomsRequestSchema,
         },
       },
     },
@@ -184,11 +180,7 @@ const postMessage = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: z.object({
-            messages: z
-              .array(WebhookMessageResponseSchema)
-              .or(WebhookMessageResponseSchema),
-          }),
+          schema: ApiPostMessageRequestSchema,
         },
       },
     },
