@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ConnectDashboard from "~/components/dashboard/ConnectDashboard";
 
 
 export const metadata: Metadata = {
@@ -23,9 +24,8 @@ export default function Page(_: {
 
   return (
     <>
-      <em>Coming soon...</em>
-
       <p>Test your websocket right here.</p>
+      <ConnectDashboard />
       {/* <ConnectTesting project={project} /> */}
     </>
   );
