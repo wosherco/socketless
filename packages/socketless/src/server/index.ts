@@ -1,6 +1,9 @@
 import type { z } from "zod";
 
-import type { ApiPostConnectRequestSchema } from "@socketless/shared";
+import type {
+  ApiPostConnectRequestSchema,
+  ApiPostMessageRequestSchema,
+} from "@socketless/shared";
 import { ApiPostConnectResponseSchema } from "@socketless/shared";
 
 const BASE_URL = "https://socketless.ws/api/v0";
@@ -86,8 +89,41 @@ class SocketlessServer<TMessage = string> {
 
     return payload;
   }
+
+  public async sendMessage(
+    message: TMessage,
+    receivers: { identifiers?: string | string[]; rooms?: string | string[] },
+  ) {
+    if (receivers.identifiers === undefined && receivers.rooms === undefined) {
+      throw new Error("You must specify at least one of identifiers or rooms");
+    }
+
+    const messagePayload =
+      typeof message === "string" ? message : JSON.stringify(message);
+
+    const req = await fetch(`${BASE_URL}/message`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.options.token}`,
+      },
+      body: JSON.stringify({
+        messages: {
+          message: messagePayload,
+          clients: receivers.identifiers,
+          rooms: receivers.rooms,
+        },
+      } satisfies z.infer<typeof ApiPostMessageRequestSchema>),
+    });
+
+    if (!req.ok) {
+      throw new Error("Failed to create connection");
+    }
+  }
 }
 
 export function createSocketless<TMessage = string>(
   options: SocketlessServerOptions,
-) {}
+) {
+  return new SocketlessServer(options);
+}
