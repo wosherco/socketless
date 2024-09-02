@@ -33,6 +33,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@socketless/shared": "*",
     "@socketless/validators": "*",
     "@t3-oss/env-nextjs": "0.11.0",
     "ioredis": "^5.4.1",

@@ -13,9 +13,9 @@
   "dependencies": {
     "@socketless/api": "*",
     "@socketless/connection-tokens": "*",
-    "@socketless/shared": "workspace:*",
     "@socketless/db": "*",
     "@socketless/redis": "*",
+    "@socketless/shared": "workspace:*",
     "@socketless/validators": "*",
     "hono": "^4.5.10",
     "ioredis": "^5.4.1",

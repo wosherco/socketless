@@ -8,7 +8,7 @@ import type {
   SimpleWebhook,
   WebhookPayloadType,
   WebhookResponseSchema,
-} from "@socketless/validators/types";
+} from "@socketless/shared";
 import { processMessages, processRoomActions } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
 import { and, eq } from "@socketless/db";
@@ -24,10 +24,7 @@ import {
 } from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
 import { RedisMessageSchema } from "@socketless/redis/schemas";
-import {
-  EWebhookActions,
-  SimpleWebhookSchema,
-} from "@socketless/validators/types";
+import { EWebhookActions, SimpleWebhookSchema } from "@socketless/shared";
 
 import { sendWebhook } from "./webhook";
 

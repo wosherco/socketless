@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { RoomNameValidator } from "@socketless/validators";
+import { RoomNameValidator } from "@socketless/shared";
 
 const JoinRoomMessage = z.object({
   type: z.literal("join-room"),

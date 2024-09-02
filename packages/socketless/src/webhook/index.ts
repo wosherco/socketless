@@ -1,5 +1,4 @@
-import { verifySignature } from "@socketless/shared";
-import { WebhookPayloadSchema } from "@socketless/validators/types";
+import { verifySignature, WebhookPayloadSchema } from "@socketless/shared";
 
 export async function constructWebhookPayload(req: Request, secret: string) {
   const body = await req.text();

@@ -13,13 +13,11 @@ import { createRedisClient } from "@socketless/redis/client";
 import {
   ApiPostConnectRequestSchema,
   ApiPostConnectResponseSchema,
-} from "@socketless/shared";
-import {
   WebhookMessageResponseSchema,
   WebhookPayloadSchema,
   WebhookResponseSchema,
   WebhookRoomsManageResponseSchema,
-} from "@socketless/validators/types";
+} from "@socketless/shared";
 
 // export const runtime = 'edge'
 

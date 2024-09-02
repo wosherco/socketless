@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { RoomNameValidator } from "..";
+import { RoomNameValidator } from "./api";
 
 const _WebhookConnectionSchema = z.object({
   clientId: z.string(),

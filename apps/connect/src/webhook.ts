@@ -1,9 +1,5 @@
-import type {
-  SimpleWebhook,
-  WebhookPayloadType,
-} from "@socketless/validators/types";
-import { signPayload } from "@socketless/shared";
-import { WebhookResponseSchema } from "@socketless/validators/types";
+import type { SimpleWebhook, WebhookPayloadType } from "@socketless/shared";
+import { signPayload, WebhookResponseSchema } from "@socketless/shared";
 
 export async function sendWebhook(
   webhook: SimpleWebhook,

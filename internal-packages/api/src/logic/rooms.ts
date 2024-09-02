@@ -4,7 +4,7 @@ import type { RedisMessageType } from "@socketless/redis/schemas";
 import type {
   WebhookMessageResponseType,
   WebhookRoomsManageResponseType,
-} from "@socketless/validators/types";
+} from "@socketless/shared";
 import { getMainChannelName, getRoomChannelName } from "@socketless/redis";
 
 import {

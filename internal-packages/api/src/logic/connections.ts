@@ -1,7 +1,7 @@
 import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import type { RedisMessageType } from "@socketless/redis/schemas";
-import type { SimpleWebhook } from "@socketless/validators/types";
+import type { SimpleWebhook } from "@socketless/shared";
 import { createToken } from "@socketless/connection-tokens";
 import { and, eq, inArray } from "@socketless/db";
 import { connectionRoomsTable } from "@socketless/db/schema";
