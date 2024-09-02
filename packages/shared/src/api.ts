@@ -1,22 +1,17 @@
 import { z } from "zod";
 
+import { RoomNameValidator } from "./types";
 import {
   SimpleWebhookSchema,
   WebhookMessageResponseSchema,
   WebhookRoomsManageResponseSchema,
 } from "./webhooks";
 
-export const RoomNameValidator = z
-  .string()
-  .min(1)
-  .max(100)
-  .regex(/^[a-z0-9_.]+$/);
-
 export const ApiPostConnectRequestSchema = z.object({
   identifier: z.string(),
   webhook: SimpleWebhookSchema.optional(),
   rooms: z.array(RoomNameValidator).optional(),
-  overrideRooms: z.boolean().default(true),
+  overrideRooms: z.boolean().default(true).optional(),
 });
 
 export const ApiPostConnectResponseSchema = z.object({
