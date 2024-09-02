@@ -1,2 +1,4 @@
 [phases.setup]
-cmds = ["curl -fsSL https://bun.sh/install | bash"]
+nixPkgs = ["bun"]
+aptPkgs = ["...", "unzip"]
+cmd = ["bun upgrade"]
