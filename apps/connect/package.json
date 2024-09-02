@@ -13,6 +13,7 @@
   "dependencies": {
     "@socketless/api": "*",
     "@socketless/connection-tokens": "*",
+    "@socketless/shared": "workspace:*",
     "@socketless/db": "*",
     "@socketless/redis": "*",
     "@socketless/validators": "*",

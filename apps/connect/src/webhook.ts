@@ -1,25 +1,40 @@
-import {
+import type {
   SimpleWebhook,
   WebhookPayloadType,
-  WebhookResponseSchema,
 } from "@socketless/validators/types";
+import { signPayload } from "@socketless/shared";
+import { WebhookResponseSchema } from "@socketless/validators/types";
 
 export async function sendWebhook(
   webhook: SimpleWebhook,
-  secret: string,
   payload: WebhookPayloadType,
 ) {
+  const stringifiedPayload = JSON.stringify(payload);
+
+  // Signing webhook payload
+  const signedPayload = await signPayload(stringifiedPayload, webhook.secret);
+
   const req = await fetch(webhook.url, {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: stringifiedPayload,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${secret}`,
+      "x-socketless-signature": signedPayload,
     },
   });
 
   if (!req.ok) {
     throw new Error("Failed to send webhook");
+  }
+
+  const resAuthorization = req.headers.get("Authorization");
+
+  if (resAuthorization == null) {
+    throw new Error("Missing authorization header");
+  }
+
+  if (resAuthorization !== `Bearer ${webhook.secret}`) {
+    throw new Error("Invalid authorization header");
   }
 
   const res = await req.json();

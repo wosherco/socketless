@@ -87,7 +87,9 @@ app.openAPIRegistry.registerWebhook({
       },
     },
     headers: z.object({
-      Authorization: z.string(),
+      "x-socketless-signature": z.string({
+        description: "Signature of payload in HMAC-SHA256",
+      }),
     }),
   },
   responses: {
@@ -95,6 +97,11 @@ app.openAPIRegistry.registerWebhook({
       content: {
         "application/json": {
           schema: WebhookResponseSchema,
+        },
+      },
+      headers: {
+        Authorization: {
+          summary: "Bearer token with webhooks secret",
         },
       },
       description: "Webhook response",

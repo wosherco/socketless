@@ -33,6 +33,7 @@
   "workspaces": [
     "apps/*",
     "internal-packages/*",
+    "packages/*",
     "tooling/*"
   ],
   "trustedDependencies": [

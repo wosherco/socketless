@@ -88,10 +88,10 @@ app.get(
 
     const launchWebhooks = async (payload: WebhookPayloadType) => {
       if (internalWebhook) {
-        // TODO: Put secret here
-        void sendWebhook(internalWebhook, "", payload).then(
-          processWebhookResponse,
-        );
+        void sendWebhook(internalWebhook, payload)
+          .then(processWebhookResponse)
+          // TODO: Handle errors
+          .catch((e) => console.log(e));
       }
 
       const webhooks: SimpleWebhook[] = [];
@@ -132,9 +132,10 @@ app.get(
       }
 
       webhooks.forEach((webhook) => {
-        void sendWebhook(webhook, webhook.secret, payload).then(
-          processWebhookResponse,
-        );
+        void sendWebhook(webhook, payload)
+          .then(processWebhookResponse)
+          // TODO: Handle errors
+          .catch((e) => console.log(e));
       });
     };
 
