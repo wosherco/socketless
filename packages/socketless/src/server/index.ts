@@ -3,32 +3,63 @@ import type { z } from "zod";
 import type {
   ApiPostConnectRequestSchema,
   ApiPostMessageRequestSchema,
+  WebhookMessageResponseSchema,
+  WebhookResponseSchema,
+  WebhookRoomsManageResponseSchema,
 } from "@socketless/shared";
-import { ApiPostConnectResponseSchema } from "@socketless/shared";
+import {
+  ApiPostConnectResponseSchema,
+  EWebhookActions,
+} from "@socketless/shared";
+
+import { constructWebhookPayload } from "../webhook";
 
 const BASE_URL = "https://socketless.ws/api/v0";
 
-interface SocketlessContext {
+interface SocketlessContext<TMessage = string> {
   // TODO: Finish types
-  message: () => void;
-  roomAction: () => void;
-  send: () => void;
+  sendMessage: (
+    message: TMessage,
+    receivers: { identifiers?: string | string[]; rooms?: string | string[] },
+  ) => void;
+  buildResponse: () => z.infer<typeof WebhookResponseSchema>;
+}
+
+function createContext<TMessage>(
+  server: SocketlessServer<TMessage>,
+): SocketlessContext<TMessage> {
+  const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
+  const roomsToManage: z.infer<typeof WebhookRoomsManageResponseSchema>[] = [];
+
+  return {
+    sendMessage(message, receivers) {
+      messagesToSend.push({
+        message,
+        clients: receivers.identifiers,
+        rooms: receivers.rooms,
+      });
+    },
+    buildResponse: () => ({
+      messages: messagesToSend,
+      rooms: roomsToManage,
+    }),
+  };
 }
 
 type MaybePromise<T> = T | Promise<T>;
 
-type OnConnectFunc = (
-  context: SocketlessContext,
+type OnConnectFunc<TMessage> = (
+  context: SocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnDisconnectFunc = (
-  context: SocketlessContext,
+type OnDisconnectFunc<TMessage> = (
+  context: SocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnMessageFunc<TMessage = string> = (
-  context: SocketlessContext,
+type OnMessageFunc<TMessage> = (
+  context: SocketlessContext<TMessage>,
   message: TMessage,
 ) => MaybePromise<void>;
 
@@ -41,23 +72,65 @@ interface SocketlessServerOptions<TMessage = string> {
    */
   url?: string;
 
-  onConnect?: OnConnectFunc;
-  onDisconnect?: OnDisconnectFunc;
+  onConnect?: OnConnectFunc<TMessage>;
+  onDisconnect?: OnDisconnectFunc<TMessage>;
   onMessage?: OnMessageFunc<TMessage>;
 }
 
 class SocketlessServer<TMessage = string> {
-  private options: SocketlessServerOptions;
+  private options: SocketlessServerOptions<TMessage>;
   private url: string;
 
-  constructor(options: SocketlessServerOptions) {
+  constructor(options: SocketlessServerOptions<TMessage>) {
     this.options = options;
 
     this.url = this.options.url ?? `${process.env.VERCEL_URL}/api/socketless`;
   }
 
-  public POST(req: Request) {
-    // TODO: Implement webhook stuff
+  public async POST(req: Request): Promise<Response> {
+    const webhookPayload = await constructWebhookPayload(
+      req,
+      this.options.token,
+    );
+
+    const context = createContext<TMessage>(this);
+
+    switch (webhookPayload.action) {
+      case EWebhookActions.CONNECTION_OPEN:
+        {
+          if (this.options.onConnect !== undefined) {
+            await this.options.onConnect(
+              context,
+              webhookPayload.data.connection.identifier,
+            );
+          }
+        }
+        break;
+      case EWebhookActions.MESSAGE:
+        {
+          if (this.options.onMessage !== undefined) {
+            await this.options.onMessage(context, webhookPayload.data.message);
+          }
+        }
+        break;
+      case EWebhookActions.CONNECTION_CLOSE:
+        {
+          if (this.options.onDisconnect !== undefined) {
+            await this.options.onDisconnect(
+              context,
+              webhookPayload.data.connection.identifier,
+            );
+          }
+        }
+        break;
+    }
+
+    return new Response(JSON.stringify(context.buildResponse()), {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.options.token}`,
+      },
+    });
   }
 
   public async getConnection(identifier: string) {
@@ -123,7 +196,7 @@ class SocketlessServer<TMessage = string> {
 }
 
 export function createSocketless<TMessage = string>(
-  options: SocketlessServerOptions,
+  options: SocketlessServerOptions<TMessage>,
 ) {
-  return new SocketlessServer(options);
+  return new SocketlessServer<TMessage>(options);
 }
