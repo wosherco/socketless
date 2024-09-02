@@ -16,7 +16,7 @@ export default defineConfig({
           {
             base: 'api',
             label: 'My API',
-            schema: 'http://localhost:3000/api/doc',
+            schema: 'http://localhost:3000/api/v0/doc',
           },
         ]),
       ],
