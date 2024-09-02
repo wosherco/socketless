@@ -15,6 +15,8 @@ export const RoomNameValidator = z
 export const ApiPostConnectRequestSchema = z.object({
   identifier: z.string(),
   webhook: SimpleWebhookSchema.optional(),
+  rooms: z.array(RoomNameValidator).optional(),
+  overrideRooms: z.boolean().default(true),
 });
 
 export const ApiPostConnectResponseSchema = z.object({

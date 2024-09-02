@@ -133,7 +133,11 @@ class SocketlessServer<TMessage = string> {
     });
   }
 
-  public async getConnection(identifier: string) {
+  public async getConnection(
+    identifier: string,
+    rooms?: string[],
+    overrideRooms = true,
+  ) {
     const req = await fetch(`${BASE_URL}/connection`, {
       method: "POST",
       headers: {
@@ -151,6 +155,8 @@ class SocketlessServer<TMessage = string> {
             sendOnDisconnect: this.options.onDisconnect !== undefined,
           },
         },
+        rooms,
+        overrideRooms,
       } satisfies z.infer<typeof ApiPostConnectRequestSchema>),
     });
 

@@ -11,12 +11,14 @@ export async function createConnection(
   projectId: number,
   projectClientId: string,
   identifier: string,
+  initialRooms: string[],
   webhook?: SimpleWebhook,
 ) {
   const token = await createToken({
     projectId,
     clientId: projectClientId,
     identifier,
+    initialRooms,
     webhook,
   });
 

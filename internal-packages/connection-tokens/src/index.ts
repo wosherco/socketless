@@ -1,6 +1,6 @@
 import * as jose from "jose";
 
-import type { SimpleWebhook } from "@socketless/validators/types";
+import type { SimpleWebhook } from "@socketless/shared";
 
 import { env } from "../env";
 
@@ -10,6 +10,7 @@ export interface TokenPayload {
   identifier: string;
   projectId: number;
   clientId: string;
+  initialRooms: string[];
   webhook?: SimpleWebhook;
 }
 

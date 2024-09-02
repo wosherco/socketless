@@ -37,6 +37,7 @@ interface WebsocketContext {
     projectId: number;
     identifier: string;
     clientId: string;
+    initialRooms: string[];
     webhook?: SimpleWebhook;
   };
 }
@@ -55,6 +56,7 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
       c.set("projectId", payload.projectId);
       c.set("identifier", payload.identifier);
       c.set("clientId", payload.clientId);
+      c.set("initialRooms", payload.initialRooms);
       c.set("webhook", payload.webhook);
 
       return next();
@@ -76,12 +78,13 @@ app.get(
       projectId,
       clientId,
       identifier,
+      initialRooms,
       webhook: internalWebhook,
     } = wscontext.var;
 
     const mainChannel = getMainChannelName(projectId, identifier);
 
-    const rooms: string[] = [];
+    const rooms: string[] = [...initialRooms];
 
     const launchWebhooks = async (payload: WebhookPayloadType) => {
       if (internalWebhook) {
@@ -157,21 +160,9 @@ app.get(
         // TODO: Handle errors
         void redis.subscribe(mainChannel);
 
-        void db
-          .select()
-          .from(connectionRoomsTable)
-          .where(
-            and(
-              eq(connectionRoomsTable.projectId, projectId),
-              eq(connectionRoomsTable.identifier, identifier),
-            ),
-          )
-          .then((dbRooms) =>
-            dbRooms.forEach((room) => {
-              rooms.push(room.room);
-              void redis.subscribe(getRoomChannelName(projectId, room.room));
-            }),
-          );
+        initialRooms.forEach((room) => {
+          void redis.subscribe(getRoomChannelName(projectId, room));
+        });
 
         redis.on("message", (channel, message) => {
           const messagePayload = JSON.parse(message) as unknown;

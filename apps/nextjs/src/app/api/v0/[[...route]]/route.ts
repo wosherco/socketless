@@ -3,7 +3,10 @@ import { bearerAuth } from "hono/bearer-auth";
 import { handle } from "hono/vercel";
 
 import {
+  connectionJoinRoom,
+  connectionSetRooms,
   createConnection,
+  getConnectionRooms,
   processMessages,
   processRoomActions,
   validateProjectToken,
@@ -197,10 +200,48 @@ app.openapi(postConnectionToken, async (c) => {
   const project = c.var.project;
   const payload = c.req.valid("json");
 
+  const rooms: string[] = [];
+
+  if (payload.rooms && payload.overrideRooms) {
+    rooms.push(...payload.rooms);
+    const redis = createRedisClient();
+    await connectionSetRooms(
+      db,
+      redis,
+      project.id,
+      payload.identifier,
+      payload.rooms,
+    );
+    void redis.quit();
+  } else {
+    const currentRooms = await getConnectionRooms(
+      db,
+      project.id,
+      payload.identifier,
+    );
+
+    rooms.push(...currentRooms.map((r) => r.room));
+
+    if (payload.rooms && !payload.overrideRooms) {
+      const redis = createRedisClient();
+      await connectionJoinRoom(
+        db,
+        redis,
+        project.id,
+        payload.identifier,
+        payload.rooms.filter((room) => !rooms.includes(room)),
+      );
+      void redis.quit();
+
+      rooms.push(...payload.rooms);
+    }
+  }
+
   const token = await createConnection(
     project.id,
     project.clientId,
     payload.identifier,
+    rooms,
     payload.webhook,
   );
 
