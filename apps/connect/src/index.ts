@@ -71,6 +71,7 @@ app.get(
   "/:token",
   tokenValidationMiddleware,
   upgradeWebSocket((c) => {
+    const redisSubscriber = createRedisClient();
     const redis = createRedisClient();
     const wscontext = c as Context<WebsocketContext>;
 
@@ -158,13 +159,13 @@ app.get(
     return {
       onOpen(evt, ws) {
         // TODO: Handle errors
-        void redis.subscribe(mainChannel);
+        void redisSubscriber.subscribe(mainChannel);
 
         initialRooms.forEach((room) => {
-          void redis.subscribe(getRoomChannelName(projectId, room));
+          void redisSubscriber.subscribe(getRoomChannelName(projectId, room));
         });
 
-        redis.on("message", (channel, message) => {
+        redisSubscriber.on("message", (channel, message) => {
           const messagePayload = JSON.parse(message) as unknown;
 
           // TODO: Handle errors
@@ -174,7 +175,7 @@ app.get(
             case "join-room":
               {
                 rooms.push(payload.data.room);
-                void redis.subscribe(
+                void redisSubscriber.subscribe(
                   getRoomChannelName(projectId, payload.data.room),
                 );
               }
@@ -182,7 +183,7 @@ app.get(
             case "leave-room":
               {
                 rooms.splice(rooms.indexOf(payload.data.room), 1);
-                void redis.unsubscribe(
+                void redisSubscriber.unsubscribe(
                   getRoomChannelName(projectId, payload.data.room),
                 );
               }
@@ -198,12 +199,16 @@ app.get(
 
                 toUnsubscribe.forEach((room) => {
                   rooms.splice(rooms.indexOf(room), 1);
-                  void redis.unsubscribe(getRoomChannelName(projectId, room));
+                  void redisSubscriber.unsubscribe(
+                    getRoomChannelName(projectId, room),
+                  );
                 });
 
                 toSubscribe.forEach((room) => {
                   rooms.push(room);
-                  void redis.subscribe(getRoomChannelName(projectId, room));
+                  void redisSubscriber.subscribe(
+                    getRoomChannelName(projectId, room),
+                  );
                 });
               }
               break;
@@ -242,25 +247,30 @@ app.get(
         console.log(`Message from client: ${event.data}`);
       },
       onClose: () => {
-        void redis.unsubscribe(mainChannel);
+        void redisSubscriber.unsubscribe(mainChannel);
 
         for (const room of rooms) {
-          void redis.unsubscribe(getRoomChannelName(projectId, room));
+          void redisSubscriber.unsubscribe(getRoomChannelName(projectId, room));
         }
 
-        void launchWebhooks({
-          action: EWebhookActions.CONNECTION_CLOSE,
-          data: {
-            connection: {
-              clientId,
-              identifier,
+        void (async () => {
+          await launchWebhooks({
+            action: EWebhookActions.CONNECTION_CLOSE,
+            data: {
+              connection: {
+                clientId,
+                identifier,
+              },
             },
-          },
-        });
+          });
 
-        void redis.quit(() => console.log("Redis closed"));
+          void redis.quit(() => console.log("Redis closed"));
+          void redisSubscriber.quit(() =>
+            console.log("Redis subscriber closed"),
+          );
 
-        console.log("Connection closed");
+          console.log("Connection closed");
+        })();
       },
     };
   }),
