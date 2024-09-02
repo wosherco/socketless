@@ -8,6 +8,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "dev": "bun with-env bun run --hot src/index.ts",
+    "start": "bun with-env bun run src/index.ts",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
