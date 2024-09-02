@@ -35,22 +35,20 @@ const app = new OpenAPIHono<{
     token: TokenValidationFunc["project_token"];
   };
 }>().basePath("/api/v0");
-app.use(
-  "*",
-  bearerAuth({
-    async verifyToken(token, c) {
-      const project = await validateProjectToken(db, token);
-      if (!project) {
-        return false;
-      }
 
-      c.set("project", project.project);
-      c.set("token", project.project_token);
+const authenticationMiddleware = bearerAuth({
+  async verifyToken(token, c) {
+    const project = await validateProjectToken(db, token);
+    if (!project) {
+      return false;
+    }
 
-      return true;
-    },
-  }),
-);
+    c.set("project", project.project);
+    c.set("token", project.project_token);
+
+    return true;
+  },
+});
 
 // Component for Bearer <token> authorization
 app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
@@ -117,6 +115,7 @@ const postConnectionToken = createRoute({
   method: "post",
   path: "/connection",
   description: "Retrieve the connection token for the client",
+  middleware: [authenticationMiddleware],
   security: [
     {
       Bearer: [],
@@ -148,6 +147,7 @@ const postRooms = createRoute({
   method: "post",
   path: "/rooms",
   description: "Manage rooms",
+  middleware: [authenticationMiddleware],
   security: [
     {
       Bearer: [],
@@ -174,6 +174,7 @@ const postMessage = createRoute({
   method: "post",
   path: "/message",
   description: "Send messages to clients and rooms",
+  middleware: [authenticationMiddleware],
   security: [
     {
       Bearer: [],
@@ -285,7 +286,7 @@ app.doc31("/doc", {
   openapi: "3.1.0",
   info: {
     version: "1.0.0",
-    title: "My API",
+    title: "Socketless API",
   },
 });
 
