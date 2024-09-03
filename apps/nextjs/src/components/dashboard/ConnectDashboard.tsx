@@ -51,7 +51,10 @@ function ConnectForm({ onConnect }: { onConnect: (url: string) => void }) {
 
         const res = ApiPostConnectResponseSchema.parse(await req.json());
 
-        onConnect(res.url);
+        //! For development
+        onConnect(res.url.replace("wss://connect.socketless.ws", "ws://localhost:3100"));
+
+        // onConnect(res.url);
       })}
     >
       <FormField
