@@ -1,5 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { bearerAuth } from "hono/bearer-auth";
+import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 
 import {
@@ -35,6 +36,15 @@ const app = new OpenAPIHono<{
     token: TokenValidationFunc["project_token"];
   };
 }>().basePath("/api/v0");
+
+app.use(
+  "*",
+  cors({
+    origin: ["https://socketless.ws", "https://docs.socketless.ws"],
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Authorization"],
+  }),
+);
 
 const authenticationMiddleware = bearerAuth({
   async verifyToken(token, c) {
