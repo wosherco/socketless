@@ -11,12 +11,9 @@ import type {
 } from "@socketless/shared";
 import { processMessages, processRoomActions } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
-import { and, eq } from "@socketless/db";
+import { eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
-import {
-  connectionRoomsTable,
-  projectWebhookTable,
-} from "@socketless/db/schema";
+import { projectWebhookTable } from "@socketless/db/schema";
 import {
   getMainChannelName,
   getRoomChannelName,
@@ -31,6 +28,12 @@ import { sendWebhook } from "./webhook";
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
 const app = new Hono();
+
+app.get("/", (c) =>
+  c.text(
+    "Hey there! I see you're trying to sniff around 👀. Don't worry, you won't find anything here, so go check our main website socketless.ws",
+  ),
+);
 
 interface WebsocketContext {
   Variables: {
@@ -75,13 +78,8 @@ app.get(
     const redis = createRedisClient();
     const wscontext = c as Context<WebsocketContext>;
 
-    const {
-      projectId,
-      clientId,
-      identifier,
-      initialRooms,
-      webhook: internalWebhook,
-    } = wscontext.var;
+    const { projectId, clientId, identifier, initialRooms } = wscontext.var;
+    const internalWebhook = wscontext.var.webhook;
 
     const mainChannel = getMainChannelName(projectId, identifier);
 
@@ -232,7 +230,7 @@ app.get(
 
         console.log("Connection opened");
       },
-      onMessage(event, ws) {
+      onMessage(event) {
         void launchWebhooks({
           action: EWebhookActions.MESSAGE,
           data: {
