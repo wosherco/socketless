@@ -18,7 +18,7 @@ const BASE_URL = "https://socketless.ws/api/v0";
 
 interface SocketlessContext<TMessage = string> {
   // TODO: Finish types
-  sendMessage: (
+  send: (
     message: TMessage,
     receivers: { identifiers?: string | string[]; rooms?: string | string[] },
   ) => void;
@@ -32,7 +32,7 @@ function createContext<TMessage>(
   const roomsToManage: z.infer<typeof WebhookRoomsManageResponseSchema>[] = [];
 
   return {
-    sendMessage(message, receivers) {
+    send(message, receivers) {
       messagesToSend.push({
         message,
         clients: receivers.identifiers,
