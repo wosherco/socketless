@@ -60,6 +60,7 @@ type OnDisconnectFunc<TMessage> = (
 
 type OnMessageFunc<TMessage> = (
   context: SocketlessContext<TMessage>,
+  identifier: string,
   message: TMessage,
 ) => MaybePromise<void>;
 
@@ -109,7 +110,26 @@ class SocketlessServer<TMessage = string> {
       case EWebhookActions.MESSAGE:
         {
           if (this.options.onMessage !== undefined) {
-            await this.options.onMessage(context, webhookPayload.data.message);
+            // Parsing message
+            if (
+              typeof webhookPayload.data.message === "string" &&
+              webhookPayload.data.message.startsWith("{")
+            ) {
+              try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                webhookPayload.data.message = JSON.parse(
+                  webhookPayload.data.message,
+                );
+              } catch {
+                // Do nothing
+              }
+            }
+
+            await this.options.onMessage(
+              context,
+              webhookPayload.data.connection.identifier,
+              webhookPayload.data.message as TMessage,
+            );
           }
         }
         break;
