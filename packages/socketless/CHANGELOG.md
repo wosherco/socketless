@@ -1,5 +1,17 @@
 # socketless.ws
 
+## 1.1.2
+
+### Patch Changes
+
+- Fixed not having new typescript build
+
+## 1.1.1
+
+### Patch Changes
+
+- Fixed some stuff with the client
+
 ## 1.1.0
 
 ### Minor Changes
