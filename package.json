@@ -40,5 +40,8 @@
   ],
   "trustedDependencies": [
     "@sentry/cli"
-  ]
+  ],
+  "dependencies": {
+    "@changesets/cli": "^2.27.7"
+  }
 }
