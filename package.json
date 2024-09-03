@@ -1,5 +1,6 @@
 {
   "name": "socketless",
+  "version": "0.1.1",
   "private": true,
   "engines": {
     "node": ">=20.16.0"
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@socketless/prettier-config": "workspace:*",
     "@turbo/gen": "2.1.1",
+    "bunchee": "^5.4.0",
     "prettier": "3.3.3",
     "turbo": "2.1.1",
     "typescript": "5.5.4"

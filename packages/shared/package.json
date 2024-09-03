@@ -1,19 +1,34 @@
 {
   "name": "@socketless/shared",
-  "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
+  "private": false,
+  "homepage": "https://socketless.ws",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    "import": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "bunchee --tsconfig tsconfig.json",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsc",
+    "dev": "bunchee -w --tsconfig tsconfig.json --no-clean",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "publish-package": "bun run build && bunx npm@latest publish"
+  },
+  "dependencies": {
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@socketless/eslint-config": "workspace:*",
@@ -23,5 +38,12 @@
     "prettier": "3.3.3",
     "typescript": "5.5.4"
   },
-  "prettier": "@socketless/prettier-config"
+  "prettier": "@socketless/prettier-config",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist"
+  ]
 }
