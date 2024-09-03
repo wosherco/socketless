@@ -181,7 +181,9 @@ class SocketlessServer<TMessage = string> {
     });
 
     if (!req.ok) {
-      throw new Error("Failed to create connection");
+      throw new Error(
+        `Failed to create connection ${req.status} ${req.statusText}`,
+      );
     }
 
     const payload = ApiPostConnectResponseSchema.parse(await req.json());
@@ -216,7 +218,7 @@ class SocketlessServer<TMessage = string> {
     });
 
     if (!req.ok) {
-      throw new Error("Failed to create connection");
+      throw new Error(`Failed to send message ${req.status} ${req.statusText}`);
     }
   }
 }
