@@ -102,6 +102,7 @@ app.get(
     const feeds: string[] = [...initialFeeds];
 
     const launchWebhooks = async (payload: WebhookPayloadType) => {
+      // Sending to webhook passed through token
       if (internalWebhook) {
         void sendWebhook(internalWebhook, payload)
           .then(processWebhookResponse)
@@ -109,6 +110,7 @@ app.get(
           .catch((e) => console.log(e));
       }
 
+      // Sending to project webhooks
       const webhooks: SimpleWebhook[] = [];
 
       const webhooksRds = await redis.get(getWebhooksCacheName(projectId));
@@ -138,6 +140,7 @@ app.get(
           }),
         );
 
+        // If cache isn't hit, cache the webhooks for 60 seconds
         void redis.set(
           getWebhooksCacheName(projectId),
           JSON.stringify(webhooks),
@@ -146,6 +149,7 @@ app.get(
         );
       }
 
+      // Actually sending the webhooks
       webhooks.forEach((webhook) => {
         void sendWebhook(webhook, payload)
           .then(processWebhookResponse)
@@ -159,13 +163,37 @@ app.get(
     ) => {
       if (!response) return;
 
-      const { messages, feeds: feedActions } = response;
+      // eslint-disable-next-line prefer-const
+      let { messages, feeds: feedActions } = response;
 
       if (messages) {
+        if (!Array.isArray(messages)) {
+          messages = [messages];
+        }
+
         void processMessages(redis, projectId, messages);
+        messages.forEach((message) => {
+          void logger.logIncomingMessage(
+            projectId,
+            identifier,
+            message.message,
+            // TODO: Make utils of isArray, because this smells bad
+            message.feeds !== undefined
+              ? Array.isArray(message.feeds)
+                ? message.feeds
+                : [message.feeds]
+              : [],
+            message.clients !== undefined
+              ? Array.isArray(message.clients)
+                ? message.clients
+                : [message.clients]
+              : [],
+          );
+        });
       }
 
       if (feedActions) {
+        // TODO: Log feed actions
         void processFeedActions(db, redis, projectId, feedActions);
       }
     };
@@ -173,7 +201,7 @@ app.get(
     return {
       onOpen(evt, ws) {
         // Logging connection
-        void logger.logConnection();
+        void logger.logConnection(projectId, identifier, feeds);
 
         // Adding connection to usage manager
         void usageManager.addConcurrentConnection(projectId);
@@ -259,7 +287,7 @@ app.get(
         console.log(`Message from client: ${event.data}`);
 
         // Logging outgoing message
-        void logger.logOutgointMessage();
+        void logger.logOutgointMessage(projectId, identifier, event.data);
 
         void launchWebhooks({
           action: EWebhookActions.MESSAGE,
@@ -274,7 +302,7 @@ app.get(
       },
       onClose: () => {
         // Logging disconnection
-        void logger.logDisconnection();
+        void logger.logDisconnection(projectId, identifier);
 
         // Removing connection from usage manager
         void usageManager.removeConcurrentConnection(projectId);
