@@ -20,7 +20,9 @@ export async function sendWebhook(
   });
 
   if (!req.ok) {
-    throw new Error("Failed to send webhook");
+    throw new Error(
+      `Failed to send webhook ${JSON.stringify(webhook)} ${req.status}`,
+    );
   }
 
   const resAuthorization = req.headers.get("Authorization");
