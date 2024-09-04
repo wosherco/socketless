@@ -107,9 +107,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                       </Button>
                     ) : (
                       <>
-                        <Link href="/dashboard">
-                          Dashboard
-                        </Link>
+                        <Button asChild variant={"outline"} className="mr-2">
+                          <Link href="/dashboard">
+                            Dashboard
+                          </Link>
+                        </Button>
                         <UserMenu user={user} />
                       </>
                     )}
