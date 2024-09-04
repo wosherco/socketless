@@ -54,10 +54,6 @@ async function LandingChat() {
     url = response.url;
   }
 
-  if (url == null) {
-    return <div>Couldn't connect to the server</div>;
-  }
-
   return <Chat websocketUrl={url} name={name} />
 }
 
