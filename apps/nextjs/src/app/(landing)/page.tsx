@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, Check, Info, Mail, Percent } from "lucide-react";
 
@@ -42,7 +41,7 @@ async function LandingChat() {
   let name = cookies().get("socketless_name")?.value;
   let url = cookies().get("socketless_url")?.value;
 
-  if (!name || !url) {
+  if (name == null || url == null) {
     name = generate({
       exactly: 3, join: "", formatter: (word, index) => {
         return index === 0
