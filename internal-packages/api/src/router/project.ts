@@ -5,7 +5,7 @@ import { and, count, eq, not } from "@socketless/db";
 import { projectTable } from "@socketless/db/schema";
 import { CreateProjectSchema } from "@socketless/validators/forms";
 
-import { createProject, getProjects } from "../logic/project";
+import { createProject, getProjects, getProjectStats } from "../logic/project";
 import { projectProcedure, protectedProcedure } from "../trpc";
 
 export const projectRouter = {
@@ -111,4 +111,10 @@ export const projectRouter = {
   //       }
   //     }),
   //   ),
+
+  stats: projectProcedure.query(async ({ ctx }) => {
+    const usage = await getProjectStats(ctx.db, ctx.project.id);
+
+    return usage;
+  }),
 } satisfies TRPCRouterRecord;

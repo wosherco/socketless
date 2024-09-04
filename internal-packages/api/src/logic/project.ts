@@ -2,8 +2,8 @@ import { nanoid } from "nanoid";
 import Stripe from "stripe";
 
 import type { DBType } from "@socketless/db/client";
-import { and, eq, not } from "@socketless/db";
-import { projectTable } from "@socketless/db/schema";
+import { and, count, eq, gte, not } from "@socketless/db";
+import { logsTable, projectTable } from "@socketless/db/schema";
 
 import { env } from "../../env";
 import { generateClientSecret } from "../utils";
@@ -75,4 +75,59 @@ export async function createProject(
 
     throw e;
   }
+}
+
+export async function getProjectStats(db: DBType, projectId: number) {
+  const [fetchedProject, incoming, outgoing] = await Promise.all([
+    // Getting concurrent connections
+    db
+      .select({
+        concurrentConnections: projectTable.concurrentConnections,
+      })
+      .from(projectTable)
+      .where(eq(projectTable.id, projectId))
+      .then((res) => res[0]),
+    // Getting Incoming messages
+    db
+      .select({ count: count() })
+      .from(logsTable)
+      .where(
+        and(
+          eq(logsTable.projectId, projectId),
+          eq(logsTable.action, "INCOMING"),
+          // Getting messages from the last 30 days
+          gte(
+            logsTable.timestamp,
+            new Date(Date.now() - 1000 * 60 * 60 * 24 * 30),
+          ),
+        ),
+      )
+      .then((res) => res[0]),
+    // Getting Outgoing messages
+    db
+      .select({ count: count() })
+      .from(logsTable)
+      .where(
+        and(
+          eq(logsTable.projectId, projectId),
+          eq(logsTable.action, "OUTGOING"),
+          // Getting messages from the last 30 days
+          gte(
+            logsTable.timestamp,
+            new Date(Date.now() - 1000 * 60 * 60 * 24 * 30),
+          ),
+        ),
+      )
+      .then((res) => res[0]),
+  ]);
+
+  if (!fetchedProject || !incoming || !outgoing) {
+    return null;
+  }
+
+  return {
+    concurrentConnections: fetchedProject.concurrentConnections,
+    incomingMessages: incoming.count,
+    outgoingMessages: outgoing.count,
+  };
 }

@@ -22,68 +22,71 @@ export const metadata: Metadata = {
   title: "Overview",
 };
 
-// TODO: Redo Usage
-// async function Usage({ projectId }: { projectId: number }) {
-//   const projectUsage = await api.projectLimits.getUsage.query({
-//     projectId,
-//   });
+async function Usage({ projectId }: { projectId: number }) {
+  const projectUsage = await api.project.stats({
+    projectId,
+  });
 
-//   return (
-//     <>
-//       <Card className="flex-grow">
-//         <CardHeader>
-//           <CardTitle>Outgoing Messages</CardTitle>
-//           <CardDescription>Messages that you've published</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <p>{projectUsage.outgoingMessages}</p>
-//         </CardContent>
-//       </Card>
+  if (!projectUsage) {
+    return null;
+  }
 
-//       <Card className="flex-grow">
-//         <CardHeader>
-//           <CardTitle>Incoming Messages</CardTitle>
-//           <CardDescription>Messages that Websockets sent</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <p>{projectUsage.incomingMessages}</p>
-//         </CardContent>
-//       </Card>
+  return (
+    <>
+      <Card className="flex-grow">
+        <CardHeader>
+          <CardTitle>Incoming Messages</CardTitle>
+          <CardDescription>Messages that you've published</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>{projectUsage.incomingMessages}</p>
+        </CardContent>
+      </Card>
 
-//       <Card className="flex-grow">
-//         <CardHeader>
-//           <CardTitle>Connections</CardTitle>
-//           <CardDescription>Connections that you've created</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <p>{projectUsage.connections}</p>
-//         </CardContent>
-//       </Card>
+      <Card className="flex-grow">
+        <CardHeader>
+          <CardTitle>Outgoing Messages</CardTitle>
+          <CardDescription>Messages that clients sent from websockets</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>{projectUsage.outgoingMessages}</p>
+        </CardContent>
+      </Card>
 
-//       <Card className="flex-grow">
-//         <CardHeader>
-//           <CardTitle>Current Connections</CardTitle>
-//           <CardDescription>
-//             Amount of clients currently connected
-//           </CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <p>{projectUsage.currentConnectionsTotal}</p>
-//         </CardContent>
-//       </Card>
+      <Card className="flex-grow">
+        <CardHeader>
+          <CardTitle>Concurrent Connections</CardTitle>
+          <CardDescription>How many clients are connected right now</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>{projectUsage.concurrentConnections}</p>
+        </CardContent>
+      </Card>
 
-//       <Card className="flex-grow">
-//         <CardHeader>
-//           <CardTitle>Peak Connections</CardTitle>
-//           <CardDescription>Peak of clients connected</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <p>{projectUsage.peakConnections}</p>
-//         </CardContent>
-//       </Card>
-//     </>
-//   );
-// }
+      {/* <Card className="flex-grow">
+        <CardHeader>
+          <CardTitle>Current Connections</CardTitle>
+          <CardDescription>
+            Amount of clients currently connected
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>{projectUsage.currentConnectionsTotal}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="flex-grow">
+        <CardHeader>
+          <CardTitle>Peak Connections</CardTitle>
+          <CardDescription>Peak of clients connected</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>{projectUsage.peakConnections}</p>
+        </CardContent>
+      </Card> */}
+    </>
+  );
+}
 
 function SkeletonUsageCard() {
   return (
@@ -168,12 +171,10 @@ export default async function Page({
                 <SkeletonUsageCard />
                 <SkeletonUsageCard />
                 <SkeletonUsageCard />
-                <SkeletonUsageCard />
-                <SkeletonUsageCard />
               </>
             }
           >
-            {/* <Usage projectId={parsedProjectId} /> */}
+            <Usage projectId={parsedProjectId} />
           </Suspense>
         </div>
       </div>
