@@ -15,6 +15,13 @@
       "when": 1725189879307,
       "tag": "0001_chemical_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725488640338,
+      "tag": "0002_greedy_dexter_bennett",
+      "breakpoints": true
     }
   ]
 }
