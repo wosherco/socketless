@@ -94,6 +94,7 @@ app.get(
     const redis = createRedisClient();
     const logger = new LogsManager(db, redis);
     const wscontext = c as Context<WebsocketContext>;
+    let closing = false;
 
     const {
       projectId,
@@ -206,124 +207,80 @@ app.get(
 
     return {
       onOpen(evt, ws) {
-        // Logging connection
-        void logger.logConnection(projectId, identifier, feeds);
+        try {
+          // Logging connection
+          void logger.logConnection(projectId, identifier, feeds);
 
-        // Adding connection to usage manager
-        void usageManager.addConcurrentConnection(projectId);
-
-        // TODO: Handle errors
-        // Subscribing to identifier channel and feeds channels
-        void redisSubscriber.subscribe(mainChannel);
-
-        initialFeeds.forEach((feed) => {
-          void redisSubscriber.subscribe(getFeedChannelName(projectId, feed));
-        });
-
-        // Initializing message listener
-        redisSubscriber.on("message", (channel, message) => {
-          const messagePayload = JSON.parse(message) as unknown;
+          // Adding connection to usage manager
+          void usageManager.addConcurrentConnection(projectId);
 
           // TODO: Handle errors
-          const payload = RedisMessageSchema.parse(messagePayload);
+          // Subscribing to identifier channel and feeds channels
+          void redisSubscriber.subscribe(mainChannel);
 
-          switch (payload.type) {
-            case "join-feed":
-              {
-                feeds.push(payload.data.feed);
-                void redisSubscriber.subscribe(
-                  getFeedChannelName(projectId, payload.data.feed),
-                );
-              }
-              break;
-            case "leave-feed":
-              {
-                feeds.splice(feeds.indexOf(payload.data.feed), 1);
-                void redisSubscriber.unsubscribe(
-                  getFeedChannelName(projectId, payload.data.feed),
-                );
-              }
-              break;
-            case "set-feeds":
-              {
-                const toUnsubscribe = feeds.filter(
-                  (feed) => !payload.data.feeds.includes(feed),
-                );
-                const toSubscribe = payload.data.feeds.filter(
-                  (feed) => !feeds.includes(feed),
-                );
+          initialFeeds.forEach((feed) => {
+            void redisSubscriber.subscribe(getFeedChannelName(projectId, feed));
+          });
 
-                toUnsubscribe.forEach((feed) => {
-                  feeds.splice(feeds.indexOf(feed), 1);
-                  void redisSubscriber.unsubscribe(
-                    getFeedChannelName(projectId, feed),
-                  );
-                });
+          // Initializing message listener
+          redisSubscriber.on("message", (channel, message) => {
+            const messagePayload = JSON.parse(message) as unknown;
 
-                toSubscribe.forEach((feed) => {
-                  feeds.push(feed);
+            // TODO: Handle errors
+            const payload = RedisMessageSchema.parse(messagePayload);
+
+            switch (payload.type) {
+              case "join-feed":
+                {
+                  feeds.push(payload.data.feed);
                   void redisSubscriber.subscribe(
-                    getFeedChannelName(projectId, feed),
+                    getFeedChannelName(projectId, payload.data.feed),
                   );
-                });
-              }
-              break;
-            case "send-message":
-              {
-                ws.send(payload.data.message);
-              }
-              break;
-          }
-        });
+                }
+                break;
+              case "leave-feed":
+                {
+                  feeds.splice(feeds.indexOf(payload.data.feed), 1);
+                  void redisSubscriber.unsubscribe(
+                    getFeedChannelName(projectId, payload.data.feed),
+                  );
+                }
+                break;
+              case "set-feeds":
+                {
+                  const toUnsubscribe = feeds.filter(
+                    (feed) => !payload.data.feeds.includes(feed),
+                  );
+                  const toSubscribe = payload.data.feeds.filter(
+                    (feed) => !feeds.includes(feed),
+                  );
 
-        // Launching webhooks for connection open
-        void launchWebhooks({
-          action: EWebhookActions.CONNECTION_OPEN,
-          data: {
-            connection: {
-              clientId,
-              identifier,
-            },
-          },
-        });
+                  toUnsubscribe.forEach((feed) => {
+                    feeds.splice(feeds.indexOf(feed), 1);
+                    void redisSubscriber.unsubscribe(
+                      getFeedChannelName(projectId, feed),
+                    );
+                  });
 
-        console.log("Connection opened");
-      },
-      onMessage(event) {
-        console.log(`Message from client: ${event.data}`);
+                  toSubscribe.forEach((feed) => {
+                    feeds.push(feed);
+                    void redisSubscriber.subscribe(
+                      getFeedChannelName(projectId, feed),
+                    );
+                  });
+                }
+                break;
+              case "send-message":
+                {
+                  ws.send(payload.data.message);
+                }
+                break;
+            }
+          });
 
-        // Logging outgoing message
-        void logger.logOutgointMessage(projectId, identifier, event.data);
-
-        void launchWebhooks({
-          action: EWebhookActions.MESSAGE,
-          data: {
-            connection: {
-              clientId,
-              identifier,
-            },
-            message: event.data,
-          },
-        });
-      },
-      onClose: () => {
-        // Logging disconnection
-        void logger.logDisconnection(projectId, identifier);
-
-        // Removing connection from usage manager
-        void usageManager.removeConcurrentConnection(projectId);
-
-        // Unsubscribing from identifier channel and feeds channels
-        void redisSubscriber.unsubscribe(mainChannel);
-
-        for (const feed of feeds) {
-          void redisSubscriber.unsubscribe(getFeedChannelName(projectId, feed));
-        }
-
-        // Launching webhooks for connection close
-        void (async () => {
-          await launchWebhooks({
-            action: EWebhookActions.CONNECTION_CLOSE,
+          // Launching webhooks for connection open
+          void launchWebhooks({
+            action: EWebhookActions.CONNECTION_OPEN,
             data: {
               connection: {
                 clientId,
@@ -332,13 +289,74 @@ app.get(
             },
           });
 
-          void redis.quit(() => console.log("Redis closed"));
-          void redisSubscriber.quit(() =>
-            console.log("Redis subscriber closed"),
-          );
+          console.log("Connection opened");
+        } catch (e) {
+          console.error("Error onOpen:", e);
+        }
+      },
+      onMessage(event) {
+        try {
+          if (closing) return;
 
-          console.log("Connection closed");
-        })();
+          console.log(`Message from client: ${event.data}`);
+
+          // Logging outgoing message
+          void logger.logOutgointMessage(projectId, identifier, event.data);
+
+          void launchWebhooks({
+            action: EWebhookActions.MESSAGE,
+            data: {
+              connection: {
+                clientId,
+                identifier,
+              },
+              message: event.data,
+            },
+          });
+        } catch (e) {
+          console.error("Error onMessage:", e);
+        }
+      },
+      onClose: () => {
+        try {
+          closing = true;
+          // Logging disconnection
+          void logger.logDisconnection(projectId, identifier);
+
+          // Removing connection from usage manager
+          void usageManager.removeConcurrentConnection(projectId);
+
+          // Unsubscribing from identifier channel and feeds channels
+          void redisSubscriber.unsubscribe(mainChannel);
+
+          for (const feed of feeds) {
+            void redisSubscriber.unsubscribe(
+              getFeedChannelName(projectId, feed),
+            );
+          }
+
+          // Launching webhooks for connection close
+          void (async () => {
+            await launchWebhooks({
+              action: EWebhookActions.CONNECTION_CLOSE,
+              data: {
+                connection: {
+                  clientId,
+                  identifier,
+                },
+              },
+            });
+
+            void redis.quit(() => console.log("Redis closed"));
+            void redisSubscriber.quit(() =>
+              console.log("Redis subscriber closed"),
+            );
+
+            console.log("Connection closed");
+          })();
+        } catch (e) {
+          console.error("Error onClose:", e);
+        }
       },
     };
   }),
