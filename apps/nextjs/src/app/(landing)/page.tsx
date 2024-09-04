@@ -15,7 +15,7 @@ import ContactForm from "~/components/home/ContactForm";
 // import Faq from "~/components/home/Faq";
 import CodeDemo from "~/components/home/CodeDemo";
 import DemoExamples from "~/components/home/DemoExamples";
-import Chat from "~/components/home/LandingChat";
+import Chat, { ChatSkeleton } from "~/components/home/LandingChat";
 import { socketless } from "~/server/socketless";
 import { generate } from "random-words";
 import { cookies } from "next/headers";
@@ -97,7 +97,7 @@ export default function HomePage() {
             alt="Simple steps: create project, create connection, connect through wscat"
           /> */}
           <CookiesProvider>
-            <Suspense fallback={<p>Loading...</p>}>
+            <Suspense fallback={<ChatSkeleton />}>
               <LandingChat />
             </Suspense>
           </CookiesProvider>

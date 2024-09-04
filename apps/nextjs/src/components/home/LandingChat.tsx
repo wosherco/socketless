@@ -18,6 +18,8 @@ function MessagesHistory({ messages }: { messages: any }) {
   </div>
 }
 
+const emojis = ["😄", "😂", "😛", "🫡", "🤗"]
+
 export default function Chat({ websocketUrl, name }: { websocketUrl: string; name: string; }) {
   const cookies = useCookies();
   // Saving cookies
@@ -44,7 +46,6 @@ export default function Chat({ websocketUrl, name }: { websocketUrl: string; nam
     sendMessage(emoji);
   }, [sendMessage])
 
-  const emojis = ["😄", "😂", "😛", "🫡", "🤗"]
 
   return <div className="w-full flex items-center justify-center py-8">
     <Card className="max-w-[500px] w-full mx-4">
@@ -73,6 +74,35 @@ export default function Chat({ websocketUrl, name }: { websocketUrl: string; nam
         <div className="flex flex-row gap-2 w-full items-center justify-around">
           {emojis.map((emoji) =>
             <Button key={emoji} variant="outline" onClick={() => sendMessageCallback(emoji)}>
+              {emoji}
+            </Button>
+          )}
+        </div>
+      </CardFooter>
+    </Card>
+  </div>
+}
+
+export function ChatSkeleton() {
+  return <div className="w-full flex items-center justify-center py-8">
+    <Card className="max-w-[500px] w-full mx-4">
+      <CardHeader>
+        <CardTitle>
+          Try it yourself
+        </CardTitle>
+        <CardDescription>
+          You are <b>Loading...</b>
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="min-h-[200px] lg:min-h-[300px]">
+        <div className="w-full min-h-[200px] lg:min-h-[300px] flex items-center justify-center">
+          <Loader className="animate-spin" />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <div className="flex flex-row gap-2 w-full items-center justify-around">
+          {emojis.map((emoji) =>
+            <Button key={emoji} variant="outline" disabled>
               {emoji}
             </Button>
           )}
