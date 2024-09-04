@@ -10,7 +10,11 @@ import type {
   WebhookResponseSchema,
 } from "@socketless/shared";
 import { processFeedActions, processMessages } from "@socketless/api/logic";
-import { verifyToken } from "@socketless/connection-tokens";
+import {
+  InvalidTokenPayloadContents,
+  TokenPayloadSchema,
+  verifyToken,
+} from "@socketless/connection-tokens";
 import { eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { projectWebhookTable } from "@socketless/db/schema";
@@ -74,7 +78,10 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
       c.set("webhook", payload.webhook);
 
       return next();
-    } catch {
+    } catch (e) {
+      if (e instanceof InvalidTokenPayloadContents) {
+        console.log(e.errors.errors);
+      }
       return c.text("Unauthorized", 401);
     }
   },
