@@ -172,14 +172,21 @@ app.get(
 
     return {
       onOpen(evt, ws) {
+        // Logging connection
         void logger.logConnection();
+
+        // Adding connection to usage manager
+        void usageManager.addConcurrentConnection(projectId);
+
         // TODO: Handle errors
+        // Subscribing to identifier channel and feeds channels
         void redisSubscriber.subscribe(mainChannel);
 
         initialFeeds.forEach((feed) => {
           void redisSubscriber.subscribe(getFeedChannelName(projectId, feed));
         });
 
+        // Initializing message listener
         redisSubscriber.on("message", (channel, message) => {
           const messagePayload = JSON.parse(message) as unknown;
 
@@ -235,6 +242,7 @@ app.get(
           }
         });
 
+        // Launching webhooks for connection open
         void launchWebhooks({
           action: EWebhookActions.CONNECTION_OPEN,
           data: {
@@ -249,7 +257,9 @@ app.get(
       },
       onMessage(event) {
         console.log(`Message from client: ${event.data}`);
-        void logger.logIncomingMessage();
+
+        // Logging outgoing message
+        void logger.logOutgointMessage();
 
         void launchWebhooks({
           action: EWebhookActions.MESSAGE,
@@ -263,13 +273,20 @@ app.get(
         });
       },
       onClose: () => {
+        // Logging disconnection
         void logger.logDisconnection();
+
+        // Removing connection from usage manager
+        void usageManager.removeConcurrentConnection(projectId);
+
+        // Unsubscribing from identifier channel and feeds channels
         void redisSubscriber.unsubscribe(mainChannel);
 
         for (const feed of feeds) {
           void redisSubscriber.unsubscribe(getFeedChannelName(projectId, feed));
         }
 
+        // Launching webhooks for connection close
         void (async () => {
           await launchWebhooks({
             action: EWebhookActions.CONNECTION_CLOSE,
@@ -299,4 +316,4 @@ Bun.serve({
   port: 3100,
 });
 
-console.log("Server started at http://localhost:3100");
+console.log("Server started");

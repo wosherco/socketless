@@ -60,6 +60,9 @@ export const projectTable = pgTable(
       .notNull()
       .default("FREE"),
     stripeSubscriptionId: text("stripe_subscription_id").unique(),
+    concurrentConnections: integer("concurrent_connections")
+      .notNull()
+      .default(0),
     ownerId: text("owner_id")
       .notNull()
       .references(() => userTable.id),
