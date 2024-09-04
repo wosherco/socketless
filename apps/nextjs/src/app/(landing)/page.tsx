@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, Check, Info, Mail, Percent } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Info, Mail, Percent } from "lucide-react";
 
 import { Button } from "@socketless/ui/button";
 import {
@@ -15,6 +15,8 @@ import {
 import ContactForm from "~/components/home/ContactForm";
 // import Faq from "~/components/home/Faq";
 import Features from "~/components/home/Features";
+import CodeDemo from "~/components/home/CodeDemo";
+import DemoExamples from "~/components/home/DemoExamples";
 
 function Cross({ className }: { className: string }) {
   return (
@@ -41,24 +43,21 @@ export default function HomePage() {
       >
         <div>
           <h1 className="text-5xl font-bold">
-            Real-time connections without a server, <br />
-            <span className="font-black text-primary">
-              scalable to the moon.
-            </span>
+            Websockets <span className="font-black text-primary">without sockets </span>
           </h1>
           <h2 className="my-6 text-lg">
-            Serverless Websockets that work everywhere. Create realtime
-            experiences like Chats, Collaboration Spaces, Push Notifications,
-            without maintaining your own servers.{" "}
+            Serverless Websockets that work everywhere. Low-latency, globally distributed, easy to use. What more do you want?{" "}
           </h2>
           <div className="flex flex-row justify-center gap-4 lg:justify-start">
             <Button asChild>
-              <a href="https://docs.socketless.ws" target="_blank">
-                Check out the Docs
-              </a>
+              <Link href="/dashboard">
+                Register for Free
+              </Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/#start">Request Demo</Link>
+            <Button variant="ghost" asChild>
+              <Link href="https://docs.socketless.ws" target="_blank">
+                Documentation <ArrowRight className="ml-2" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -154,8 +153,28 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* Features */}
+      {/* Demo */}
       <section id="features" className="pt-16">
+        <h3 className="w-full px-4 text-center text-4xl font-bold">
+          Create realtime apps without a server
+        </h3>
+        <h4 className="mx-auto max-w-[700px] p-4 px-4 text-center text-lg">
+          Define what you need, and we'll handle the rest. You just build your app.
+        </h4>
+
+        <div className="max-w-screen-xl mx-auto py-8">
+          <CodeDemo />
+        </div>
+
+        <div className="text-center">
+          <p className="text-lg font-medium pt-8">Check our examples:</p>
+
+          <DemoExamples />
+        </div>
+      </section>
+
+      {/* Features */}
+      {/* <section id="features" className="pt-16">
         <h3 className="w-full px-4 text-center text-4xl font-bold">
           Create realtime apps without a server
         </h3>
@@ -166,7 +185,7 @@ export default function HomePage() {
         </h4>
 
         <Features />
-      </section>
+      </section> */}
 
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-screen-xl px-4 py-8">
@@ -286,22 +305,21 @@ export default function HomePage() {
           <li className="max-w-[500px]">
             <Card>
               <CardHeader>
-                <CardTitle>Fast by design</CardTitle>
+                <CardTitle>Low latency</CardTitle>
               </CardHeader>
               <CardContent>
                 <p>
-                  Sending messages is really fast. We've design our systems to
-                  process critical requests, like publishing a message, within a
-                  matter of milliseconds.
+                  Sending messages is really fast. We've design our systems globally to
+                  process requests in milliseconds across the globe.
                 </p>
               </CardContent>
               <CardFooter>
                 <a
-                  href="https://docs.socketless.ws"
+                  href="https://docs.socketless.ws/infrastructure"
                   target="_blank"
                   className="underline"
                 >
-                  Read the docs →
+                  Our infrastructure →
                 </a>
               </CardFooter>
             </Card>
@@ -310,21 +328,20 @@ export default function HomePage() {
           <li className="max-w-[500px]">
             <Card>
               <CardHeader>
-                <CardTitle>Lives on the edge</CardTitle>
+                <CardTitle>World-wide</CardTitle>
               </CardHeader>
               <CardContent>
                 <p>
-                  Our service lives on the edge, which means that latency will
-                  we worldwide the lowest.
+                  Doesn't matter where you are, and where your users are. We use multiple locations to provide the best experience.
                 </p>
               </CardContent>
               <CardFooter>
                 <a
-                  href="https://docs.socketless.ws"
+                  href="https://docs.socketless.ws/locations"
                   target="_blank"
                   className="underline"
                 >
-                  Read the docs →
+                  Check out our locations →
                 </a>
               </CardFooter>
             </Card>
