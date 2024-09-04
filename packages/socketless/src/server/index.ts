@@ -85,7 +85,8 @@ class SocketlessServer<TMessage = string> {
   constructor(options: SocketlessServerOptions<TMessage>) {
     this.options = options;
 
-    this.url = this.options.url ?? `${process.env.VERCEL_URL}/api/socketless`;
+    this.url =
+      this.options.url ?? `https://${process.env.VERCEL_URL}/api/socketless`;
   }
 
   public generateRoutes() {
