@@ -1,3 +1,3 @@
 import { socketless } from "~/server/socketless";
 
-export default socketless.generateRoutes();
+export const { POST } = socketless.generateRoutes();
