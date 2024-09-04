@@ -23,6 +23,7 @@ import { createRedisClient } from "@socketless/redis/client";
 import { RedisMessageSchema } from "@socketless/redis/schemas";
 import { EWebhookActions, SimpleWebhookSchema } from "@socketless/shared";
 
+import { UsageManager } from "./usage";
 import { sendWebhook } from "./webhook";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -34,6 +35,10 @@ app.get("/", (c) =>
     "Hey there! I see you're trying to sniff around 👀. Don't worry, you won't find anything here, so go check our main website socketless.ws",
   ),
 );
+
+// Usage Manager
+const globalRedis = createRedisClient();
+const usageManager = new UsageManager(db, globalRedis);
 
 interface WebsocketContext {
   Variables: {
@@ -55,6 +60,11 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
 
     try {
       const payload = await verifyToken(token);
+      const canConnect = await usageManager.canConnect(payload.projectId);
+
+      if (!canConnect) {
+        return c.text("Too Many Requests", 429);
+      }
 
       c.set("projectId", payload.projectId);
       c.set("identifier", payload.identifier);
@@ -64,8 +74,7 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
 
       return next();
     } catch {
-      c.status(401);
-      return c.text("Unauthorized");
+      return c.text("Unauthorized", 401);
     }
   },
 );
