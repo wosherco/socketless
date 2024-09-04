@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RoomNameValidator = z
+export const FeedNameValidator = z
   .string()
   .min(1)
   .max(100)

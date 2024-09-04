@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Channels",
+  title: "Feeds",
 };
 
-export default function Page() {
+export default function FeedsPage() {
   return <em>Coming soon...</em>;
 }

@@ -4,48 +4,48 @@ import type { RedisMessageType } from "@socketless/redis/schemas";
 import type { SimpleWebhook } from "@socketless/shared";
 import { createToken } from "@socketless/connection-tokens";
 import { and, eq, inArray } from "@socketless/db";
-import { connectionRoomsTable } from "@socketless/db/schema";
+import { connectionFeedsTable } from "@socketless/db/schema";
 import { getMainChannelName } from "@socketless/redis";
 
 export async function createConnection(
   projectId: number,
   projectClientId: string,
   identifier: string,
-  initialRooms: string[],
+  feeds: string[],
   webhook?: SimpleWebhook,
 ) {
   const token = await createToken({
     projectId,
     clientId: projectClientId,
     identifier,
-    initialRooms,
+    feeds,
     webhook,
   });
 
   return token;
 }
 
-export async function connectionJoinRoom(
+export async function connectionJoinFeed(
   db: DBType,
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomNames: string[],
+  feedNames: string[],
 ) {
-  await db.insert(connectionRoomsTable).values(
-    roomNames.map((room) => ({
+  await db.insert(connectionFeedsTable).values(
+    feedNames.map((feed) => ({
       projectId,
       identifier,
-      room,
+      feed,
     })),
   );
 
   await Promise.all(
-    roomNames.map((room) => {
+    feedNames.map((feed) => {
       const message = {
-        type: "join-room",
+        type: "join-feed",
         data: {
-          room,
+          feed,
         },
       } satisfies RedisMessageType;
 
@@ -57,30 +57,30 @@ export async function connectionJoinRoom(
   );
 }
 
-export async function connectionLeaveRoom(
+export async function connectionLeaveFeed(
   db: DBType,
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomNames: string[],
+  feedNames: string[],
 ) {
   await db
-    .delete(connectionRoomsTable)
+    .delete(connectionFeedsTable)
     .where(
       and(
-        eq(connectionRoomsTable.projectId, projectId),
-        eq(connectionRoomsTable.identifier, identifier),
-        inArray(connectionRoomsTable.room, roomNames),
+        eq(connectionFeedsTable.projectId, projectId),
+        eq(connectionFeedsTable.identifier, identifier),
+        inArray(connectionFeedsTable.feed, feedNames),
       ),
     );
   // .returning({count: count()})
 
   await Promise.all(
-    roomNames.map((room) => {
+    feedNames.map((feed) => {
       const message = {
-        type: "leave-room",
+        type: "leave-feed",
         data: {
-          room,
+          feed,
         },
       } satisfies RedisMessageType;
 
@@ -92,38 +92,38 @@ export async function connectionLeaveRoom(
   );
 }
 
-export async function connectionSetRooms(
+export async function connectionSetFeeds(
   db: DBType,
   redis: RedisType,
   projectId: number,
   identifier: string,
-  roomNames: string[],
+  feedNames: string[],
 ) {
-  const currentRooms = await getConnectionRooms(db, projectId, identifier).then(
-    (rooms) => rooms.map((r) => r.room),
+  const currentFeeds = await getConnectionFeeds(db, projectId, identifier).then(
+    (feeds) => feeds.map((r) => r.feed),
   );
 
-  const toLeave = currentRooms.filter((room) => !roomNames.includes(room));
-  const toJoin = roomNames.filter((room) => !currentRooms.includes(room));
+  const toLeave = currentFeeds.filter((feed) => !feedNames.includes(feed));
+  const toJoin = feedNames.filter((feed) => !currentFeeds.includes(feed));
 
   await Promise.all([
-    connectionJoinRoom(db, redis, projectId, identifier, toJoin),
-    connectionLeaveRoom(db, redis, projectId, identifier, toLeave),
+    connectionJoinFeed(db, redis, projectId, identifier, toJoin),
+    connectionLeaveFeed(db, redis, projectId, identifier, toLeave),
   ]);
 }
 
-export async function getConnectionRooms(
+export async function getConnectionFeeds(
   db: DBType,
   projectId: number,
   identifier: string,
 ) {
   const channels = await db
     .select()
-    .from(connectionRoomsTable)
+    .from(connectionFeedsTable)
     .where(
       and(
-        eq(connectionRoomsTable.projectId, projectId),
-        eq(connectionRoomsTable.identifier, identifier),
+        eq(connectionFeedsTable.projectId, projectId),
+        eq(connectionFeedsTable.identifier, identifier),
       ),
     );
 

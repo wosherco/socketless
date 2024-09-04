@@ -10,7 +10,7 @@ export interface TokenPayload {
   identifier: string;
   projectId: number;
   clientId: string;
-  initialRooms: string[];
+  feeds: string[];
   webhook?: SimpleWebhook;
 }
 

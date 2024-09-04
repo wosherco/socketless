@@ -119,7 +119,7 @@ export const projectWebhookTable = pgTable(
   }),
 );
 
-export const roomTable = pgTable(
+export const feedTable = pgTable(
   "room",
   {
     name: text("name").notNull(),
@@ -132,21 +132,21 @@ export const roomTable = pgTable(
   },
   (t) => ({
     pk: primaryKey({ columns: [t.name, t.projectId] }),
-    room__projectId_idx: index("room__projectId_idx").on(t.projectId),
+    feed__projectId_idx: index("room__projectId_idx").on(t.projectId),
   }),
 );
 
-export const connectionRoomsTable = pgTable(
+export const connectionFeedsTable = pgTable(
   "connection_rooms",
   {
-    room: text("room").notNull(),
+    feed: text("room").notNull(),
     projectId: integer("project_id")
       .notNull()
       .references(() => projectTable.id),
     identifier: text("identifier").notNull(),
   },
   (t) => ({
-    pk: primaryKey({ columns: [t.room, t.projectId, t.identifier] }),
+    pk: primaryKey({ columns: [t.feed, t.projectId, t.identifier] }),
     connection_rooms__identifier_project_id_idx: index(
       "connection_rooms__identifier_project_id_idx",
     ).on(t.identifier, t.projectId),

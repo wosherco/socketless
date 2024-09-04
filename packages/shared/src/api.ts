@@ -1,17 +1,17 @@
 import { z } from "zod";
 
-import { RoomNameValidator } from "./types";
+import { FeedNameValidator } from "./types";
 import {
   SimpleWebhookSchema,
+  WebhookFeedsManageResponseSchema,
   WebhookMessageResponseSchema,
-  WebhookRoomsManageResponseSchema,
 } from "./webhooks";
 
 export const ApiPostConnectRequestSchema = z.object({
   identifier: z.string(),
   webhook: SimpleWebhookSchema.optional(),
-  rooms: z.array(RoomNameValidator).optional(),
-  overrideRooms: z.boolean().default(true).optional(),
+  feeds: z.array(FeedNameValidator).optional(),
+  overrideFeeds: z.boolean().default(true).optional(),
 });
 
 export const ApiPostConnectResponseSchema = z.object({
@@ -20,10 +20,10 @@ export const ApiPostConnectResponseSchema = z.object({
   url: z.string(),
 });
 
-export const ApiPostRoomsRequestSchema = z.object({
+export const ApiPostFeedsRequestSchema = z.object({
   actions: z
-    .array(WebhookRoomsManageResponseSchema)
-    .or(WebhookRoomsManageResponseSchema),
+    .array(WebhookFeedsManageResponseSchema)
+    .or(WebhookFeedsManageResponseSchema),
 });
 
 export const ApiPostMessageRequestSchema = z.object({

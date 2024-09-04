@@ -2,15 +2,15 @@ import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import type { RedisMessageType } from "@socketless/redis/schemas";
 import type {
+  WebhookFeedsManageResponseType,
   WebhookMessageResponseType,
-  WebhookRoomsManageResponseType,
 } from "@socketless/shared";
-import { getMainChannelName, getRoomChannelName } from "@socketless/redis";
+import { getFeedChannelName, getMainChannelName } from "@socketless/redis";
 
 import {
-  connectionJoinRoom,
-  connectionLeaveRoom,
-  connectionSetRooms,
+  connectionJoinFeed,
+  connectionLeaveFeed,
+  connectionSetFeeds,
 } from "./connections";
 
 export async function processMessage(
@@ -23,11 +23,11 @@ export async function processMessage(
     : message.clients === undefined
       ? []
       : [message.clients];
-  const rooms = Array.isArray(message.rooms)
-    ? message.rooms
-    : message.rooms === undefined
+  const feeds = Array.isArray(message.feeds)
+    ? message.feeds
+    : message.feeds === undefined
       ? []
-      : [message.rooms];
+      : [message.feeds];
 
   return Promise.all([
     // Send message to clients
@@ -43,10 +43,10 @@ export async function processMessage(
       ),
     ),
 
-    // Send message to rooms
-    ...rooms.map((room) =>
+    // Send message to feeds
+    ...feeds.map((feed) =>
       redis.publish(
-        getRoomChannelName(projectId, room),
+        getFeedChannelName(projectId, feed),
         JSON.stringify({
           type: "send-message",
           data: {
@@ -58,36 +58,36 @@ export async function processMessage(
   ]);
 }
 
-export async function processRoomAction(
+export async function processFeedAction(
   db: DBType,
   redis: RedisType,
   projectId: number,
-  roomAction: WebhookRoomsManageResponseType,
+  feedAction: WebhookFeedsManageResponseType,
 ) {
-  const rooms = Array.isArray(roomAction.rooms)
-    ? roomAction.rooms
-    : [roomAction.rooms];
-  const identifiers = Array.isArray(roomAction.clients)
-    ? roomAction.clients
-    : [roomAction.clients];
+  const feeds = Array.isArray(feedAction.feeds)
+    ? feedAction.feeds
+    : [feedAction.feeds];
+  const identifiers = Array.isArray(feedAction.clients)
+    ? feedAction.clients
+    : [feedAction.clients];
 
-  switch (roomAction.action) {
+  switch (feedAction.action) {
     case "join":
       return Promise.all(
         identifiers.map((identifier) =>
-          connectionJoinRoom(db, redis, projectId, identifier, rooms),
+          connectionJoinFeed(db, redis, projectId, identifier, feeds),
         ),
       );
     case "set":
       return Promise.all(
         identifiers.map((identifier) =>
-          connectionSetRooms(db, redis, projectId, identifier, rooms),
+          connectionSetFeeds(db, redis, projectId, identifier, feeds),
         ),
       );
     case "leave":
       return Promise.all(
         identifiers.map((identifier) =>
-          connectionLeaveRoom(db, redis, projectId, identifier, rooms),
+          connectionLeaveFeed(db, redis, projectId, identifier, feeds),
         ),
       );
     default:
@@ -109,19 +109,19 @@ export async function processMessages(
   );
 }
 
-export async function processRoomActions(
+export async function processFeedActions(
   db: DBType,
   redis: RedisType,
   projectId: number,
-  roomActions:
-    | WebhookRoomsManageResponseType
-    | WebhookRoomsManageResponseType[],
+  feedActions:
+    | WebhookFeedsManageResponseType
+    | WebhookFeedsManageResponseType[],
 ) {
-  if (!Array.isArray(roomActions)) {
-    roomActions = [roomActions];
+  if (!Array.isArray(feedActions)) {
+    feedActions = [feedActions];
   }
 
   return Promise.all(
-    roomActions.map((room) => processRoomAction(db, redis, projectId, room)),
+    feedActions.map((feed) => processFeedAction(db, redis, projectId, feed)),
   );
 }

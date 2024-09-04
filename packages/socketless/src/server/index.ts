@@ -3,9 +3,9 @@ import type { z } from "zod";
 import type {
   ApiPostConnectRequestSchema,
   ApiPostMessageRequestSchema,
+  WebhookFeedsManageResponseSchema,
   WebhookMessageResponseSchema,
   WebhookResponseSchema,
-  WebhookRoomsManageResponseSchema,
 } from "@socketless/shared";
 import {
   ApiPostConnectResponseSchema,
@@ -20,7 +20,7 @@ interface SocketlessContext<TMessage = string> {
   // TODO: Finish types
   send: (
     message: TMessage,
-    receivers: { identifiers?: string | string[]; rooms?: string | string[] },
+    receivers: { identifiers?: string | string[]; feeds?: string | string[] },
   ) => void;
   buildResponse: () => z.infer<typeof WebhookResponseSchema>;
 }
@@ -29,19 +29,19 @@ function createContext<TMessage>(
   server: SocketlessServer<TMessage>,
 ): SocketlessContext<TMessage> {
   const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
-  const roomsToManage: z.infer<typeof WebhookRoomsManageResponseSchema>[] = [];
+  const feedsToManage: z.infer<typeof WebhookFeedsManageResponseSchema>[] = [];
 
   return {
     send(message, receivers) {
       messagesToSend.push({
         message,
         clients: receivers.identifiers,
-        rooms: receivers.rooms,
+        feeds: receivers.feeds,
       });
     },
     buildResponse: () => ({
       messages: messagesToSend,
-      rooms: roomsToManage,
+      feeds: feedsToManage,
     }),
   };
 }
@@ -155,8 +155,8 @@ class SocketlessServer<TMessage = string> {
 
   public async getConnection(
     identifier: string,
-    rooms?: string[],
-    overrideRooms = true,
+    feeds?: string[],
+    overrideFeeds = true,
   ) {
     const req = await fetch(`${BASE_URL}/connection`, {
       method: "POST",
@@ -175,8 +175,8 @@ class SocketlessServer<TMessage = string> {
             sendOnDisconnect: this.options.onDisconnect !== undefined,
           },
         },
-        rooms,
-        overrideRooms,
+        feeds,
+        overrideFeeds,
       } satisfies z.infer<typeof ApiPostConnectRequestSchema>),
     });
 
@@ -193,10 +193,10 @@ class SocketlessServer<TMessage = string> {
 
   public async sendMessage(
     message: TMessage,
-    receivers: { identifiers?: string | string[]; rooms?: string | string[] },
+    receivers: { identifiers?: string | string[]; feeds?: string | string[] },
   ) {
-    if (receivers.identifiers === undefined && receivers.rooms === undefined) {
-      throw new Error("You must specify at least one of identifiers or rooms");
+    if (receivers.identifiers === undefined && receivers.feeds === undefined) {
+      throw new Error("You must specify at least one of identifiers or feeds");
     }
 
     const messagePayload =
@@ -212,7 +212,7 @@ class SocketlessServer<TMessage = string> {
         messages: {
           message: messagePayload,
           clients: receivers.identifiers,
-          rooms: receivers.rooms,
+          feeds: receivers.feeds,
         },
       } satisfies z.infer<typeof ApiPostMessageRequestSchema>),
     });

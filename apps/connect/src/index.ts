@@ -9,14 +9,14 @@ import type {
   WebhookPayloadType,
   WebhookResponseSchema,
 } from "@socketless/shared";
-import { processMessages, processRoomActions } from "@socketless/api/logic";
+import { processFeedActions, processMessages } from "@socketless/api/logic";
 import { verifyToken } from "@socketless/connection-tokens";
 import { eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { projectWebhookTable } from "@socketless/db/schema";
 import {
+  getFeedChannelName,
   getMainChannelName,
-  getRoomChannelName,
   getWebhooksCacheName,
 } from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
@@ -40,7 +40,7 @@ interface WebsocketContext {
     projectId: number;
     identifier: string;
     clientId: string;
-    initialRooms: string[];
+    feeds: string[];
     webhook?: SimpleWebhook;
   };
 }
@@ -59,7 +59,7 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
       c.set("projectId", payload.projectId);
       c.set("identifier", payload.identifier);
       c.set("clientId", payload.clientId);
-      c.set("initialRooms", payload.initialRooms);
+      c.set("feeds", payload.feeds);
       c.set("webhook", payload.webhook);
 
       return next();
@@ -78,12 +78,17 @@ app.get(
     const redis = createRedisClient();
     const wscontext = c as Context<WebsocketContext>;
 
-    const { projectId, clientId, identifier, initialRooms } = wscontext.var;
+    const {
+      projectId,
+      clientId,
+      identifier,
+      feeds: initialFeeds,
+    } = wscontext.var;
     const internalWebhook = wscontext.var.webhook;
 
     const mainChannel = getMainChannelName(projectId, identifier);
 
-    const rooms: string[] = [...initialRooms];
+    const feeds: string[] = [...initialFeeds];
 
     const launchWebhooks = async (payload: WebhookPayloadType) => {
       if (internalWebhook) {
@@ -143,14 +148,14 @@ app.get(
     ) => {
       if (!response) return;
 
-      const { messages, rooms: roomActions } = response;
+      const { messages, feeds: feedActions } = response;
 
       if (messages) {
         void processMessages(redis, projectId, messages);
       }
 
-      if (roomActions) {
-        void processRoomActions(db, redis, projectId, roomActions);
+      if (feedActions) {
+        void processFeedActions(db, redis, projectId, feedActions);
       }
     };
 
@@ -159,8 +164,8 @@ app.get(
         // TODO: Handle errors
         void redisSubscriber.subscribe(mainChannel);
 
-        initialRooms.forEach((room) => {
-          void redisSubscriber.subscribe(getRoomChannelName(projectId, room));
+        initialFeeds.forEach((feed) => {
+          void redisSubscriber.subscribe(getFeedChannelName(projectId, feed));
         });
 
         redisSubscriber.on("message", (channel, message) => {
@@ -170,42 +175,42 @@ app.get(
           const payload = RedisMessageSchema.parse(messagePayload);
 
           switch (payload.type) {
-            case "join-room":
+            case "join-feed":
               {
-                rooms.push(payload.data.room);
+                feeds.push(payload.data.feed);
                 void redisSubscriber.subscribe(
-                  getRoomChannelName(projectId, payload.data.room),
+                  getFeedChannelName(projectId, payload.data.feed),
                 );
               }
               break;
-            case "leave-room":
+            case "leave-feed":
               {
-                rooms.splice(rooms.indexOf(payload.data.room), 1);
+                feeds.splice(feeds.indexOf(payload.data.feed), 1);
                 void redisSubscriber.unsubscribe(
-                  getRoomChannelName(projectId, payload.data.room),
+                  getFeedChannelName(projectId, payload.data.feed),
                 );
               }
               break;
-            case "set-rooms":
+            case "set-feeds":
               {
-                const toUnsubscribe = rooms.filter(
-                  (room) => !payload.data.rooms.includes(room),
+                const toUnsubscribe = feeds.filter(
+                  (feed) => !payload.data.feeds.includes(feed),
                 );
-                const toSubscribe = payload.data.rooms.filter(
-                  (room) => !rooms.includes(room),
+                const toSubscribe = payload.data.feeds.filter(
+                  (feed) => !feeds.includes(feed),
                 );
 
-                toUnsubscribe.forEach((room) => {
-                  rooms.splice(rooms.indexOf(room), 1);
+                toUnsubscribe.forEach((feed) => {
+                  feeds.splice(feeds.indexOf(feed), 1);
                   void redisSubscriber.unsubscribe(
-                    getRoomChannelName(projectId, room),
+                    getFeedChannelName(projectId, feed),
                   );
                 });
 
-                toSubscribe.forEach((room) => {
-                  rooms.push(room);
+                toSubscribe.forEach((feed) => {
+                  feeds.push(feed);
                   void redisSubscriber.subscribe(
-                    getRoomChannelName(projectId, room),
+                    getFeedChannelName(projectId, feed),
                   );
                 });
               }
@@ -247,8 +252,8 @@ app.get(
       onClose: () => {
         void redisSubscriber.unsubscribe(mainChannel);
 
-        for (const room of rooms) {
-          void redisSubscriber.unsubscribe(getRoomChannelName(projectId, room));
+        for (const feed of feeds) {
+          void redisSubscriber.unsubscribe(getFeedChannelName(projectId, feed));
         }
 
         void (async () => {

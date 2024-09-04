@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { RoomNameValidator } from "./types";
+import { FeedNameValidator } from "./types";
 
 const _WebhookConnectionSchema = z.object({
   clientId: z.string(),
@@ -65,21 +65,21 @@ export type SimpleWebhook = z.infer<typeof SimpleWebhookSchema>;
 export const WebhookMessageResponseSchema = z.object({
   message: z.any(),
   clients: z.array(z.string()).or(z.string()).optional(),
-  rooms: z.array(RoomNameValidator).or(RoomNameValidator).optional(),
+  feeds: z.array(FeedNameValidator).or(FeedNameValidator).optional(),
 });
 
 export type WebhookMessageResponseType = z.infer<
   typeof WebhookMessageResponseSchema
 >;
 
-export const WebhookRoomsManageResponseSchema = z.object({
-  rooms: z.array(RoomNameValidator).or(RoomNameValidator),
+export const WebhookFeedsManageResponseSchema = z.object({
+  feeds: z.array(FeedNameValidator).or(FeedNameValidator),
   action: z.enum(["join", "leave", "set"]),
   clients: z.array(z.string()).or(z.string()),
 });
 
-export type WebhookRoomsManageResponseType = z.infer<
-  typeof WebhookRoomsManageResponseSchema
+export type WebhookFeedsManageResponseType = z.infer<
+  typeof WebhookFeedsManageResponseSchema
 >;
 
 export const WebhookResponseSchema = z
@@ -88,9 +88,9 @@ export const WebhookResponseSchema = z
       .array(WebhookMessageResponseSchema)
       .or(WebhookMessageResponseSchema)
       .optional(),
-    rooms: z
-      .array(WebhookRoomsManageResponseSchema)
-      .or(WebhookRoomsManageResponseSchema)
+    feeds: z
+      .array(WebhookFeedsManageResponseSchema)
+      .or(WebhookFeedsManageResponseSchema)
       .optional(),
   })
   .optional();

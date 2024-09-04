@@ -4,12 +4,12 @@ import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 
 import {
-  connectionJoinRoom,
-  connectionSetRooms,
+  connectionJoinFeed,
+  connectionSetFeeds,
   createConnection,
-  getConnectionRooms,
+  getConnectionFeeds,
+  processFeedActions,
   processMessages,
-  processRoomActions,
   validateProjectToken,
 } from "@socketless/api/logic";
 import { db } from "@socketless/db/client";
@@ -17,8 +17,8 @@ import { createRedisClient } from "@socketless/redis/client";
 import {
   ApiPostConnectRequestSchema,
   ApiPostConnectResponseSchema,
+  ApiPostFeedsRequestSchema,
   ApiPostMessageRequestSchema,
-  ApiPostRoomsRequestSchema,
   WebhookPayloadSchema,
   WebhookResponseSchema,
 } from "@socketless/shared";
@@ -153,10 +153,10 @@ const postConnectionToken = createRoute({
   },
 });
 
-const postRooms = createRoute({
+const postFeeds = createRoute({
   method: "post",
-  path: "/rooms",
-  description: "Manage rooms",
+  path: "/feeds",
+  description: "Manage feeds",
   middleware: [authenticationMiddleware],
   security: [
     {
@@ -167,14 +167,14 @@ const postRooms = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: ApiPostRoomsRequestSchema,
+          schema: ApiPostFeedsRequestSchema,
         },
       },
     },
   },
   responses: {
     204: {
-      description: "Successfully managed rooms",
+      description: "Successfully managed feeds",
     },
     ...DEFAULT_RESPONSES,
   },
@@ -183,7 +183,7 @@ const postRooms = createRoute({
 const postMessage = createRoute({
   method: "post",
   path: "/message",
-  description: "Send messages to clients and rooms",
+  description: "Send messages to clients and feeds",
   middleware: [authenticationMiddleware],
   security: [
     {
@@ -211,40 +211,40 @@ app.openapi(postConnectionToken, async (c) => {
   const project = c.var.project;
   const payload = c.req.valid("json");
 
-  const rooms: string[] = [];
+  const feeds: string[] = [];
 
-  if (payload.rooms && payload.overrideRooms) {
-    rooms.push(...payload.rooms);
+  if (payload.feeds && payload.overrideFeeds) {
+    feeds.push(...payload.feeds);
     const redis = createRedisClient();
-    await connectionSetRooms(
+    await connectionSetFeeds(
       db,
       redis,
       project.id,
       payload.identifier,
-      payload.rooms,
+      payload.feeds,
     );
     void redis.quit();
   } else {
-    const currentRooms = await getConnectionRooms(
+    const currentFeeds = await getConnectionFeeds(
       db,
       project.id,
       payload.identifier,
     );
 
-    rooms.push(...currentRooms.map((r) => r.room));
+    feeds.push(...currentFeeds.map((r) => r.feed));
 
-    if (payload.rooms && !payload.overrideRooms) {
+    if (payload.feeds && !payload.overrideFeeds) {
       const redis = createRedisClient();
-      await connectionJoinRoom(
+      await connectionJoinFeed(
         db,
         redis,
         project.id,
         payload.identifier,
-        payload.rooms.filter((room) => !rooms.includes(room)),
+        payload.feeds.filter((feed) => !feeds.includes(feed)),
       );
       void redis.quit();
 
-      rooms.push(...payload.rooms);
+      feeds.push(...payload.feeds);
     }
   }
 
@@ -252,7 +252,7 @@ app.openapi(postConnectionToken, async (c) => {
     project.id,
     project.clientId,
     payload.identifier,
-    rooms,
+    feeds,
     payload.webhook,
   );
 
@@ -266,13 +266,13 @@ app.openapi(postConnectionToken, async (c) => {
   );
 });
 
-app.openapi(postRooms, async (c) => {
+app.openapi(postFeeds, async (c) => {
   const project = c.var.project;
   const payload = c.req.valid("json");
 
   const redis = createRedisClient();
 
-  await processRoomActions(db, redis, project.id, payload.actions);
+  await processFeedActions(db, redis, project.id, payload.actions);
 
   await redis.quit();
 

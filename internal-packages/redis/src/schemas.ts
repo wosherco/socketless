@@ -1,25 +1,25 @@
 import { z } from "zod";
 
-import { RoomNameValidator } from "@socketless/shared";
+import { FeedNameValidator } from "@socketless/shared";
 
-const JoinRoomMessage = z.object({
-  type: z.literal("join-room"),
+const JoinFeedMessage = z.object({
+  type: z.literal("join-feed"),
   data: z.object({
-    room: RoomNameValidator,
+    feed: FeedNameValidator,
   }),
 });
 
-const LeaveRoomMessage = z.object({
-  type: z.literal("leave-room"),
+const LeaveFeedMessage = z.object({
+  type: z.literal("leave-feed"),
   data: z.object({
-    room: RoomNameValidator,
+    feed: FeedNameValidator,
   }),
 });
 
-const SetRoomsMessage = z.object({
-  type: z.literal("set-rooms"),
+const SetFeedsMessage = z.object({
+  type: z.literal("set-feeds"),
   data: z.object({
-    rooms: z.array(RoomNameValidator),
+    feeds: z.array(FeedNameValidator),
   }),
 });
 
@@ -31,9 +31,9 @@ const SendMessage = z.object({
 });
 
 export const RedisMessageSchema = z.union([
-  JoinRoomMessage,
-  LeaveRoomMessage,
-  SetRoomsMessage,
+  JoinFeedMessage,
+  LeaveFeedMessage,
+  SetFeedsMessage,
   SendMessage,
 ]);
 
