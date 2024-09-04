@@ -1,13 +1,11 @@
 "use client";
 
+import { Button } from "@socketless/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@socketless/ui/card";
+import { Loader } from "lucide-react";
+import { useCookies } from "next-client-cookies";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@socketless/ui/card";
-import { Textarea } from "@socketless/ui/textarea";
-import { Button } from "@socketless/ui/button";
-import { Loader, Send } from "lucide-react";
-import { useCookies } from "next-client-cookies";
-import { Input } from "@socketless/ui/input";
 
 function MessagesHistory({ messages }: { messages: any }) {
   return <div>
@@ -42,36 +40,23 @@ export default function Chat({ websocketUrl, name }: { websocketUrl: string; nam
     }
   }, [lastMessage]);
 
-  const [message, setMessage] = useState("");
-  const [valid, setValid] = useState(false);
+  const sendMessageCallback = useCallback((emoji: string) => {
+    sendMessage(emoji);
+  }, [sendMessage])
 
-  useEffect(() => {
-    const length = message.trim().length;
-    if (length <= 0 || length >= 950) {
-      setValid(false);
-    } else {
-      setValid(true);
-    }
-  }, [message, setValid]);
+  const emojis = ["😄", "😂", "😛", "🫡", "🤗"]
 
-  const sendMessageCallback = useCallback(() => {
-    if (!valid) return;
-
-    sendMessage(message);
-    setMessage("");
-  }, [sendMessage, message, setMessage, valid])
-
-  return <div className="h-screen w-full flex items-center justify-center">
+  return <div className="w-full flex items-center justify-center py-8">
     <Card className="max-w-[500px] w-full mx-4">
       <CardHeader>
         <CardTitle>
-          Chat
+          Try it yourself
         </CardTitle>
         <CardDescription>
           You are <b>{name}</b>
         </CardDescription>
       </CardHeader>
-      <CardContent className="min-h-[400px]">
+      <CardContent className="min-h-[200px] lg:min-h-[300px]">
         {
           readyState === ReadyState.OPEN ?
 
@@ -79,22 +64,18 @@ export default function Chat({ websocketUrl, name }: { websocketUrl: string; nam
             <MessagesHistory messages={messageHistory} /> :
 
             // Socket is connecting, showing spinner
-            <div className="w-full min-h-[390px] flex items-center justify-center">
+            <div className="w-full min-h-[200px] lg:min-h-[300px] flex items-center justify-center">
               <Loader className="animate-spin" />
             </div>
         }
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row gap-2 w-full">
-          <form className="w-full flex-grow" onSubmit={(e) => {
-            e.preventDefault();
-            sendMessageCallback();
-          }}>
-            <Input value={message} onChange={(e) => setMessage(e.target.value)} />
-          </form>
-          <Button disabled={!valid} onClick={sendMessageCallback}>
-            <Send />
-          </Button>
+        <div className="flex flex-row gap-2 w-full items-center justify-around">
+          {emojis.map((emoji) =>
+            <Button key={emoji} variant="outline" onClick={() => sendMessageCallback(emoji)}>
+              {emoji}
+            </Button>
+          )}
         </div>
       </CardFooter>
     </Card>
