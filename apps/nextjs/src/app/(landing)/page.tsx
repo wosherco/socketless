@@ -246,7 +246,7 @@ export default function HomePage() {
                 <li>No credit card required</li>
               </ul>
 
-              <p>$0/month</p>
+              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$0</span>/month</p>
             </CardContent>
             <CardFooter>
               <Button variant="outline" asChild>
@@ -271,7 +271,7 @@ export default function HomePage() {
                 <li>Check logs</li>
               </ul>
 
-              <p>$20/month</p>
+              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$20</span>/month</p>
             </CardContent>
             <CardFooter>
               <Button asChild>
@@ -296,7 +296,7 @@ export default function HomePage() {
                 <li>24/7 Support</li>
               </ul>
 
-              <p>Custom</p>
+              <p className="pt-4 text-2xl">Custom</p>
             </CardContent>
             <CardFooter className="mt-auto">
               <Button variant="secondary" asChild>
