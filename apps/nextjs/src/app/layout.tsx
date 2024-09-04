@@ -80,7 +80,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                   >
                     Socketless
                   </Link>
-                  <ul className="flex flex-row gap-4">
+                  {/* <ul className="flex flex-row gap-4">
                     <li>
                       <Button asChild variant={"ghost"}>
                         <Link href="/#features">Features</Link>
@@ -90,28 +90,28 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                       <Button asChild variant={"ghost"}>
                         <Link href="/#pricing">Pricing</Link>
                       </Button>
+                    </li> 
+                    <li className="lg:block hidden">
+                      
                     </li>
-                    <li>
-                      <Button asChild variant={"ghost"}>
-                        <Link href="https://docs.socketless.ws" target="_blank">
-                          Docs
-                        </Link>
-                      </Button>
-                    </li>
-                  </ul>
+                  </ul> */}
                   <div className="flex flex-row items-center gap-2">
-                    <Button asChild variant="ghost">
-                      <Link href={user === null ? "/auth" : "/dashboard"}>
-                        Dashboard
+                    <Button asChild variant={"ghost"}>
+                      <Link href="https://docs.socketless.ws" target="_blank">
+                        Documentation
                       </Link>
                     </Button>
                     {user === null ? (
                       <Button asChild variant="default">
-                        <Link href="/#start">Get Started</Link>
+                        <Link href="/auth">Get Started</Link>
                       </Button>
                     ) : (
-                      // <Link href="/auth">Get Started</Link>
-                      <UserMenu user={user} />
+                      <>
+                        <Link href="/dashboard">
+                          Dashboard
+                        </Link>
+                        <UserMenu user={user} />
+                      </>
                     )}
                   </div>
                 </nav>
