@@ -11,9 +11,12 @@ import Link from "next/link";
 
 export default function DemoExamples() {
   return <div className="flex flex-row gap-4 justify-center items-center pt-4">
+    {/* NextJS */}
     <Link href="https://github.com/wosherco/socketless-nextjs-demo" target="_blank">
       <Image src="/logos/nextjs.svg" width={35} height={35} alt="nextjs" />
     </Link>
+
+    {/* SolidJS */}
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
@@ -23,6 +26,18 @@ export default function DemoExamples() {
           <p>Coming soon</p>
         </TooltipContent>
       </Tooltip>
+
+      {/* SvelteKit */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Image src="/logos/svelte.svg" width={35} height={35} alt="svelte" className="opacity-60" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Coming soon</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </TooltipProvider>
   </div>
 }
