@@ -7,14 +7,9 @@ import { useCookies } from "next-client-cookies";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
-function MessagesHistory({ messages }: { messages: any }) {
+function MessagesHistory({ messages }: { messages: string[] }) {
   return <div>
-    {messages.map((message: any, index: number) => {
-      const jsonData = JSON.parse(message.data)
-      return <div key={index}>
-        {`${jsonData.name}: ${jsonData.message}`}
-      </div>
-    })}
+    {messages.map((message) => <p>{message}</p>)}
   </div>
 }
 
@@ -33,12 +28,12 @@ export default function Chat({ websocketUrl, name }: { websocketUrl: string; nam
   }, [cookies, websocketUrl, name]);
 
   // Opening websocket and creating a message history
-  const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
-  const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl);
+  const [messageHistory, setMessageHistory] = useState<string[]>([]);
+  const { sendMessage, lastMessage, readyState } = useWebSocket<string>(websocketUrl);
 
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+      setMessageHistory((prev) => prev.concat(lastMessage.data as string));
     }
   }, [lastMessage]);
 
