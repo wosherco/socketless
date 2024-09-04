@@ -226,14 +226,12 @@ export default function HomePage() {
           We keep princing simple.
         </h3>
         <h4 className="mx-auto max-w-screen-lg py-8 text-lg">
-          Three simple plans, with three simple specifications. You can try us
-          for free, and upgrade to Pay-as.you-go plan whenever you want. If you
-          still have specific needs, we have an Enterprise Plan.
+          Don't worry about hidden fees or complex pricing models. Just pay for what you use.
         </h4>
         <div className="flex flex-wrap justify-around gap-8">
           <Card>
             <CardHeader>
-              <CardTitle>Free</CardTitle>
+              <CardTitle>Free Plan</CardTitle>
               <CardDescription>
                 Try us for free, no strings attached.
               </CardDescription>
@@ -241,23 +239,24 @@ export default function HomePage() {
             <CardContent>
               <p>Included in this plan:</p>
               <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>10k Connections</li>
-                <li>50k Incoming Messages</li>
-                <li>50k Outgoing Messages</li>
-                <li>5 connections per channel</li>
-                <li>Unlimited Channels</li>
-                <li>Unlimited Concurrent Connections</li>
+                <li>100 Concurrent Connections</li>
+                <li>1M Incoming Messages</li>
+                <li>1M Outgoing Messages</li>
+                <li><b>Unlimited</b> Feeds</li>
+                <li>No credit card required</li>
               </ul>
+
+              <p>$0/month</p>
             </CardContent>
             <CardFooter>
               <Button variant="outline" asChild>
-                <Link href="/auth">Create a project</Link>
+                <Link href="/dashboard">Create a project</Link>
               </Button>
             </CardFooter>
           </Card>
           <Card className="border-primary">
             <CardHeader>
-              <CardTitle>Pay-as-you-go</CardTitle>
+              <CardTitle>Launch Plan</CardTitle>
               <CardDescription>
                 You decide your limits, we scale for you.
               </CardDescription>
@@ -265,13 +264,14 @@ export default function HomePage() {
             <CardContent>
               <p>Included in this plan:</p>
               <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>25k Connections</li>
-                <li>250k Incoming Messages</li>
-                <li>200k Outgoing Messages</li>
-                <li>100 connections per channel</li>
-                <li>Unlimited Channels</li>
-                <li>Unlimited Concurrent Connections</li>
+                <li>10k Concurrent Connections</li>
+                <li>10M Incoming Messages</li>
+                <li>10M Outgoing Messages</li>
+                <li><b>Unlimited</b> Feeds</li>
+                <li>Check logs</li>
               </ul>
+
+              <p>$20/month</p>
             </CardContent>
             <CardFooter>
               <Button asChild>
@@ -289,13 +289,14 @@ export default function HomePage() {
             <CardContent>
               <p>Included in this plan:</p>
               <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>Flexible pricing model</li>
-                <li>Unlimited Connections & Messages</li>
-                <li>Unlimited Connections per Channel</li>
+                <li>Usage based pricing</li>
+                <li>Unlimited Concurrent Connections</li>
+                <li>Unlimited Throughoutput</li>
                 <li>CNAME, SSO, & more...</li>
-                <li>99.999% uptime SLAs</li>
                 <li>24/7 Support</li>
               </ul>
+
+              <p>Custom</p>
             </CardContent>
             <CardFooter className="mt-auto">
               <Button variant="secondary" asChild>
