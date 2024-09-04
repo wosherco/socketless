@@ -23,6 +23,7 @@ import { createRedisClient } from "@socketless/redis/client";
 import { RedisMessageSchema } from "@socketless/redis/schemas";
 import { EWebhookActions, SimpleWebhookSchema } from "@socketless/shared";
 
+import { LogsManager } from "./logs";
 import { UsageManager } from "./usage";
 import { sendWebhook } from "./webhook";
 
@@ -85,6 +86,7 @@ app.get(
   upgradeWebSocket((c) => {
     const redisSubscriber = createRedisClient();
     const redis = createRedisClient();
+    const logger = new LogsManager(db, redis);
     const wscontext = c as Context<WebsocketContext>;
 
     const {
@@ -170,6 +172,7 @@ app.get(
 
     return {
       onOpen(evt, ws) {
+        void logger.logConnection();
         // TODO: Handle errors
         void redisSubscriber.subscribe(mainChannel);
 
@@ -245,6 +248,9 @@ app.get(
         console.log("Connection opened");
       },
       onMessage(event) {
+        console.log(`Message from client: ${event.data}`);
+        void logger.logIncomingMessage();
+
         void launchWebhooks({
           action: EWebhookActions.MESSAGE,
           data: {
@@ -255,10 +261,9 @@ app.get(
             message: event.data,
           },
         });
-
-        console.log(`Message from client: ${event.data}`);
       },
       onClose: () => {
+        void logger.logDisconnection();
         void redisSubscriber.unsubscribe(mainChannel);
 
         for (const feed of feeds) {
