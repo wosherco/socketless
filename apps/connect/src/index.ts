@@ -12,7 +12,6 @@ import type {
 import { processFeedActions, processMessages } from "@socketless/api/logic";
 import {
   InvalidTokenPayloadContents,
-  TokenPayloadSchema,
   verifyToken,
 } from "@socketless/connection-tokens";
 import { eq } from "@socketless/db";
@@ -80,7 +79,7 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
       return next();
     } catch (e) {
       if (e instanceof InvalidTokenPayloadContents) {
-        console.log(e.errors.errors);
+        console.log(e.originalContent, e.errors.errors);
       }
       return c.text("Unauthorized", 401);
     }

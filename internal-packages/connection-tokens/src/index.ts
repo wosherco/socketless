@@ -26,11 +26,13 @@ export async function createToken(payload: TokenPayload) {
 }
 
 export class InvalidTokenPayloadContents extends Error {
+  public originalContent: unknown;
   public errors: z.ZodError;
 
-  constructor(errors: z.ZodError) {
+  constructor(originalContent: unknown, errors: z.ZodError) {
     super("Invalid token payload contents");
     this.name = "InvalidTokenPayloadContents";
+    this.originalContent = originalContent;
     this.errors = errors;
   }
 }
@@ -41,7 +43,7 @@ export async function verifyToken(token: string) {
   const parsedPayload = await TokenPayloadSchema.safeParseAsync(payload);
 
   if (!parsedPayload.success) {
-    throw new InvalidTokenPayloadContents(parsedPayload.error);
+    throw new InvalidTokenPayloadContents(payload, parsedPayload.error);
   }
 
   return payload;
