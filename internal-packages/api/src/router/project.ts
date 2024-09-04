@@ -5,11 +5,7 @@ import { and, count, eq, not } from "@socketless/db";
 import { projectTable } from "@socketless/db/schema";
 import { CreateProjectSchema } from "@socketless/validators/forms";
 
-import {
-  createProject,
-  getProjects,
-  resetClientSecret,
-} from "../logic/project";
+import { createProject, getProjects } from "../logic/project";
 import { projectProcedure, protectedProcedure } from "../trpc";
 
 export const projectRouter = {
@@ -25,12 +21,6 @@ export const projectRouter = {
       plan: ctx.project.stripePlan,
       customerId: ctx.project.stripeCustomerId,
     };
-  }),
-
-  resetClientSecret: projectProcedure.mutation(async ({ ctx }) => {
-    const newSecret = await resetClientSecret(ctx.db, ctx.project.id);
-
-    return newSecret;
   }),
 
   createProject: protectedProcedure

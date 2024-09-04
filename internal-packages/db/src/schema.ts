@@ -55,7 +55,6 @@ export const projectTable = pgTable(
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     clientId: text("client_id").notNull().unique(),
-    clientSecret: text("client_secret").notNull().unique(),
     stripeCustomerId: text("stripe_customer_id").notNull().unique(),
     stripePlan: text("stripe_plan", { enum: ["FREE", "PAID", "CUSTOM"] })
       .notNull()

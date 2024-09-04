@@ -58,7 +58,6 @@ export async function createProject(
       .values({
         name: projectName,
         clientId: clientId,
-        clientSecret: generateClientSecret(),
         stripeCustomerId: stripeCustomer.id,
         ownerId: creatorId,
       })
@@ -76,17 +75,4 @@ export async function createProject(
 
     throw e;
   }
-}
-
-export async function resetClientSecret(db: DBType, projectId: number) {
-  const newSecret = generateClientSecret();
-
-  await db
-    .update(projectTable)
-    .set({
-      clientSecret: newSecret,
-    })
-    .where(and(eq(projectTable.id, projectId), not(projectTable.deleted)));
-
-  return newSecret;
 }
