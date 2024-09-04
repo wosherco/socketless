@@ -88,7 +88,13 @@ class SocketlessServer<TMessage = string> {
     this.url = this.options.url ?? `${process.env.VERCEL_URL}/api/socketless`;
   }
 
-  public async POST(req: Request): Promise<Response> {
+  public generateRoutes() {
+    return {
+      POST: this.POST.bind(this),
+    };
+  }
+
+  private async POST(req: Request): Promise<Response> {
     const webhookPayload = await constructWebhookPayload(
       req,
       this.options.token,

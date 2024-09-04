@@ -20,6 +20,9 @@ export const env = createEnv({
     POSTGRES_URL: z.string().url(),
     STRIPE_PUBLIC_KEY: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
+    SOCKETLESS_CLIENT_ID: z.string().min(1),
+    SOCKETLESS_TOKEN: z.string().min(1),
+    SOCKETLESS_URL: z.string().min(1),
   },
 
   /**

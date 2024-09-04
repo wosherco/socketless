@@ -14,9 +14,14 @@ import {
 
 import ContactForm from "~/components/home/ContactForm";
 // import Faq from "~/components/home/Faq";
-import Features from "~/components/home/Features";
 import CodeDemo from "~/components/home/CodeDemo";
 import DemoExamples from "~/components/home/DemoExamples";
+import Chat from "~/components/home/LandingChat";
+import { socketless } from "~/server/socketless";
+import { generate } from "random-words";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
+import { CookiesProvider } from "next-client-cookies/server";
 
 function Cross({ className }: { className: string }) {
   return (
@@ -31,6 +36,30 @@ function Cross({ className }: { className: string }) {
       <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
     </svg>
   );
+}
+
+async function LandingChat() {
+  let name = cookies().get("socketless_name")?.value;
+  let url = cookies().get("socketless_url")?.value;
+
+  if (!name || !url) {
+    name = generate({
+      exactly: 3, join: "", formatter: (word, index) => {
+        return index === 0
+          ? word.slice(0, 1).toUpperCase().concat(word.slice(1))
+          : word;
+      },
+    })
+
+    const response = await socketless.getConnection(name, ["landing"]);
+    url = response.url;
+  }
+
+  if (url == null) {
+    return <div>Couldn't connect to the server</div>;
+  }
+
+  return <Chat websocketUrl={url} name={name} />
 }
 
 export default function HomePage() {
@@ -62,12 +91,17 @@ export default function HomePage() {
           </div>
         </div>
         <div>
-          <Image
+          {/* <Image
             src="hero.svg"
             width={1080}
             height={1080}
             alt="Simple steps: create project, create connection, connect through wscat"
-          />
+          /> */}
+          <CookiesProvider>
+            <Suspense fallback={<p>Loading...</p>}>
+              <LandingChat />
+            </Suspense>
+          </CookiesProvider>
         </div>
       </section>
 
