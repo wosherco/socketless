@@ -1,5 +1,16 @@
 # socketless.ws
 
+## 1.2.0
+
+### Minor Changes
+
+- Renamed rooms to feeds
+
+### Patch Changes
+
+- Updated dependencies
+  - @socketless/shared@1.1.0
+
 ## 1.1.2
 
 ### Patch Changes
