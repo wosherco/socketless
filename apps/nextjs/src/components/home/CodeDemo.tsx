@@ -9,12 +9,7 @@ const serverCode = `import { createSocketless } from "socketless.ws/server";
 
 export const socketless = createSocketless({
   onMessage: (context, identifier, message) => 
-    context.send(
-    \`\${identifier}: "\${message}"\`, 
-    { 
-      rooms: ["demo"] 
-    }
-  ),
+    context.send(\`\${identifier}: \${message}\`),
 })`
 
 const clientCode = `import { socketless } from "@/server/socketless";
