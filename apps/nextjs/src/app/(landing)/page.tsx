@@ -110,18 +110,22 @@ export default function HomePage() {
         <h3 className="w-full px-4 text-center text-4xl font-bold">
           Create realtime apps without a server
         </h3>
-        <h4 className="mx-auto max-w-[700px] p-4 px-4 text-center text-lg">
+        <h4 className="mx-auto max-w-[700px] pt-4 px-4 text-center text-lg">
           Define what you need, and we'll handle the rest. You just build your app.
         </h4>
+
+        <DemoExamples />
 
         <div className="max-w-screen-xl mx-auto py-8">
           <CodeDemo />
         </div>
 
         <div className="text-center">
-          <p className="text-lg font-medium pt-8">Check our examples:</p>
+          <p className="text-lg font-medium pt-8">Works everywhere</p>
 
-          <DemoExamples />
+          <div className="flex items-center justify-center pt-4">
+            Cloud providers...
+          </div>
         </div>
       </section>
 
@@ -140,7 +144,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-screen-xl px-4 py-8">
+      <section id="pricing" className="mx-auto max-w-screen-xl px-4 pt-16 pb-8">
         <h3 className="w-full pt-4 text-center text-4xl font-bold">
           We keep princing simple.
         </h3>
