@@ -109,12 +109,15 @@ app.get(
     const feeds: string[] = [...initialFeeds];
 
     const launchWebhooks = async (payload: WebhookPayloadType) => {
+      const promises = [];
       // Sending to webhook passed through token
       if (internalWebhook) {
-        void sendWebhook(internalWebhook, payload)
+        const promise = sendWebhook(internalWebhook, payload)
           .then(processWebhookResponse)
           // TODO: Handle errors
           .catch((e) => console.log(e));
+
+        promises.push(promise);
       }
 
       // Sending to project webhooks
@@ -158,17 +161,23 @@ app.get(
 
       // Actually sending the webhooks
       webhooks.forEach((webhook) => {
-        void sendWebhook(webhook, payload)
+        const promise = sendWebhook(webhook, payload)
           .then(processWebhookResponse)
           // TODO: Handle errors
           .catch((e) => console.log(e));
+
+        promises.push(promise);
       });
+
+      await Promise.all(promises);
     };
 
     const processWebhookResponse = (
       response: z.infer<typeof WebhookResponseSchema>,
     ) => {
       if (!response) return;
+
+      const promises = [];
 
       // eslint-disable-next-line prefer-const
       let { messages, feeds: feedActions } = response;
@@ -178,7 +187,13 @@ app.get(
           messages = [messages];
         }
 
-        void processMessages(redis, projectId, messages);
+        const processMessagesPromise = processMessages(
+          redis,
+          projectId,
+          messages,
+        );
+        promises.push(processMessagesPromise);
+
         messages.forEach((message) => {
           void logger.logIncomingMessage(
             projectId,
@@ -201,8 +216,17 @@ app.get(
 
       if (feedActions) {
         // TODO: Log feed actions
-        void processFeedActions(db, redis, projectId, feedActions);
+        const processFeedActionsPromise = processFeedActions(
+          db,
+          redis,
+          projectId,
+          feedActions,
+        );
+
+        promises.push(processFeedActionsPromise);
       }
+
+      return Promise.all(promises);
     };
 
     return {
