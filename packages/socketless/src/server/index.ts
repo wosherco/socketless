@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import { z } from "zod";
 
 import type {
   ApiPostConnectRequestSchema,
@@ -85,8 +85,29 @@ class SocketlessServer<TMessage = string> {
   constructor(options: SocketlessServerOptions<TMessage>) {
     this.options = options;
 
-    this.url =
-      this.options.url ?? `https://${process.env.VERCEL_URL}/api/socketless`;
+    if (this.options.url === undefined) {
+      if (process.env.VERCEL_URL === undefined) {
+        throw new Error(
+          "You must specify the url in the options or use the VERCEL_URL environment variable",
+        );
+      }
+      this.url = `https://${process.env.VERCEL_URL}/api/socketless`;
+    } else {
+      this.url = this.options.url;
+    }
+
+    // Checking if url is valid
+    const parsedURL = z.string().url().safeParse(this.url);
+
+    if (!parsedURL.success) {
+      throw new Error("Invalid URL");
+    }
+
+    if (this.url.includes("localhost")) {
+      console.warn(
+        "You are using a localhost URL. Currently Socketless does not support localhost URLs, so you won't be able to receive messages from the server. More info on https://docs.socketless.ws/local-development",
+      );
+    }
   }
 
   public generateRoutes() {
