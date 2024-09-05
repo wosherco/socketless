@@ -334,6 +334,9 @@ export default function HomePage() {
       {/* Ready to start */}
       <section id="start" className="mx-auto max-w-screen-xl p-4">
         <h3 className="py-4 text-center text-4xl font-bold">Ready to start?</h3>
+        <div className="mx-auto w-fit py-4">
+          <Button asChild className="scale-125 text-lg text-center"><Link href="/dashboard">Register today</Link></Button>
+        </div>
 
         <div className="my-8 flex flex-col gap-8 md:grid md:grid-cols-2">
           <div>
