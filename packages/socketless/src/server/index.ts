@@ -18,14 +18,14 @@ import { constructWebhookPayload } from "../webhook";
 
 const BASE_URL = "https://socketless.ws/api/v0";
 
-interface BuildSend {
-  toFeed: (feed: string) => void;
-  toFeeds: (feeds: string[]) => void;
-  toClient: (identifier: string) => void;
-  toClients: (identifiers: string[]) => void;
+interface BuildSend<TMessage = string> {
+  toFeed: (feed: string) => SenderContext<TMessage>;
+  toFeeds: (feeds: string[]) => SenderContext<TMessage>;
+  toClient: (identifier: string) => SenderContext<TMessage>;
+  toClients: (identifiers: string[]) => SenderContext<TMessage>;
 }
 
-class SenderContext<TMessage = string> implements BuildSend {
+class SenderContext<TMessage = string> implements BuildSend<TMessage> {
   private feeds: string[] = [];
   private clients: string[] = [];
   private messages: z.infer<typeof WebhookMessageResponseSchema>[];
@@ -67,7 +67,7 @@ class SenderContext<TMessage = string> implements BuildSend {
   }
 }
 
-type SocketlessContext<TMessage = string> = BuildSend & {
+type SocketlessContext<TMessage = string> = BuildSend<TMessage> & {
   // TODO: Finish types
   send: (
     message: TMessage,
@@ -108,8 +108,6 @@ function createContext<TMessage>(
   const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
   const feedsToManage: z.infer<typeof WebhookFeedsManageResponseSchema>[] = [];
 
-  const sendContext = new SenderContext<TMessage>(messagesToSend);
-
   const formatClients = (clients: string | string[] | undefined) => {
     if (clients === undefined) {
       return identifier;
@@ -140,19 +138,35 @@ function createContext<TMessage>(
     /**
      * Builder to send messages to clients or feeds
      */
-    toClient: sendContext.toClient.bind(sendContext),
+    toClient(identifier) {
+      const sendContext = new SenderContext<TMessage>(messagesToSend);
+
+      return sendContext.toClient(identifier);
+    },
     /**
      * Builder to send messages to clients or feeds
      */
-    toClients: sendContext.toClients.bind(sendContext),
+    toClients(identifier: string[]) {
+      const sendContext = new SenderContext<TMessage>(messagesToSend);
+
+      return sendContext.toClients(identifier);
+    },
     /**
      * Builder to send messages to clients or feeds
      */
-    toFeed: sendContext.toFeed.bind(sendContext),
+    toFeed(feed: string) {
+      const sendContext = new SenderContext<TMessage>(messagesToSend);
+
+      return sendContext.toFeed(feed);
+    },
     /**
      * Builder to send messages to clients or feeds
      */
-    toFeeds: sendContext.toFeeds.bind(sendContext),
+    toFeeds(feeds: string[]) {
+      const sendContext = new SenderContext<TMessage>(messagesToSend);
+
+      return sendContext.toFeeds(feeds);
+    },
 
     // Methods to manage feeds
     joinFeed(feed, clients) {

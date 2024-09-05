@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.3.1
+
+### Patch Changes
+
+- Fixed socketio-like methods
+
 ## 1.3.0
 
 ### Minor Changes
