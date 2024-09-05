@@ -2,8 +2,10 @@ import { z } from "zod";
 
 import type {
   ApiPostConnectRequestSchema,
+  ApiPostFeedsRequestSchema,
   ApiPostMessageRequestSchema,
   WebhookFeedsManageResponseSchema,
+  WebhookFeedsManageResponseType,
   WebhookMessageResponseSchema,
   WebhookResponseSchema,
 } from "@socketless/shared";
@@ -243,6 +245,25 @@ class SocketlessServer<TMessage = string> {
           feeds: receivers.feeds,
         },
       } satisfies z.infer<typeof ApiPostMessageRequestSchema>),
+    });
+
+    if (!req.ok) {
+      throw new Error(`Failed to send message ${req.status} ${req.statusText}`);
+    }
+  }
+
+  public async manageFeeds(
+    actions: WebhookFeedsManageResponseType | WebhookFeedsManageResponseType[],
+  ) {
+    const req = await fetch(`${BASE_URL}/feeds`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.options.token}`,
+      },
+      body: JSON.stringify({
+        actions,
+      } satisfies z.infer<typeof ApiPostFeedsRequestSchema>),
     });
 
     if (!req.ok) {
