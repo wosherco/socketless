@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.3.0
+
+### Minor Changes
+
+- Added new methods to handle messages
+
 ## 1.2.0
 
 ### Minor Changes
