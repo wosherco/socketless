@@ -18,20 +18,63 @@ import { constructWebhookPayload } from "../webhook";
 
 const BASE_URL = "https://socketless.ws/api/v0";
 
-interface SocketlessContext<TMessage = string> {
+interface BuildSend {
+  toFeed: (feed: string) => void;
+  toFeeds: (feeds: string[]) => void;
+  toClient: (identifier: string) => void;
+  toClients: (identifiers: string[]) => void;
+}
+
+class SenderContext<TMessage = string> implements BuildSend {
+  private feeds: string[] = [];
+  private clients: string[] = [];
+  private messages: z.infer<typeof WebhookMessageResponseSchema>[];
+
+  constructor(messages: z.infer<typeof WebhookMessageResponseSchema>[]) {
+    this.messages = messages;
+  }
+
+  toFeed(feed: string) {
+    this.feeds.push(feed);
+  }
+
+  toFeeds(feeds: string[]) {
+    this.feeds.push(...feeds);
+  }
+
+  toClient(identifier: string) {
+    this.clients.push(identifier);
+  }
+
+  toClients(identifiers: string[]) {
+    this.clients.push(...identifiers);
+  }
+
+  send(message: TMessage) {
+    this.messages.push({
+      message,
+      clients: this.clients,
+      feeds: this.feeds,
+    });
+  }
+}
+
+type SocketlessContext<TMessage = string> = BuildSend & {
   // TODO: Finish types
   send: (
     message: TMessage,
     receivers: { identifiers?: string | string[]; feeds?: string | string[] },
   ) => void;
   buildResponse: () => z.infer<typeof WebhookResponseSchema>;
-}
+};
 
 function createContext<TMessage>(
   server: SocketlessServer<TMessage>,
 ): SocketlessContext<TMessage> {
   const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
   const feedsToManage: z.infer<typeof WebhookFeedsManageResponseSchema>[] = [];
+
+  const sendContext = new SenderContext<TMessage>(messagesToSend);
 
   return {
     send(message, receivers) {
@@ -45,6 +88,10 @@ function createContext<TMessage>(
       messages: messagesToSend,
       feeds: feedsToManage,
     }),
+    toClient: sendContext.toClient.bind(sendContext),
+    toClients: sendContext.toClients.bind(sendContext),
+    toFeed: sendContext.toFeed.bind(sendContext),
+    toFeeds: sendContext.toFeeds.bind(sendContext),
   };
 }
 
