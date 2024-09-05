@@ -123,110 +123,11 @@ export default function HomePage() {
         <div className="text-center">
           <p className="text-lg font-medium pt-8">Works everywhere</p>
 
-          <div className="flex items-center justify-center pt-4">
-            Cloud providers...
+          <div className="flex items-center justify-center pt-4 pb-16 gap-8">
+            <Image src="/logos/vercel.svg" width={800} height={200} alt="Vercel" draggable={false} className="h-8 w-fit" />
+            <Image src="/logos/netlify.svg" width={800} height={200} alt="Vercel" draggable={false} className="h-10 w-fit" />
+            <Image src="/logos/cfworkers.svg" width={800} height={200} alt="Vercel" draggable={false} className="h-8 w-fit" />
           </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      {/* <section id="features" className="pt-16">
-        <h3 className="w-full px-4 text-center text-4xl font-bold">
-          Create realtime apps without a server
-        </h3>
-        <h4 className="mx-auto max-w-[700px] p-4 px-4 text-center text-lg">
-          Create, manage and broadcast to Websockets without having to worry.
-          You build your app, we handle your connections and messages. Combine
-          our features to make your product successful:
-        </h4>
-
-        <Features />
-      </section> */}
-
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-screen-xl px-4 pt-16 pb-8">
-        <h3 className="w-full pt-4 text-center text-4xl font-bold">
-          We keep princing simple.
-        </h3>
-        <h4 className="mx-auto max-w-screen-lg py-8 text-lg">
-          Don't worry about hidden fees or complex pricing models. Just pay for what you use.
-        </h4>
-        <div className="flex flex-wrap justify-around gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Free Plan</CardTitle>
-              <CardDescription>
-                Try us for free, no strings attached.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Included in this plan:</p>
-              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>100 Concurrent Connections</li>
-                <li>1M Incoming Messages</li>
-                <li>1M Outgoing Messages</li>
-                <li><b>Unlimited</b> Feeds</li>
-                <li>No credit card required</li>
-              </ul>
-
-              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$0</span>/month</p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" asChild>
-                <Link href="/dashboard">Create a project</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-          <Card className="border-primary">
-            <CardHeader>
-              <CardTitle>Launch Plan</CardTitle>
-              <CardDescription>
-                You decide your limits, we scale for you.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Included in this plan:</p>
-              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>10k Concurrent Connections</li>
-                <li>10M Incoming Messages</li>
-                <li>10M Outgoing Messages</li>
-                <li><b>Unlimited</b> Feeds</li>
-                <li>Check logs</li>
-              </ul>
-
-              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$20</span>/month</p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild>
-                <Link href="/#start">Request a Demo</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-          <Card className="border-primary-foreground bg-primary text-white">
-            <CardHeader>
-              <CardTitle>Enterprise</CardTitle>
-              <CardDescription>
-                Benefit your business from exclusive features.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Included in this plan:</p>
-              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
-                <li>Usage based pricing</li>
-                <li>Unlimited Concurrent Connections</li>
-                <li>Unlimited Throughoutput</li>
-                <li>CNAME, SSO, & more...</li>
-                <li>24/7 Support</li>
-              </ul>
-
-              <p className="pt-4 text-2xl">Custom</p>
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Button variant="secondary" asChild>
-                <Link href="/#start">Contact with Sales</Link>
-              </Button>
-            </CardFooter>
-          </Card>
         </div>
       </section>
 
@@ -327,6 +228,107 @@ export default function HomePage() {
             </Card>
           </li>
         </ul>
+      </section>
+
+      {/* Features */}
+      {/* <section id="features" className="pt-16">
+        <h3 className="w-full px-4 text-center text-4xl font-bold">
+          Create realtime apps without a server
+        </h3>
+        <h4 className="mx-auto max-w-[700px] p-4 px-4 text-center text-lg">
+          Create, manage and broadcast to Websockets without having to worry.
+          You build your app, we handle your connections and messages. Combine
+          our features to make your product successful:
+        </h4>
+
+        <Features />
+      </section> */}
+
+      {/* Pricing */}
+      <section id="pricing" className="mx-auto max-w-screen-xl px-4 pt-16 pb-8">
+        <h3 className="w-full pt-4 text-center text-4xl font-bold">
+          We keep princing simple.
+        </h3>
+        <h4 className="mx-auto max-w-screen-lg py-8 text-lg text-center">
+          Don't worry about hidden fees or complex pricing models. Just pay for what you use.
+        </h4>
+        <div className="flex flex-wrap justify-around gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Free Plan</CardTitle>
+              <CardDescription>
+                Try us for free, no strings attached.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Included in this plan:</p>
+              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
+                <li>100 Concurrent Connections</li>
+                <li>1M Incoming Messages</li>
+                <li>1M Outgoing Messages</li>
+                <li><b>Unlimited</b> Feeds</li>
+                <li>No credit card required</li>
+              </ul>
+
+              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$0</span>/month</p>
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline" asChild>
+                <Link href="/dashboard">Create a project</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+          <Card className="border-primary">
+            <CardHeader>
+              <CardTitle>Launch Plan</CardTitle>
+              <CardDescription>
+                You decide your limits, we scale for you.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Included in this plan:</p>
+              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
+                <li>10k Concurrent Connections</li>
+                <li>10M Incoming Messages</li>
+                <li>10M Outgoing Messages</li>
+                <li><b>Unlimited</b> Feeds</li>
+                <li>Check logs</li>
+              </ul>
+
+              <p className="pt-4 text-xl"><span className="font-bold text-2xl">$20</span>/month</p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild>
+                <Link href="/#start">Request a Demo</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+          <Card className="border-primary-foreground bg-primary text-white">
+            <CardHeader>
+              <CardTitle>Enterprise</CardTitle>
+              <CardDescription>
+                Benefit your business from exclusive features.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Included in this plan:</p>
+              <ul className="flex list-disc flex-col gap-2 px-4 pt-2">
+                <li>Usage based pricing</li>
+                <li>Unlimited Concurrent Connections</li>
+                <li>Unlimited Throughoutput</li>
+                <li>CNAME, SSO, & more...</li>
+                <li>24/7 Support</li>
+              </ul>
+
+              <p className="pt-4 text-2xl">Custom</p>
+            </CardContent>
+            <CardFooter className="mt-auto">
+              <Button variant="secondary" asChild>
+                <Link href="/#start">Contact with Sales</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       </section>
 
       {/* Ready to start */}

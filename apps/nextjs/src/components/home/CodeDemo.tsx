@@ -18,8 +18,6 @@ const url = await socketless.getConnection(name, ["demo"]);
 const ws = new WebSocket(url);`
 
 export default function Features() {
-
-
   return (
     <div className={cn(Monaco.className, "gap-4 flex flex-col px-4 lg:grid grid-rows-1 grid-cols-2")}>
       <div className="bg-[#32343e] rounded-lg overflow-hidden h-fit">
