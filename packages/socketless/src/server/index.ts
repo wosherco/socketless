@@ -36,21 +36,29 @@ class SenderContext<TMessage = string> implements BuildSend {
 
   toFeed(feed: string) {
     this.feeds.push(feed);
+
+    return this;
   }
 
   toFeeds(feeds: string[]) {
     this.feeds.push(...feeds);
+
+    return this;
   }
 
   toClient(identifier: string) {
     this.clients.push(identifier);
+
+    return this;
   }
 
   toClients(identifiers: string[]) {
     this.clients.push(...identifiers);
+
+    return this;
   }
 
-  send(message: TMessage) {
+  send(message: TMessage): void {
     this.messages.push({
       message,
       clients: this.clients,
@@ -66,15 +74,53 @@ type SocketlessContext<TMessage = string> = BuildSend & {
     receivers: { identifiers?: string | string[]; feeds?: string | string[] },
   ) => void;
   buildResponse: () => z.infer<typeof WebhookResponseSchema>;
+  /**
+   * @param feed Feed to join
+   * @param clients Clients to join the feed. If undefined, the current client will be joined.
+   */
+  joinFeed: (feed: string, clients?: string | string[]) => void;
+  /**
+   * @param feeds Feeds to join
+   * @param clients Clients to join the feeds. If undefined, the current client will be joined.
+   */
+  joinFeeds: (feeds: string[], clients?: string | string[]) => void;
+  /**
+   * @param feed Feed to leave
+   * @param clients Clients to leave the feed. If undefined, the current client will be left.
+   */
+  leaveFeed: (feed: string, clients?: string | string[]) => void;
+  /**
+   * @param feeds Feeds to leave
+   * @param clients Clients to leave the feeds. If undefined, the current client will be left.
+   */
+  leaveFeeds: (feeds: string[], clients?: string | string[]) => void;
 };
+
+type PublicSocketlessContext<TMessage = string> = Omit<
+  SocketlessContext<TMessage>,
+  "buildResponse"
+>;
 
 function createContext<TMessage>(
   server: SocketlessServer<TMessage>,
+  identifier: string,
 ): SocketlessContext<TMessage> {
   const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
   const feedsToManage: z.infer<typeof WebhookFeedsManageResponseSchema>[] = [];
 
   const sendContext = new SenderContext<TMessage>(messagesToSend);
+
+  const formatClients = (clients: string | string[] | undefined) => {
+    if (clients === undefined) {
+      return identifier;
+    }
+
+    if (Array.isArray(clients)) {
+      return clients;
+    }
+
+    return [clients];
+  };
 
   return {
     send(message, receivers) {
@@ -84,31 +130,79 @@ function createContext<TMessage>(
         feeds: receivers.feeds,
       });
     },
+
     buildResponse: () => ({
       messages: messagesToSend,
       feeds: feedsToManage,
     }),
+
+    // Socket.io like methods
+    /**
+     * Builder to send messages to clients or feeds
+     */
     toClient: sendContext.toClient.bind(sendContext),
+    /**
+     * Builder to send messages to clients or feeds
+     */
     toClients: sendContext.toClients.bind(sendContext),
+    /**
+     * Builder to send messages to clients or feeds
+     */
     toFeed: sendContext.toFeed.bind(sendContext),
+    /**
+     * Builder to send messages to clients or feeds
+     */
     toFeeds: sendContext.toFeeds.bind(sendContext),
+
+    // Methods to manage feeds
+    joinFeed(feed, clients) {
+      feedsToManage.push({
+        feeds: [feed],
+        action: "join",
+        clients: formatClients(clients),
+      });
+    },
+
+    joinFeeds(feeds, clients) {
+      feedsToManage.push({
+        feeds,
+        action: "join",
+        clients: formatClients(clients),
+      });
+    },
+
+    leaveFeed(feed, clients) {
+      feedsToManage.push({
+        feeds: [feed],
+        action: "leave",
+        clients: formatClients(clients),
+      });
+    },
+
+    leaveFeeds(feeds, clients) {
+      feedsToManage.push({
+        feeds,
+        action: "leave",
+        clients: formatClients(clients),
+      });
+    },
   };
 }
 
 type MaybePromise<T> = T | Promise<T>;
 
 type OnConnectFunc<TMessage> = (
-  context: SocketlessContext<TMessage>,
+  context: PublicSocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
 type OnDisconnectFunc<TMessage> = (
-  context: SocketlessContext<TMessage>,
+  context: PublicSocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
 type OnMessageFunc<TMessage> = (
-  context: SocketlessContext<TMessage>,
+  context: PublicSocketlessContext<TMessage>,
   identifier: string,
   message: TMessage,
 ) => MaybePromise<void>;
@@ -171,7 +265,10 @@ class SocketlessServer<TMessage = string> {
       this.options.token,
     );
 
-    const context = createContext<TMessage>(this);
+    const context = createContext<TMessage>(
+      this,
+      webhookPayload.data.connection.identifier,
+    );
 
     switch (webhookPayload.action) {
       case EWebhookActions.CONNECTION_OPEN:
