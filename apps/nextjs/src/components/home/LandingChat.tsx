@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 function MessagesHistory({ messages }: { messages: string[] }) {
-  return <div>
+  return <div className="max-h-[200px] lg:max-h-[300px] overflow-auto">
     {messages.map((message) => <p>{message}</p>)}
   </div>
 }
