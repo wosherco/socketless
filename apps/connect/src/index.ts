@@ -248,6 +248,9 @@ app.get(
 
           // Initializing message listener
           redisSubscriber.on("message", (channel, message) => {
+            // If connection is closing, don't process messages
+            if (closing) return;
+
             const messagePayload = JSON.parse(message) as unknown;
 
             // TODO: Handle errors
