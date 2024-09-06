@@ -17,6 +17,9 @@ importers:
       '@turbo/gen':
         specifier: 2.1.1
         version: 2.1.1(@swc/core@1.7.23(@swc/helpers@0.5.13))(@types/node@20.14.15)(typescript@5.5.4)
+      bun:
+        specifier: ^1.1.26
+        version: 1.1.26
       bunchee:
         specifier: ^5.4.0
         version: 5.4.0(typescript@5.5.4)
@@ -2712,6 +2715,46 @@ packages:
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
 
+  '@oven/bun-darwin-aarch64@1.1.26':
+    resolution: {integrity: sha512-E8/3i0RIvsIWS+kyeIlbwBh+4qB5DsQIfcO6xr4p3t7tEzvRWnrFkJrbJthru/eB1UsVV9PJ/hsxTrp3m3za4A==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@oven/bun-darwin-x64-baseline@1.1.26':
+    resolution: {integrity: sha512-36HQlQfbrwP//xOS5VFN9AR/iH6BDQo3y8j5282DmRO+h6jylwlg+2+Sfz+1uXDOLDQWCbnNv3Mpl8+Ltso6cQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oven/bun-darwin-x64@1.1.26':
+    resolution: {integrity: sha512-ENRAAGBr2zh0VfETZXqcNPO3ZnnKDX3U6E/oWY+J70uWa9dJqRlRaj1oLB63AGoYJBNdhEcsSmTAk7toCJ+PGQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oven/bun-linux-aarch64@1.1.26':
+    resolution: {integrity: sha512-MqE/ClaEMW6B5i5UIYJnHbadWLt6QQQHV3NBlXd78Mhx1OiZY0YmARQmAItPUp9mxIEgGuA2QyrKvgGD3pzWPQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@oven/bun-linux-x64-baseline@1.1.26':
+    resolution: {integrity: sha512-jQeSLodwfQu5pG529jYG73VSFq26hdrTspxo9E/1B1WvwKrs2Vtz3w32zv+JWH+gvZqc28A/yK6pAmzQMiscNg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-linux-x64@1.1.26':
+    resolution: {integrity: sha512-sD/ZegJpnBg93qsKsiGnJgTROc68CWONwZpvtL65cBROLBqKb965ofhPUaM5oV8HckfaTDmT37cks59hG+tHvw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-windows-x64-baseline@1.1.26':
+    resolution: {integrity: sha512-qb593xu9WIKBCHd47z7ZaZTC9h8r4T6qDbBV/XGLhxdZEJb24ePWdhW8WoHxa9hsATio9SByozqwblXb2tJncw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@oven/bun-windows-x64@1.1.26':
+    resolution: {integrity: sha512-EkyW6JYnZPFxD9XsdEDqFxVCnWnAoyacUAiOEUYAiz8LsnbHLMlOfbdw7KYzvm7UPFoEkUZKD78eSdpg6q6c+Q==}
+    cpu: [x64]
+    os: [win32]
+
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
 
@@ -4516,6 +4559,12 @@ packages:
 
   bun-types@1.1.26:
     resolution: {integrity: sha512-n7jDe62LsB2+WE8Q8/mT3azkPaatKlj/2MyP6hi3mKvPz9oPpB6JW/Ll6JHtNLudasFFuvfgklYSE+rreGvBjw==}
+
+  bun@1.1.26:
+    resolution: {integrity: sha512-dWSewAqE7sVbYmflJxgG47dW4vmsbar7VAnQ4ao45y3ulr3n7CwdsMLFnzd28jhPRtF+rsaVK2y4OLIkP3OD4A==}
+    cpu: [arm64, x64]
+    os: [darwin, linux, win32]
+    hasBin: true
 
   bunchee@5.4.0:
     resolution: {integrity: sha512-7R1Y5l5js3a+l7dlOVClQ54JnNSUmsU661dLiQyyfxEfM1BnlfmaLSdVkfNXaU+zmgkTK7F3/XEl97YSBpVjhQ==}
@@ -12368,6 +12417,30 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.26.0(@opentelemetry/api@1.9.0)
 
+  '@oven/bun-darwin-aarch64@1.1.26':
+    optional: true
+
+  '@oven/bun-darwin-x64-baseline@1.1.26':
+    optional: true
+
+  '@oven/bun-darwin-x64@1.1.26':
+    optional: true
+
+  '@oven/bun-linux-aarch64@1.1.26':
+    optional: true
+
+  '@oven/bun-linux-x64-baseline@1.1.26':
+    optional: true
+
+  '@oven/bun-linux-x64@1.1.26':
+    optional: true
+
+  '@oven/bun-windows-x64-baseline@1.1.26':
+    optional: true
+
+  '@oven/bun-windows-x64@1.1.26':
+    optional: true
+
   '@panva/hkdf@1.2.1': {}
 
   '@pkgjs/parseargs@0.11.0':
@@ -14522,6 +14595,17 @@ snapshots:
     dependencies:
       '@types/node': 20.12.14
       '@types/ws': 8.5.12
+
+  bun@1.1.26:
+    optionalDependencies:
+      '@oven/bun-darwin-aarch64': 1.1.26
+      '@oven/bun-darwin-x64': 1.1.26
+      '@oven/bun-darwin-x64-baseline': 1.1.26
+      '@oven/bun-linux-aarch64': 1.1.26
+      '@oven/bun-linux-x64': 1.1.26
+      '@oven/bun-linux-x64-baseline': 1.1.26
+      '@oven/bun-windows-x64': 1.1.26
+      '@oven/bun-windows-x64-baseline': 1.1.26
 
   bunchee@5.4.0(typescript@5.5.4):
     dependencies:
