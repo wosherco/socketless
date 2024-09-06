@@ -2,6 +2,8 @@ import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import { logsTable } from "@socketless/db/schema";
 
+import { posthog } from "./posthog";
+
 export class LogsManager {
   private db: DBType;
   private redis: RedisType;
@@ -16,6 +18,13 @@ export class LogsManager {
     action: "INCOMING" | "OUTGOING" | "CONNECTION" | "DISCONNECT",
     data: unknown,
   ) {
+    posthog.capture({
+      distinctId: `project_${projectId}`,
+      event: `CONNECT_ACTIONLOG_${action}`,
+      // @ts-expect-error - This is a valid event
+      properties: data,
+    });
+
     await this.db.insert(logsTable).values({
       action,
       projectId,
