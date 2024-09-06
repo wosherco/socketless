@@ -2,7 +2,7 @@ import type { DBType } from "@socketless/db/client";
 import type { RedisType } from "@socketless/redis/client";
 import { logsTable } from "@socketless/db/schema";
 
-import { posthog } from "./posthog";
+import { posthog } from "../external/posthog";
 
 export class LogsManager {
   private db: DBType;
