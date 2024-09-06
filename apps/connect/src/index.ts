@@ -30,6 +30,8 @@ import { LogsManager } from "./logs";
 import { UsageManager } from "./usage";
 import { sendWebhook } from "./webhook";
 
+import "./instrument";
+
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
 const app = new Hono();

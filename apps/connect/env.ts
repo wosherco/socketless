@@ -18,6 +18,7 @@ export const env = createEnv({
   server: {
     POSTGRES_URL: z.string().url(),
     REDIS_URL: z.string().url(),
+    CONNECT_SENTRY_DSN: z.string().url(),
   },
 
   /**
@@ -40,5 +41,5 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
   skipValidation:
-    !!process.env.CI || process.env.npm_lifecycle_event === "lint",
+    !(process.env.CI == null) || process.env.npm_lifecycle_event === "lint",
 });

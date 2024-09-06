@@ -12,6 +12,8 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@sentry/node": "^8.28.0",
+    "@sentry/profiling-node": "^8.28.0",
     "@socketless/api": "workspace:*",
     "@socketless/connection-tokens": "workspace:*",
     "@socketless/db": "workspace:*",
