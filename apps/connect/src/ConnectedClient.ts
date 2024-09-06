@@ -209,21 +209,28 @@ export class ConnectedClient {
       this.onOpenCallback();
     }
 
-    void this.logger.logConnection(this.projectId, this.identifier, this.feeds);
+    const promises = [];
 
-    void this.usageManager.addConcurrentConnection(this.projectId);
+    promises.push(
+      this.logger.logConnection(this.projectId, this.identifier, this.feeds),
+    );
+    promises.push(this.usageManager.addConcurrentConnection(this.projectId));
 
     // TODO: Handle errors
     // Subscribing to identifier channel and feeds channels
-    void this.redisSubscriber.subscribe(
-      getMainChannelName(this.projectId, this.identifier),
+    promises.push(
+      this.redisSubscriber.subscribe(
+        getMainChannelName(this.projectId, this.identifier),
+      ),
     );
 
-    this.feeds.forEach((feed) => {
-      void this.redisSubscriber.subscribe(
-        getFeedChannelName(this.projectId, feed),
-      );
-    });
+    promises.push(
+      this.feeds.map((feed) =>
+        this.redisSubscriber.subscribe(
+          getFeedChannelName(this.projectId, feed),
+        ),
+      ),
+    );
 
     // Initializing message listener
     this.redisSubscriber.on("message", (channel, message) => {
@@ -284,39 +291,47 @@ export class ConnectedClient {
       }
     });
 
-    void this.launchWebhooks({
-      action: EWebhookActions.CONNECTION_OPEN,
-      data: {
-        connection: {
-          clientId: this.projectClientId,
-          identifier: this.identifier,
+    promises.push(
+      this.launchWebhooks({
+        action: EWebhookActions.CONNECTION_OPEN,
+        data: {
+          connection: {
+            clientId: this.projectClientId,
+            identifier: this.identifier,
+          },
         },
-      },
-    });
+      }),
+    );
+
+    return Promise.all(promises);
   }
 
   private async onMessage(evt: MessageEvent<WSMessageReceive>, ws: WSContext) {
     if (this.closing) return;
 
+    const promises = [];
+
     console.log(`Message from client: ${evt.data}`);
 
     // Logging outgoing message
-    void this.logger.logOutgointMessage(
-      this.projectId,
-      this.identifier,
-      evt.data,
+    promises.push(
+      this.logger.logOutgointMessage(this.projectId, this.identifier, evt.data),
     );
 
-    void this.launchWebhooks({
-      action: EWebhookActions.MESSAGE,
-      data: {
-        connection: {
-          clientId: this.projectClientId,
-          identifier: this.identifier,
+    promises.push(
+      this.launchWebhooks({
+        action: EWebhookActions.MESSAGE,
+        data: {
+          connection: {
+            clientId: this.projectClientId,
+            identifier: this.identifier,
+          },
+          message: evt.data,
         },
-        message: evt.data,
-      },
-    });
+      }),
+    );
+
+    return Promise.all(promises);
   }
 
   private async onClose(evt: CloseEvent, ws: WSContext) {
@@ -325,24 +340,31 @@ export class ConnectedClient {
       this.onCloseCallback();
     }
 
+    const promises = [];
+
     // Logging disconnection
-    void this.logger.logDisconnection(this.projectId, this.identifier);
-
-    // Removing connection from usage manager
-    void this.usageManager.removeConcurrentConnection(this.projectId);
-
-    // Unsubscribing from identifier channel and feeds channels
-    void this.redisSubscriber.unsubscribe(
-      getMainChannelName(this.projectId, this.identifier),
+    promises.push(
+      this.logger.logDisconnection(this.projectId, this.identifier),
     );
 
-    for (const feed of this.feeds) {
-      void this.redisSubscriber.unsubscribe(
-        getFeedChannelName(this.projectId, feed),
-      );
-    }
+    // Removing connection from usage manager
+    promises.push(this.usageManager.removeConcurrentConnection(this.projectId));
 
-    return (async () => {
+    // Unsubscribing from identifier channel and feeds channels
+    promises.push(
+      this.redisSubscriber.unsubscribe(
+        getMainChannelName(this.projectId, this.identifier),
+      ),
+    );
+    promises.push(
+      this.feeds.map((feed) =>
+        this.redisSubscriber.unsubscribe(
+          getFeedChannelName(this.projectId, feed),
+        ),
+      ),
+    );
+
+    const finalPromise = async () => {
       await this.launchWebhooks({
         action: EWebhookActions.CONNECTION_CLOSE,
         data: {
@@ -359,7 +381,11 @@ export class ConnectedClient {
       );
 
       console.log("Connection closed");
-    })();
+    };
+
+    promises.push(finalPromise());
+
+    return Promise.all(promises);
   }
 
   private async onError(evt: Event, ws: WSContext) {
