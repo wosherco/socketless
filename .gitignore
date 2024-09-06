@@ -52,3 +52,6 @@ dist/
 .turbo
 
 /data
+
+# cf is mad
+bun.lockb
