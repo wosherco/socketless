@@ -9,7 +9,9 @@ export default {
   content: [
     // ...baseConfig.content,
     "../../internal-packages/ui/src/*.{ts,tsx}",
-    "./**/*.{ts,tsx,mdx}",
+    "./src/**/*.{ts,tsx,mdx}",
+    "./docs/**/*.{ts,tsx,mdx}",
+    "./static/**/*.{ts,tsx,mdx}",
   ],
   theme: {
     extend: {},
