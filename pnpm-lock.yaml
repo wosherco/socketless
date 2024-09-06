@@ -173,7 +173,7 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2(hono@4.5.11)(zod@3.23.8)
       '@sentry/nextjs':
-        specifier: '8'
+        specifier: ^8.28.0
         version: 8.28.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(next@14.2.5(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.94.0(@swc/core@1.7.23(@swc/helpers@0.5.13)))
       '@socketless/api':
         specifier: workspace:*
@@ -775,7 +775,7 @@ importers:
         version: 7.35.0(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-react-hooks:
         specifier: rc
-        version: 5.1.0-rc-4c58fce7-20240904(eslint@9.9.1(jiti@1.21.6))
+        version: 5.1.0-rc-a03254bc-20240905(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-turbo:
         specifier: 2.0.13
         version: 2.0.13(eslint@9.9.1(jiti@1.21.6))
@@ -5610,8 +5610,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@5.1.0-rc-4c58fce7-20240904:
-    resolution: {integrity: sha512-PDoulHvydL8q8QhhyQx9y7c0Ot79D/o53+/6GG/9stROV2iBteNl/n8WNxwdcVtaSrFJ2BXd/M1U2fyjhelUzA==}
+  eslint-plugin-react-hooks@5.1.0-rc-a03254bc-20240905:
+    resolution: {integrity: sha512-MAQG2WZjBdVBz2mpyWz2l7piMjBoHrSaPiWAQqyJuwbmRRy5YHdVW/jkLXQcKWoct+U02AojaWh+EGKfsL1fgA==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -15801,7 +15801,7 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
-  eslint-plugin-react-hooks@5.1.0-rc-4c58fce7-20240904(eslint@9.9.1(jiti@1.21.6)):
+  eslint-plugin-react-hooks@5.1.0-rc-a03254bc-20240905(eslint@9.9.1(jiti@1.21.6)):
     dependencies:
       eslint: 9.9.1(jiti@1.21.6)
 
