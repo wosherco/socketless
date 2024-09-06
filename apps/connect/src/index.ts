@@ -1,34 +1,17 @@
 import type { Context } from "hono";
-import { z } from "@hono/zod-openapi";
 import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
 
-import type {
-  SimpleWebhook,
-  WebhookPayloadType,
-  WebhookResponseSchema,
-} from "@socketless/shared";
-import { processFeedActions, processMessages } from "@socketless/api/logic";
+import type { SimpleWebhook } from "@socketless/shared";
 import {
   InvalidTokenPayloadContents,
   verifyToken,
 } from "@socketless/connection-tokens";
-import { eq } from "@socketless/db";
 import { db } from "@socketless/db/client";
-import { projectWebhookTable } from "@socketless/db/schema";
-import {
-  getFeedChannelName,
-  getMainChannelName,
-  getWebhooksCacheName,
-} from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
-import { RedisMessageSchema } from "@socketless/redis/schemas";
-import { EWebhookActions, SimpleWebhookSchema } from "@socketless/shared";
 
-import { LogsManager } from "./internal/logs";
 import { UsageManager } from "./internal/usage";
-import { sendWebhook } from "./webhook";
 
 import "./external/instrument";
 

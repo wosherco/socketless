@@ -1,11 +1,12 @@
 import * as Sentry from "@sentry/node";
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
+
+// import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 import { env } from "../../env";
 
 Sentry.init({
   dsn: env.CONNECT_SENTRY_DSN,
-  integrations: [nodeProfilingIntegration()],
+  // integrations: [nodeProfilingIntegration()],
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
 
