@@ -22,7 +22,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsc",
+    "dev": "tsc --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "push": "bun with-env drizzle-kit push",
