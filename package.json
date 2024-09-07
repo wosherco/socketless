@@ -25,7 +25,6 @@
     "@changesets/cli": "^2.27.7",
     "@socketless/prettier-config": "workspace:*",
     "@turbo/gen": "2.1.1",
-    "bun": "^1.1.26",
     "bunchee": "^5.4.0",
     "prettier": "3.3.3",
     "turbo": "2.1.1",
@@ -33,7 +32,7 @@
     "wait-on": "^8.0.0"
   },
   "prettier": "@socketless/prettier-config",
-  "packageManager": "pnpm@9.9.0",
+  "packageManager": "bun@1.1.26",
   "workspaces": [
     "apps/*",
     "internal-packages/*",
