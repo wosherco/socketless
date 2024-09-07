@@ -147,15 +147,15 @@ export default async function Page({
         </Card>
         <Card className="flex-grow">
           <CardHeader>
-            <CardTitle>Go to channels</CardTitle>
+            <CardTitle>Test a websocket</CardTitle>
             <CardDescription>
-              Manage your channels and check what your users are doing.
+              Want to test a websocket? Use the playground to test it out.
             </CardDescription>
           </CardHeader>
           <CardFooter>
             <Button asChild>
-              <Link href={`/dashboard/${parsedProjectId}/channels`}>
-                Go to channels <ArrowRight className="ml-2" />
+              <Link href={`/dashboard/${parsedProjectId}/connect`}>
+                Go to Connect <ArrowRight className="ml-2" />
               </Link>
             </Button>
           </CardFooter>
