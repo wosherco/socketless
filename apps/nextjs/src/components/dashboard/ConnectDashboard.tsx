@@ -68,9 +68,9 @@ function ConnectForm({ onConnect, tokens, projectId }: { onConnect: (url: string
         const res = ApiPostConnectResponseSchema.parse(await req.json());
 
         //! For development
-        onConnect(res.url.replace("wss://connect.socketless.ws", "ws://localhost:3100"));
+        // onConnect(res.url.replace("wss://connect.socketless.ws", "ws://localhost:3100"));
 
-        // onConnect(res.url);
+        onConnect(res.url);
       })}
     >
       <FormField
