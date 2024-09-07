@@ -21,6 +21,17 @@ const config = withSentryConfig({
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  images: {
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      {
+        hostname: "api.producthunt.com",
+      },
+      {
+        hostname: "avatars.githubusercontent.com"
+      }
+    ]
+  }
 }, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options

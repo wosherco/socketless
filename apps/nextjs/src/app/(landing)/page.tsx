@@ -55,6 +55,11 @@ export default function HomePage() {
         className="mx-auto flex min-h-[80vh] max-w-screen-xl flex-col items-center gap-6 px-4 pt-32 text-center lg:grid lg:grid-cols-2 lg:grid-rows-1 lg:pt-0 lg:text-start"
       >
         <div>
+          <div className="pb-8">
+            <a href="https://www.producthunt.com/posts/socketless?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-socketless" target="_blank">
+              <Image src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=487474&theme=light" alt="Socketless - Publish&#0032;data&#0032;to&#0032;your&#0032;front&#0045;end&#0032;with&#0032;serverless&#0032;platforms | Product Hunt" style={{ width: 250, height: 54 }} width="250" height="54" />
+            </a>
+          </div>
           <h1 className="text-5xl font-bold">
             Websockets <span className="font-black text-primary">without sockets </span>
           </h1>
