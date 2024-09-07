@@ -21,6 +21,11 @@
     "test": "bun test",
     "test:watch": "bun test --watch"
   },
+  "dependencies": {
+    "@socketless/shared": "workspace:*",
+    "@t3-oss/env-nextjs": "0.11.0",
+    "jose": "^5.8.0"
+  },
   "devDependencies": {
     "@socketless/eslint-config": "workspace:*",
     "@socketless/prettier-config": "workspace:*",
@@ -29,9 +34,5 @@
     "prettier": "3.3.3",
     "typescript": "5.5.4"
   },
-  "prettier": "@socketless/prettier-config",
-  "dependencies": {
-    "@t3-oss/env-nextjs": "0.11.0",
-    "jose": "^5.8.0"
-  }
+  "prettier": "@socketless/prettier-config"
 }
