@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/bun";
 
 /**
  * Function to wrap a promise and send any errors to Sentry.

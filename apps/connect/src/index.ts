@@ -1,3 +1,5 @@
+import "./external/instrument";
+
 import type { Context } from "hono";
 import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
@@ -11,11 +13,8 @@ import {
 import { db } from "@socketless/db/client";
 import { createRedisClient } from "@socketless/redis/client";
 
-import { UsageManager } from "./internal/usage";
-
-import "./external/instrument";
-
 import { ConnectedClient } from "./ConnectedClient";
+import { UsageManager } from "./internal/usage";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
