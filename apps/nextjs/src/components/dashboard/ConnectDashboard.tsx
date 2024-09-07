@@ -3,22 +3,38 @@
 import { ApiPostConnectResponseSchema } from "@socketless/shared";
 import type { ApiPostConnectRequestSchema } from "@socketless/shared";
 import { Button } from "@socketless/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useForm } from "@socketless/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useForm } from "@socketless/ui/form";
 import { Input } from "@socketless/ui/input";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-export default function ConnectDashboard() {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@socketless/ui/select"
+import Link from "next/link";
+import { Textarea } from "@socketless/ui/textarea";
+
+interface Token { name: string, token: string }
+interface ConnectDashboardProps {
+  tokens: Token[];
+  projectId: number;
+}
+
+export default function ConnectDashboard(props: ConnectDashboardProps) {
   const [url, setUrl] = useState<string | null>(null);
 
   return <div>
-    <ConnectForm onConnect={setUrl} />
+    <ConnectForm onConnect={setUrl} tokens={props.tokens} projectId={props.projectId} />
     {url !== null && <SimpleClient url={url} />}
   </div>
 }
 
-function ConnectForm({ onConnect }: { onConnect: (url: string) => void }) {
+function ConnectForm({ onConnect, tokens, projectId }: { onConnect: (url: string) => void; tokens: Token[]; projectId: number; }) {
   const form = useForm({
     schema: z.object({
       identifier: z.string().min(1),
@@ -77,8 +93,33 @@ function ConnectForm({ onConnect }: { onConnect: (url: string) => void }) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Token</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select the token you want to use" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {tokens.map((token) => <SelectItem value={token.token}>{token.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              Select the token you want to use. You can manage your tokens
+              <Link href={`/dashboard/${projectId}/tokens`}>here</Link>.
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="webhook"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Webhook URL (optional)</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="******" type="password" />
+              <Input {...field} placeholder="https://example.com/api/socketless" type="url" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -93,7 +134,37 @@ function ConnectForm({ onConnect }: { onConnect: (url: string) => void }) {
 }
 
 function SimpleClient({ url }: { url: string }) {
+  const [messageHistory, setMessageHistory] = useState("");
+  const [message, setMessage] = useState("");
   const { sendMessage, lastMessage, readyState } = useWebSocket(url);
 
-  return <p>{readyState}</p>
+  useEffect(() => {
+    if (lastMessage) {
+      setMessageHistory(messageHistory + lastMessage.data + "\n");
+    }
+  }, [lastMessage, messageHistory]);
+
+  const submitMessage = useCallback(() => {
+    sendMessage(message);
+    setMessageHistory(messageHistory + "➡️" + message + "\n");
+    setMessage("");
+  }, [message, sendMessage, messageHistory]);
+
+  return <div>
+    <p>Status: {readyState === ReadyState.OPEN ? "Connected" : "Disconnected"}</p>
+    <Textarea readOnly className="mt-4 border-[1px] rounded-lg">
+      {messageHistory}
+    </Textarea>
+
+    <div className="flex flex-row gap-4 mt-4">
+      <Input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type your message here"
+        className="w-full"
+        onSubmit={submitMessage}
+      />
+      <Button onClick={submitMessage}>Send</Button>
+    </div>
+  </div>
 }
