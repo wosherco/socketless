@@ -16,8 +16,6 @@ import {
 
 import { constructWebhookPayload } from "../webhook";
 
-const BASE_URL = "https://socketless.ws/api/v0";
-
 interface BuildSend<TMessage = string> {
   toFeed: (feed: string) => SenderContext<TMessage>;
   toFeeds: (feeds: string[]) => SenderContext<TMessage>;
@@ -226,6 +224,11 @@ interface SocketlessServerOptions<TMessage = string> {
   token: string;
 
   /**
+   * @default "https://app.socketless.ws/api/v0"
+   */
+  socketless_url?: string;
+
+  /**
    * If undefined, the server will be created in the current domain using env.VERCAL_URL/api/socketless
    */
   url?: string;
@@ -238,6 +241,7 @@ interface SocketlessServerOptions<TMessage = string> {
 class SocketlessServer<TMessage = string> {
   private options: SocketlessServerOptions<TMessage>;
   private url: string;
+  private baseUrl = "https://app.socketless.ws/api/v0";
 
   constructor(options: SocketlessServerOptions<TMessage>) {
     this.options = options;
@@ -264,6 +268,20 @@ class SocketlessServer<TMessage = string> {
       console.warn(
         "You are using a localhost URL. Currently Socketless does not support localhost URLs, so you won't be able to receive messages from the server. More info on https://docs.socketless.ws/local-development",
       );
+    }
+
+    // Checking socketless_url
+    if (this.options.socketless_url !== undefined) {
+      const parsedSocketlessURL = z
+        .string()
+        .url()
+        .safeParse(this.options.socketless_url);
+
+      if (!parsedSocketlessURL.success) {
+        throw new Error("Invalid socketless_url");
+      }
+
+      this.baseUrl = this.options.socketless_url;
     }
   }
 
@@ -346,7 +364,7 @@ class SocketlessServer<TMessage = string> {
     feeds?: string[],
     overrideFeeds = true,
   ) {
-    const req = await fetch(`${BASE_URL}/connection`, {
+    const req = await fetch(`${this.baseUrl}/connection`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -390,7 +408,7 @@ class SocketlessServer<TMessage = string> {
     const messagePayload =
       typeof message === "string" ? message : JSON.stringify(message);
 
-    const req = await fetch(`${BASE_URL}/message`, {
+    const req = await fetch(`${this.baseUrl}/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -413,7 +431,7 @@ class SocketlessServer<TMessage = string> {
   public async manageFeeds(
     actions: WebhookFeedsManageResponseType | WebhookFeedsManageResponseType[],
   ) {
-    const req = await fetch(`${BASE_URL}/feeds`, {
+    const req = await fetch(`${this.baseUrl}/feeds`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
