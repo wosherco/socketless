@@ -67,7 +67,7 @@ export default function HomePage() {
           </h2>
           <div className="flex flex-row justify-center gap-4 lg:justify-start">
             <Button asChild>
-              <Link href="/dashboard">
+              <Link href="https://app.socketless.ws">
                 Register for Free
               </Link>
             </Button>
@@ -278,7 +278,7 @@ export default function HomePage() {
             </CardContent>
             <CardFooter>
               <Button variant="outline" asChild>
-                <Link href="/dashboard">Create a project</Link>
+                <Link href="https://app.socketless.ws">Create a project</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -339,7 +339,7 @@ export default function HomePage() {
       <section id="start" className="mx-auto max-w-screen-xl p-4">
         <h3 className="py-4 text-center text-4xl font-bold">Ready to start?</h3>
         <div className="mx-auto w-fit py-4">
-          <Button asChild className="scale-125 text-lg text-center"><Link href="/dashboard">Register today</Link></Button>
+          <Button asChild className="scale-125 text-lg text-center"><Link href="https://app.socketless.ws">Register today</Link></Button>
         </div>
 
         <div className="my-8 flex flex-col gap-8 md:grid md:grid-cols-2">

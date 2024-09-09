@@ -108,7 +108,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                     ) : (
                       <>
                         <Button asChild variant={"outline"} className="mr-2">
-                          <Link href="/dashboard">
+                          <Link href="/">
                             Dashboard
                           </Link>
                         </Button>

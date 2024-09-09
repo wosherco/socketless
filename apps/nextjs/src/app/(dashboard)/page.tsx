@@ -11,7 +11,7 @@ import { api } from "~/trpc/server";
 
 function Project({ project }: { project: { id: number; name: string } }) {
   return (
-    <Link href={`/dashboard/${project.id}`}>
+    <Link href={`/${project.id}`}>
       <Card>
         <CardHeader>
           <CardTitle>{project.name}</CardTitle>

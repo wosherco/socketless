@@ -105,7 +105,7 @@ function ConnectForm({ onConnect, tokens, projectId }: { onConnect: (url: string
             </Select>
             <FormDescription>
               Select the token you want to use. You can manage your tokens
-              <Link href={`/dashboard/${projectId}/tokens`}>here</Link>.
+              <Link href={`/${projectId}/tokens`}>here</Link>.
             </FormDescription>
             <FormMessage />
           </FormItem>

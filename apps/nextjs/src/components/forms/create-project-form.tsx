@@ -58,7 +58,7 @@ export default function CreateProjectForm({ close }: { close?: () => void }) {
         close()
       }
       router.refresh();
-      router.push(`/dashboard/${data.id}`);
+      router.push(`/${data.id}`);
     },
     onError: () => {
       toast.error("Failed to create project.");

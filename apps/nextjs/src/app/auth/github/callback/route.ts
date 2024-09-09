@@ -91,7 +91,7 @@ export async function GET(request: Request): Promise<Response> {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: "/dashboard",
+          Location: "/",
         },
       });
     }
@@ -135,7 +135,7 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/dashboard",
+        Location: "/",
       },
     });
   } catch (e) {

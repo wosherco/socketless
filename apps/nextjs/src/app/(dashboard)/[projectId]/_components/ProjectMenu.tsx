@@ -57,56 +57,56 @@ export default function ProjectMenu({ projectId }: { projectId: number }) {
     <div className="sticky flex w-screen shrink-0 flex-row items-start justify-around gap-2 p-4 md:w-[215px] md:flex-col md:justify-start">
       <ProjectMenuButton
         icon={<Home width={20} />}
-        href={`/dashboard/${projectId}`}
+        href={`/${projectId}`}
       >
         Overview
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<GalleryVerticalEnd width={20} />}
-        href={`/dashboard/${projectId}/logs`}
+        href={`/${projectId}/logs`}
       >
         Logs
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<List width={20} />}
-        href={`/dashboard/${projectId}/feeds`}
+        href={`/${projectId}/feeds`}
       >
         Feeds
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<Rss width={20} />}
-        href={`/dashboard/${projectId}/connect`}
+        href={`/${projectId}/connect`}
       >
         Connect
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<KeyRound width={20} />}
-        href={`/dashboard/${projectId}/tokens`}
+        href={`/${projectId}/tokens`}
       >
         Tokens
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<Webhook width={20} />}
-        href={`/dashboard/${projectId}/webhooks`}
+        href={`/${projectId}/webhooks`}
       >
         Webhooks
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<CircleDollarSign width={20} />}
-        href={`/dashboard/${projectId}/billing`}
+        href={`/${projectId}/billing`}
       >
         Billing
       </ProjectMenuButton>
 
       <ProjectMenuButton
         icon={<Settings width={20} />}
-        href={`/dashboard/${projectId}/settings`}
+        href={`/${projectId}/settings`}
       >
         Settings
       </ProjectMenuButton>

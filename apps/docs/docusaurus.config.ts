@@ -110,7 +110,7 @@ const config: Config = {
         },
         // { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://socketless.ws/dashboard",
+          href: "https://app.socketless.ws/",
           label: "Dashboard",
           position: "right",
         },

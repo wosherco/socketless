@@ -106,7 +106,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     ) : (
                       <>
                         <Button asChild variant={"outline"} className="mr-2">
-                          <Link href="/dashboard">
+                          <Link href="https://app.socketless.ws">
                             Dashboard
                           </Link>
                         </Button>

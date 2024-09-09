@@ -28,7 +28,7 @@ export default function UserMenu({ user }: { user: User }) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link href="/dashboard" className="h-full w-full">
+          <Link href="/" className="h-full w-full">
             Projects
           </Link>
         </DropdownMenuItem>

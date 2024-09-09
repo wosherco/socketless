@@ -12,7 +12,7 @@ export default async function Page() {
   const { user } = await validateRequest();
 
   if (user) {
-    return permanentRedirect("/dashboard");
+    return permanentRedirect("/");
   }
 
   return (

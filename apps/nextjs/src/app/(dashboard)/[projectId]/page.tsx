@@ -154,7 +154,7 @@ export default async function Page({
           </CardHeader>
           <CardFooter>
             <Button asChild>
-              <Link href={`/dashboard/${parsedProjectId}/connect`}>
+              <Link href={`/${parsedProjectId}/connect`}>
                 Go to Connect <ArrowRight className="ml-2" />
               </Link>
             </Button>

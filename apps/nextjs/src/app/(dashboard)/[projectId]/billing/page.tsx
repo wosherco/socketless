@@ -63,8 +63,8 @@ export default async function Page({
               //   quantity: 0,
               // }
             ],
-            cancel_url: `https://socketless.ws/dashboard/${parsedProjectId}/billing?return=cancel`,
-            success_url: `https://socketless.ws/dashboard/${parsedProjectId}/billing?return=success?stripeid={CHECKOUT_SESSION_ID}`,
+            cancel_url: `https://app.socketless.ws/${parsedProjectId}/billing?return=cancel`,
+            success_url: `https://app.socketless.ws/${parsedProjectId}/billing?return=success?stripeid={CHECKOUT_SESSION_ID}`,
           });
 
           if (session.url !== null) {
@@ -83,7 +83,7 @@ export default async function Page({
 
           const session = await stripe.billingPortal.sessions.create({
             customer: project.customerId,
-            return_url: `https://socketless.ws/dashboard/${parsedProjectId}/billing`,
+            return_url: `https://app.socketless.ws/${parsedProjectId}/billing`,
           });
 
           redirect(session.url);
