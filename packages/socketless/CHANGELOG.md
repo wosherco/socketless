@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.4.0
+
+### Minor Changes
+
+- Updated base url and added option to set a custom socketless server
+
 ## 1.3.1
 
 ### Patch Changes

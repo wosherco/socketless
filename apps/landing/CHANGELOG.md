@@ -1,5 +1,12 @@
 # @socketless/nextjs
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  - socketless.ws@1.4.0
+
 ## 0.1.4
 
 ### Patch Changes
