@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { cn } from "@socketless/ui";
 import { ThemeProvider } from "@socketless/ui/theme";
 
-import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
@@ -14,9 +13,8 @@ import Link from "next/link";
 import { Button } from "@socketless/ui/button";
 import { Toaster } from "@socketless/ui/toast";
 
-import UserMenu from "~/components/UserMenu";
 import { PHProvider } from "~/providers/posthogProvider";
-import { validateRequest } from "~/server/auth";
+import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://socketless.ws"),
@@ -52,8 +50,8 @@ const PostHogPageView = dynamic(() => import("../providers/posthogPageView"), {
   ssr: false,
 });
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { user } = await validateRequest();
+export default function RootLayout(props: { children: React.ReactNode }) {
+  // const { user } = await validateRequest();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -101,7 +99,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                         Documentation
                       </Link>
                     </Button>
-                    {user === null ? (
+                    {/* {user === null ? (
                       <Button asChild variant="default">
                         <Link href="/auth">Get Started</Link>
                       </Button>
@@ -114,12 +112,23 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                         </Button>
                         <UserMenu user={user} />
                       </>
-                    )}
+                    )} */}
+
+                    <Button asChild variant={"outline"} className="mr-2">
+                      <Link href="https://app.socketless.ws">
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button asChild>
+                      <Link href="https://app.socketless.ws">
+                        Get Started
+                      </Link>
+                    </Button>
                   </div>
                 </nav>
               </header>
 
-              <main className="min-h-[100dvh] mx-auto max-w-screen-xl pt-[50px]">
+              <main className="min-h-screen">
                 {props.children}
               </main>
 
@@ -149,6 +158,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                   </p>
                 </div>
               </footer>
+
               <Toaster />
             </ThemeProvider>
           </body>
