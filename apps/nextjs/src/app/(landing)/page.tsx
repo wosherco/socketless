@@ -1,5 +1,5 @@
+import { ArrowRight, Info, Mail, Percent } from "lucide-react";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, Check, Info, Mail, Percent } from "lucide-react";
 
 import { Button } from "@socketless/ui/button";
 import {
@@ -13,16 +13,15 @@ import {
 
 import ContactForm from "~/components/home/ContactForm";
 // import Faq from "~/components/home/Faq";
+import { CookiesProvider } from "next-client-cookies/server";
+import { cookies } from "next/headers";
+import Image from "next/image";
+import { generate } from "random-words";
+import { Suspense } from "react";
 import CodeDemo from "~/components/home/CodeDemo";
 import DemoExamples from "~/components/home/DemoExamples";
 import Chat, { ChatSkeleton } from "~/components/home/LandingChat";
 import { socketless } from "~/server/socketless";
-import { generate } from "random-words";
-import { cookies } from "next/headers";
-import { Suspense } from "react";
-import { CookiesProvider } from "next-client-cookies/server";
-import ProsCons from "~/components/home/ProsCons";
-import Image from "next/image";
 
 
 
@@ -178,7 +177,7 @@ export default function HomePage() {
               </CardContent>
               <CardFooter>
                 <a
-                  href="https://docs.socketless.ws/infrastructure"
+                  href="https://docs.socketless.ws/docs/infrastructure"
                   target="_blank"
                   className="underline"
                 >
@@ -200,7 +199,7 @@ export default function HomePage() {
               </CardContent>
               <CardFooter>
                 <a
-                  href="https://docs.socketless.ws/locations"
+                  href="https://docs.socketless.ws/docs/locations"
                   target="_blank"
                   className="underline"
                 >
@@ -218,7 +217,7 @@ export default function HomePage() {
               <CardContent>
                 <p>
                   You have the full control to allow connections to specific
-                  channels and you decide who receives messages.
+                  feeds and you decide who receives messages.
                 </p>
               </CardContent>
               <CardFooter>
