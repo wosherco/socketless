@@ -1,0 +1,37 @@
+# Concepts
+
+Here you will find the main concepts of Socketless. Maybe you have some questions about what a `feed` is, or how the `context` works. This is the place to be.
+
+## General
+
+### Websocket
+
+A websocket is a communication protocol that provides full-duplex communication channels over a single TCP connection. It's the technology that powers Socketless. Since it's compatible with HTTP, it's easy to use in the browser.
+
+### Feed
+
+A feed is a channel where you can send messages. You can think of it as a chat room. You can send messages to a feed, and everyone that's subscribed to that feed will receive the message.
+
+### Serverless
+
+Serverless is a cloud computing execution model where the cloud provider dynamically manages the allocation of machine resources. It's a great way to deploy your applications without worrying about the infrastructure.
+
+### Webhook
+
+A webhook is a way to send data from one application to another. It's like an API, but instead of you asking for the data, the data is sent to you. This is the base of Socketless, since it's totally compatible with Serverless.
+
+## Socketless
+
+### Incoming messages
+
+Messages that come from outside, to socketless.
+
+### Outgoing messages
+
+Messages sent from a client connected to a socketless websocket, that go to the outside world.
+
+## Library
+
+### Context
+
+The context object is the main object you will use to interact with Socketless when an event is triggered (a webhook is received). Doing actions through the context will reuse the existing webhook connection, making it faster to respond.

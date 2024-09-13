@@ -1,0 +1,48 @@
+{
+  "name": "socketless",
+  "version": "0.1.1",
+  "private": true,
+  "engines": {
+    "node": ">=20.16.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
+    "db:push": "turbo -F @socketless/db push",
+    "db:studio": "turbo -F @socketless/db studio",
+    "dev": "turbo dev",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@v0.11.0",
+    "postinstall": "pnpm run lint:ws",
+    "typecheck": "turbo run typecheck",
+    "ui-add": "turbo run ui-add"
+  },
+  "dependencies": {
+    "bun": "1.1.27"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.7",
+    "@socketless/prettier-config": "workspace:*",
+    "@turbo/gen": "2.1.1",
+    "bunchee": "^5.4.0",
+    "prettier": "3.3.3",
+    "turbo": "2.1.1",
+    "typescript": "5.5.4",
+    "wait-on": "^8.0.0"
+  },
+  "prettier": "@socketless/prettier-config",
+  "packageManager": "pnpm@9.10.0",
+  "workspaces": [
+    "apps/*",
+    "internal-packages/*",
+    "packages/*",
+    "tooling/*"
+  ],
+  "trustedDependencies": [
+    "@sentry/cli"
+  ]
+}

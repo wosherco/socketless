@@ -1,0 +1,53 @@
+{
+  "name": "@socketless/api",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./logic": {
+      "types": "./dist/src/logic/index.d.ts",
+      "default": "./src/logic/index.ts"
+    },
+    "./utils": {
+      "types": "./dist/src/utils/index.d.ts",
+      "default": "./src/utils/index.ts"
+    },
+    "./env": "./env.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@socketless/auth": "workspace:*",
+    "@socketless/connection-tokens": "workspace:*",
+    "@socketless/db": "workspace:*",
+    "@socketless/redis": "workspace:*",
+    "@socketless/validators": "workspace:*",
+    "@socketless/shared": "workspace:*",
+    "@t3-oss/env-nextjs": "0.11.0",
+    "@trpc/server": "11.0.0-rc.477",
+    "nanoid": "5.0.7",
+    "stripe": "^16.9.0",
+    "superjson": "2.2.1",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
+    "eslint": "9.9.1",
+    "prettier": "3.3.3",
+    "typescript": "5.5.4"
+  },
+  "prettier": "@socketless/prettier-config"
+}

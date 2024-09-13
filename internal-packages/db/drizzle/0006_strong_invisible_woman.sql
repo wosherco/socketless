@@ -1,0 +1,1 @@
+ALTER TABLE "connected_clients" ADD COLUMN "node" text NOT NULL;

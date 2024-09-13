@@ -1,0 +1,38 @@
+{
+  "name": "@socketless/connection-tokens",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./env": "./env.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "wait-on ../../packages/shared/dist/index.js && tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "dependencies": {
+    "@socketless/shared": "workspace:*",
+    "@t3-oss/env-nextjs": "0.11.0",
+    "jose": "^5.8.0"
+  },
+  "devDependencies": {
+    "@socketless/eslint-config": "workspace:*",
+    "@socketless/prettier-config": "workspace:*",
+    "@socketless/tsconfig": "workspace:*",
+    "eslint": "9.9.1",
+    "prettier": "3.3.3",
+    "typescript": "5.5.4"
+  },
+  "prettier": "@socketless/prettier-config"
+}

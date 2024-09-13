@@ -1,0 +1,110 @@
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+# Next.js
+
+Before anything, you'll need to be registered in [socketless.ws](https://socketless.ws) and already have a project created.
+
+## Setting up project
+
+1. ### Installing packages
+
+   <Tabs groupId="package-manager">
+     <TabItem value="npm" label="npm">
+       ```bash npm install socketless.ws ```
+     </TabItem>
+     <TabItem value="pnpm" label="pnpm">
+       ```bash pnpm add socketless.ws ```
+     </TabItem>
+     <TabItem value="bun" label="bun">
+       ```bash bun add socketless.ws ```
+     </TabItem>
+     <TabItem value="yarn" label="yarn">
+       ```bash yarn add socketless.ws ```
+     </TabItem>
+   </Tabs>
+
+2. ### Setting environment variables
+
+   Create a `.env` file in the root of your project and add the following variables:
+
+   ```toml title=".env"
+   # ...your existing variables
+   SOCKETLESS_CLIENT_ID=...
+   SOCKETLESS_TOKEN=...
+
+   # This one is optional. If you deploy to Vercel, you won't need it.
+   SOCKETLESS_URL=...
+   ```
+
+   :::info
+
+   You can get the `SOCKETLESS_CLIENT_ID` and `SOCKETLESS_TOKEN` from the [socketless.ws dashboard](https://app.socketless.ws/).
+
+   :::
+
+## Setting up Socketless on Next.js
+
+1. ### Create the server
+
+   Create a new file somewhere safe, like `server/socketless.ts`. This file will only be used in the server-side.
+
+   ```ts title="src/server/socketless.ts"
+   import { createSocketless } from "socketless.ws/server";
+
+   export const socketless = createSocketless({
+     clientId: process.env.SOCKETLESS_CLIENT_ID!,
+     token: process.env.SOCKETLESS_TOKEN!,
+
+     url: process.env.SOCKETLESS_URL!,
+
+     // Here go your functions
+     onConnect(context, identifier) {
+       console.log("User connected", identifier);
+       context.toFeed("demo").send(`${identifier} connected`);
+     },
+     onDisconnect(context, identifier) {
+       console.log("User disconnected", identifier);
+       context.toFeed("demo").send(`${identifier} disconnected`);
+     },
+     onMessage(context, identifier, message) {
+       console.log("Message received", message);
+       context.toFeed("demo").send(`${identifier}: "${message}"`);
+     },
+   });
+   ```
+
+   Here we've create a Socketless server with our environment variables. Here you also add the functionality of your "server". We're sending a message to a feed called `demo` when a user connects, disconnects or sends a message.
+
+2. ### Creating the API route
+
+   Now you need to create the route where socketless will connect to your website. We recommend it to be under `/api/socketless`.
+
+   ```ts title="src/app/api/socketless/route.ts"
+   import { socketless } from "@/server/socketless";
+
+   export const { POST } = socketless.generateRoutes();
+   ```
+
+Nice! You're now ready to use Socketless on your Next.js project.
+
+## Using Socketless on Next.js
+
+Now that you have your server and route set up, you can start using Socketless on your pages. Here's an example on how to use it:
+
+```tsx title="src/app/page.tsx"
+import { socketless } from "@/server/socketless";
+
+export default async function Page() {
+  // Obtain a way to identify the user. If anonymous, you can use a random string (and maybe store to cookies).
+  const { userId } = await authenticate();
+
+  const { url } = await socketless.getConnection(userId);
+
+  return <LiveDashboard websocketUrl={url} />;
+}
+```
+
+## Next steps
+
+Check out how to develop locally with Socketless on Next.js.
