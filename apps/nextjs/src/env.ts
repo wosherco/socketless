@@ -18,7 +18,7 @@ export const env = createEnv({
   server: {
     // Comes from apiEnv
     // POSTGRES_URL: z.string().url(),
-    CONNECT_URL: z.string().default("wss://connect.socketless.ws"),
+    CONNECT_URL: z.string().default("wss://connect.socketless.ws").optional(),
   },
 
   /**

@@ -262,7 +262,7 @@ app.openapi(postConnectionToken, async (c) => {
     {
       token: token,
       identifier: payload.identifier,
-      url: `${env.CONNECT_URL}/${token}`,
+      url: `${env.CONNECT_URL ?? "wss://connect.socketless.ws"}/${token}`,
     },
     200,
   );
