@@ -286,7 +286,7 @@ export default function HomePage() {
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-screen-xl px-4 pb-8 pt-16">
         <h3 className="w-full pt-4 text-center text-4xl font-bold">
-          We keep princing simple.
+          We keep pricing simple.
         </h3>
         <h4 className="mx-auto max-w-screen-lg py-8 text-center text-lg">
           Don't worry about hidden fees or complex pricing models. Just pay for
