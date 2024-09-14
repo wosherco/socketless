@@ -2,7 +2,7 @@
 
 # Socketless
 
-Websockets **made easy**.
+Websockets **made simple**.
 
 [Homepage](https://socketless.ws) | [Dashboard](https://app.socketless.ws) | [Docs](https://docs.socketless.ws)
 
