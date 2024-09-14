@@ -8,27 +8,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #000000; /* Black */
+  --ifm-color-primary-dark: #000000; /* Black */
+  --ifm-color-primary-darker: #000000; /* Black */
+  --ifm-color-primary-darkest: #000000; /* Black */
+  --ifm-color-primary-light: #ffffff; /* White */
+  --ifm-color-primary-lighter: #ffffff; /* White */
+  --ifm-color-primary-lightest: #ffffff; /* White */
+  --ifm-color-link: #0d9ae1ff; /* Blue-Cyan for links */
+  --ifm-color-link-hover: #0cb3ddff; /* Lighter Blue-Cyan on hover */
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Very light white */
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme="dark"] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #ffffff; /* White */
+  --ifm-color-primary-dark: #ffffff; /* White */
+  --ifm-color-primary-darker: #ffffff; /* White */
+  --ifm-color-primary-darkest: #ffffff; /* White */
+  --ifm-color-primary-light: #000000; /* Black */
+  --ifm-color-primary-lighter: #000000; /* Black */
+  --ifm-color-primary-lightest: #000000; /* Black */
+  --ifm-color-link: #00aaff; /* Blue-Cyan for links */
+  --ifm-color-link-hover: #00ccff; /* Lighter Blue-Cyan on hover */
+  --docusaurus-highlighted-code-line-bg: rgba(
+    255,
+    255,
+    255,
+    0.3
+  ); /* Slightly brighter */
+}
+
+a {
+  color: var(--ifm-color-link);
+}
+
+a:hover {
+  color: var(--ifm-color-link-hover);
 }
