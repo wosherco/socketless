@@ -167,6 +167,12 @@ export default function HomePage() {
             />
           </div>
         </div>
+
+        <div className="mx-auto w-fit pb-12">
+          <Button asChild className="">
+            <Link href="https://app.socketless.ws">Try it right now</Link>
+          </Button>
+        </div>
       </section>
 
       {/* Why */}
