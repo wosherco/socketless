@@ -17,6 +17,7 @@ import { Toaster } from "@socketless/ui/toast";
 import UserMenu from "~/components/UserMenu";
 import { PHProvider } from "~/providers/posthogProvider";
 import { validateRequest } from "~/server/auth";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://socketless.ws"),
@@ -74,12 +75,17 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
             >
               <header className="fixed left-0 top-0 z-40 h-[50px] w-full bg-secondary/50 backdrop-blur">
                 <nav className="mx-auto flex h-full max-w-screen-xl flex-row items-center justify-between px-4 py-0.5">
-                  <Link
-                    href="/"
-                    className="font-black transition-transform hover:scale-125"
-                  >
-                    Socketless
-                  </Link>
+                  <div className="flex flex-row items-center gap-4">
+                    <Link
+                      href="/"
+                      className="font-black transition-transform hover:scale-125"
+                    >
+                      Socketless
+                    </Link>
+                    <Link href="https://github.com/wosherco/socketless" target="_blank" className="hidden sm:block">
+                      <Image src="/logos/github.svg" width={24} height={24} alt="Github Repository" />
+                    </Link>
+                  </div>
                   {/* <ul className="flex flex-row gap-4">
                     <li>
                       <Button asChild variant={"ghost"}>
@@ -134,17 +140,22 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                     </a>
                     .
                   </p>
-                  <p>
-                    © 2024{" "}
-                    <a
-                      className="hover:underline"
-                      href="https://wosher.co"
-                      target="_blank"
-                    >
-                      wosher.co
-                    </a>
-                    . All Rights Reserved.
-                  </p>
+                  <div className="flex flex-row items-center gap-4">
+                    <Link href="https://github.com/wosherco/socketless" target="_blank" className="invert">
+                      <Image src="/logos/github.svg" width={24} height={24} alt="Github Repository" />
+                    </Link>
+                    <p>
+                      © 2024{" "}
+                      <a
+                        className="hover:underline"
+                        href="https://wosher.co"
+                        target="_blank"
+                      >
+                        wosher.co
+                      </a>
+                      . All Rights Reserved.
+                    </p>
+                  </div>
                 </div>
               </footer>
               <Toaster />
