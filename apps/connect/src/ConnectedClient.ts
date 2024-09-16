@@ -26,6 +26,8 @@ import { LogsManager } from "./internal/logs";
 import { UsageManager } from "./internal/usage";
 import { sendWebhook } from "./webhook";
 
+const PING_INTERVAL = 5000;
+
 export class ConnectedClient {
   private closing = false;
 
@@ -45,6 +47,9 @@ export class ConnectedClient {
   private onCloseCallback?: () => void;
 
   private logger: LogsManager;
+
+  private lastPong: number = Date.now();
+  private pingInterval: Timer | null = null;
 
   constructor(
     db: DBType,
@@ -215,6 +220,19 @@ export class ConnectedClient {
       this.onOpenCallback();
     }
 
+    // Starting ping interval
+    this.pingInterval = setInterval(() => {
+      if (Date.now() - this.lastPong > PING_INTERVAL * 3) {
+        ws.close(1000, "Ping timeout");
+        if (this.pingInterval) {
+          clearInterval(this.pingInterval);
+        }
+      } else {
+        ws.send("");
+        console.log(`Sending ping to client: ${this.identifier}`);
+      }
+    }, PING_INTERVAL);
+
     const promises = [];
 
     promises.push(
@@ -318,6 +336,12 @@ export class ConnectedClient {
 
   private async onMessage(evt: MessageEvent<WSMessageReceive>, __: WSContext) {
     if (this.closing) return;
+
+    if (evt.data === "") {
+      this.lastPong = Date.now();
+      console.log(`Pong from client: ${this.identifier}`);
+      return;
+    }
 
     const promises = [];
 

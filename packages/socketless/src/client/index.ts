@@ -6,8 +6,6 @@ type OnMessageFunction<TResponse extends WebsocketMessage> = (
   message: TResponse,
 ) => MaybePromise<void>;
 
-const PING_INTERVAL = 5000;
-
 export class SocketlessWebsocket<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
@@ -16,8 +14,6 @@ export class SocketlessWebsocket<
   private websocket!: WebSocket;
   private state: "DISCONNECTED" | "CONNECTING" | "CONNECTED" = "DISCONNECTED";
 
-  private pongInterval: Timer | null = null;
-  private lastPong: number = Date.now();
   private shouldRetryOnClose = true;
 
   private onMessage: OnMessageFunction<TResponse>;
@@ -37,40 +33,14 @@ export class SocketlessWebsocket<
     websocket.onopen = () => {
       this.state = "CONNECTED";
 
-      // Starting interval for sending pings
-      this.pongInterval = setInterval(() => {
-        if (this.lastPong < Date.now() - PING_INTERVAL * 2) {
-          // A pong hasn't been received in 2 intervals, close the connection and try to reconnect
-          websocket.close(1010);
-          return;
-        }
-
-        // This doesn't count as a message to Socketless
-        websocket.ping();
-      }, PING_INTERVAL);
-
       // Send all messages in the queue
       for (const message of this.sendQueue) {
         websocket.send(JSON.stringify(message));
       }
     };
 
-    websocket.on("ping", () => {
-      websocket.pong();
-    });
-
-    websocket.on("pong", () => {
-      this.lastPong = Date.now();
-    });
-
     websocket.onclose = () => {
       this.state = "DISCONNECTED";
-
-      // Clear the interval
-      if (this.pongInterval !== null) {
-        clearInterval(this.pongInterval);
-        this.pongInterval = null;
-      }
 
       if (this.shouldRetryOnClose) {
         // Try to reconnect
@@ -81,12 +51,6 @@ export class SocketlessWebsocket<
     websocket.onerror = () => {
       this.state = "DISCONNECTED";
 
-      // Clear the interval
-      if (this.pongInterval !== null) {
-        clearInterval(this.pongInterval);
-        this.pongInterval = null;
-      }
-
       if (this.shouldRetryOnClose) {
         // Try to reconnect
         this.createWebsocket();
@@ -96,6 +60,12 @@ export class SocketlessWebsocket<
     websocket.onmessage = (message) => {
       if (typeof message.data !== "string") {
         // TODO: Handle binary messages
+        return;
+      }
+
+      if (message.data === "") {
+        // Empty frames are used for keep-alive
+        websocket.send("");
         return;
       }
 
