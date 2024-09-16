@@ -1,5 +1,16 @@
 # socketless.ws
 
+## 1.0.0
+
+### Major Changes
+
+- a43c2ac: Released react package for easier usage and fixed socketless client.
+
+### Patch Changes
+
+- Updated dependencies [a43c2ac]
+  - socketless.ws@1.5.1
+
 ## 1.5.0
 
 ### Minor Changes
