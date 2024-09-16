@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.4.1
+
+### Patch Changes
+
+- Added validation and typesafety to messages
+
 ## 1.4.0
 
 ### Minor Changes
