@@ -16,14 +16,18 @@ import {
 
 import { constructWebhookPayload } from "../webhook";
 
-interface BuildSend<TMessage = string> {
+type WebsocketMessage = string | Record<string, unknown> | unknown[];
+
+interface BuildSend<TMessage extends WebsocketMessage = string> {
   toFeed: (feed: string) => SenderContext<TMessage>;
   toFeeds: (feeds: string[]) => SenderContext<TMessage>;
   toClient: (identifier: string) => SenderContext<TMessage>;
   toClients: (identifiers: string[]) => SenderContext<TMessage>;
 }
 
-class SenderContext<TMessage = string> implements BuildSend<TMessage> {
+class SenderContext<TMessage extends WebsocketMessage>
+  implements BuildSend<TMessage>
+{
   private feeds: string[] = [];
   private clients: string[] = [];
   private messages: z.infer<typeof WebhookMessageResponseSchema>[];
@@ -65,40 +69,41 @@ class SenderContext<TMessage = string> implements BuildSend<TMessage> {
   }
 }
 
-type SocketlessContext<TMessage = string> = BuildSend<TMessage> & {
-  send: (
-    message: TMessage,
-    receivers: { identifiers?: string | string[]; feeds?: string | string[] },
-  ) => void;
-  buildResponse: () => z.infer<typeof WebhookResponseSchema>;
-  /**
-   * @param feed Feed to join
-   * @param clients Clients to join the feed. If undefined, the current client will be joined.
-   */
-  joinFeed: (feed: string, clients?: string | string[]) => void;
-  /**
-   * @param feeds Feeds to join
-   * @param clients Clients to join the feeds. If undefined, the current client will be joined.
-   */
-  joinFeeds: (feeds: string[], clients?: string | string[]) => void;
-  /**
-   * @param feed Feed to leave
-   * @param clients Clients to leave the feed. If undefined, the current client will be left.
-   */
-  leaveFeed: (feed: string, clients?: string | string[]) => void;
-  /**
-   * @param feeds Feeds to leave
-   * @param clients Clients to leave the feeds. If undefined, the current client will be left.
-   */
-  leaveFeeds: (feeds: string[], clients?: string | string[]) => void;
-};
+type SocketlessContext<TMessage extends WebsocketMessage> =
+  BuildSend<TMessage> & {
+    send: (
+      message: TMessage,
+      receivers: { identifiers?: string | string[]; feeds?: string | string[] },
+    ) => void;
+    buildResponse: () => z.infer<typeof WebhookResponseSchema>;
+    /**
+     * @param feed Feed to join
+     * @param clients Clients to join the feed. If undefined, the current client will be joined.
+     */
+    joinFeed: (feed: string, clients?: string | string[]) => void;
+    /**
+     * @param feeds Feeds to join
+     * @param clients Clients to join the feeds. If undefined, the current client will be joined.
+     */
+    joinFeeds: (feeds: string[], clients?: string | string[]) => void;
+    /**
+     * @param feed Feed to leave
+     * @param clients Clients to leave the feed. If undefined, the current client will be left.
+     */
+    leaveFeed: (feed: string, clients?: string | string[]) => void;
+    /**
+     * @param feeds Feeds to leave
+     * @param clients Clients to leave the feeds. If undefined, the current client will be left.
+     */
+    leaveFeeds: (feeds: string[], clients?: string | string[]) => void;
+  };
 
-type PublicSocketlessContext<TMessage = string> = Omit<
+type PublicSocketlessContext<TMessage extends WebsocketMessage> = Omit<
   SocketlessContext<TMessage>,
   "buildResponse"
 >;
 
-function createContext<TMessage>(
+function createContext<TMessage extends WebsocketMessage>(
   server: SocketlessServer<TMessage>,
   identifier: string,
 ): SocketlessContext<TMessage> {
@@ -202,23 +207,23 @@ function createContext<TMessage>(
 
 type MaybePromise<T> = T | Promise<T>;
 
-type OnConnectFunc<TMessage> = (
+type OnConnectFunc<TMessage extends WebsocketMessage> = (
   context: PublicSocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnDisconnectFunc<TMessage> = (
+type OnDisconnectFunc<TMessage extends WebsocketMessage> = (
   context: PublicSocketlessContext<TMessage>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnMessageFunc<TMessage> = (
+type OnMessageFunc<TMessage extends WebsocketMessage> = (
   context: PublicSocketlessContext<TMessage>,
   identifier: string,
   message: TMessage,
 ) => MaybePromise<void>;
 
-interface SocketlessServerOptions<TMessage = string> {
+interface SocketlessServerOptions<TMessage extends WebsocketMessage> {
   clientId: string;
   token: string;
 
@@ -235,9 +240,11 @@ interface SocketlessServerOptions<TMessage = string> {
   onConnect?: OnConnectFunc<TMessage>;
   onDisconnect?: OnDisconnectFunc<TMessage>;
   onMessage?: OnMessageFunc<TMessage>;
+
+  messageValidator?: z.ZodType<TMessage>;
 }
 
-class SocketlessServer<TMessage = string> {
+class SocketlessServer<TMessage extends WebsocketMessage = string> {
   private options: SocketlessServerOptions<TMessage>;
   private url?: string;
   private baseUrl = "https://app.socketless.ws/api/v0";
@@ -319,24 +326,51 @@ class SocketlessServer<TMessage = string> {
         {
           if (this.options.onMessage !== undefined) {
             // Parsing message
+            let message: TMessage;
+
+            // First of all, if it's a string, try parsing it as JSON
             if (
               typeof webhookPayload.data.message === "string" &&
-              webhookPayload.data.message.startsWith("{")
+              (webhookPayload.data.message.startsWith("{") ||
+                webhookPayload.data.message.startsWith("["))
             ) {
+              // If JSON try parsing
               try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                webhookPayload.data.message = JSON.parse(
+                message = JSON.parse(
                   webhookPayload.data.message,
-                );
+                ) as unknown as TMessage;
               } catch {
-                // Do nothing
+                // TODO: Would be cool to check before if TMessage is string...
+                message = webhookPayload.data.message as TMessage;
+              }
+            } else {
+              // TODO: Would be cool to check before if TMessage is string...
+              message = webhookPayload.data.message as TMessage;
+            }
+
+            // Validating message
+            if (this.options.messageValidator !== undefined) {
+              // Using validator
+              const safeParse =
+                await this.options.messageValidator.safeParseAsync(message);
+
+              // If unsuccessful, log and ignore
+              if (!safeParse.success) {
+                console.error(
+                  "Invalid message received. Ignoring it...",
+                  safeParse.error,
+                );
+
+                return new Response("Invalid message validation", {
+                  status: 400,
+                });
               }
             }
 
             await this.options.onMessage(
               context,
               webhookPayload.data.connection.identifier,
-              webhookPayload.data.message as TMessage,
+              message,
             );
           }
         }
@@ -453,7 +487,7 @@ class SocketlessServer<TMessage = string> {
   }
 }
 
-export function createSocketless<TMessage = string>(
+export function createSocketless<TMessage extends WebsocketMessage = string>(
   options: SocketlessServerOptions<TMessage>,
 ) {
   return new SocketlessServer<TMessage>(options);
