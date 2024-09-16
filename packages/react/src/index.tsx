@@ -1,5 +1,4 @@
-import { createContext, useContext } from "react";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { SocketlessWebsocket } from "socketless.ws/client";
 
 import type { WebsocketMessage } from "@socketless/shared";
@@ -7,20 +6,25 @@ import type { WebsocketMessage } from "@socketless/shared";
 function SocketlessProvider<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
->(context: ReturnType<typeof createContext<SocketlessWebsocket<TMessage, TResponse> | null>>, { url, children }: { url: string; children: React.ReactNode }) {
+>(
+  context: ReturnType<
+    typeof createContext<SocketlessWebsocket<TMessage, TResponse> | null>
+  >,
+  { url, children }: { url: string; children: React.ReactNode },
+) {
   const { client } = useSocketlessWebsocket<TMessage, TResponse>({ url });
 
-  return (
-    <context.Provider value={client}>
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={client}>{children}</context.Provider>;
 }
 
 function useSocketless<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
->(context: ReturnType<typeof createContext<SocketlessWebsocket<TMessage, TResponse> | null>>) {
+>(
+  context: ReturnType<
+    typeof createContext<SocketlessWebsocket<TMessage, TResponse> | null>
+  >,
+) {
   const ctx = useContext(context);
 
   if (!ctx) {
@@ -65,7 +69,10 @@ export function generateSocketlessReact<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage = string,
 >() {
-  const context = createContext<SocketlessWebsocket<TMessage, TResponse> | null>(null);
+  const context = createContext<SocketlessWebsocket<
+    TMessage,
+    TResponse
+  > | null>(null);
 
   const bindedSocketlessProvider = SocketlessProvider.bind(null, context);
   const bindedUseSocketless = useSocketless.bind(null, context);

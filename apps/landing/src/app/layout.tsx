@@ -7,6 +7,7 @@ import { ThemeProvider } from "@socketless/ui/theme";
 import "~/app/globals.css";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@socketless/ui/button";
@@ -14,7 +15,6 @@ import { Toaster } from "@socketless/ui/toast";
 
 import { PHProvider } from "~/providers/posthogProvider";
 import { TRPCReactProvider } from "~/trpc/react";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://socketless.ws"),
@@ -79,8 +79,17 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     >
                       Socketless
                     </Link>
-                    <Link href="https://github.com/wosherco/socketless" target="_blank" className="hidden sm:block">
-                      <Image src="/logos/github.svg" width={24} height={24} alt="Github Repository" />
+                    <Link
+                      href="https://github.com/wosherco/socketless"
+                      target="_blank"
+                      className="hidden sm:block"
+                    >
+                      <Image
+                        src="/logos/github.svg"
+                        width={24}
+                        height={24}
+                        alt="Github Repository"
+                      />
                     </Link>
                   </div>
                   {/* <ul className="flex flex-row gap-4">
@@ -149,8 +158,17 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     .
                   </p>
                   <div className="flex flex-row items-center gap-4">
-                    <Link href="https://github.com/wosherco/socketless" target="_blank" className="invert">
-                      <Image src="/logos/github.svg" width={24} height={24} alt="Github Repository" />
+                    <Link
+                      href="https://github.com/wosherco/socketless"
+                      target="_blank"
+                      className="invert"
+                    >
+                      <Image
+                        src="/logos/github.svg"
+                        width={24}
+                        height={24}
+                        alt="Github Repository"
+                      />
                     </Link>
                     <p>
                       © 2024{" "}
