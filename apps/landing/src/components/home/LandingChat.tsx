@@ -47,17 +47,17 @@ export default function Chat({
 
   // Opening websocket and creating a message history
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
-  const { client, lastMessage } = useSocketlessWebsocket<>(websocketUrl);
+  const { client, lastMessage } = useSocketlessWebsocket(websocketUrl);
 
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage.data as string));
+      setMessageHistory((prev) => prev.concat(lastMessage));
     }
   }, [lastMessage]);
 
   const sendMessageCallback = useCallback(
     (emoji: string) => {
-      client.send(emoji);
+      client?.send(emoji);
     },
     [client],
   );
@@ -72,7 +72,7 @@ export default function Chat({
           </CardDescription>
         </CardHeader>
         <CardContent className="min-h-[200px] lg:min-h-[300px]">
-          {client.getState() === "CONNECTED" ? (
+          {client?.getState() === "CONNECTED" ? (
             // Socket is connected, showing messages
             <MessagesHistory messages={messageHistory} />
           ) : (
