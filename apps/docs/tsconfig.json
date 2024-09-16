@@ -4,6 +4,6 @@
   "compilerOptions": {
     "baseUrl": "."
   },
-  "include": ["src/**/*", "docs/**/*.mdx"],
+  "include": ["src/**/*", "docs/**/*.mdx", "*.ts"],
   "exclude": ["node_modules", "build", ".cache", ".docusaurus"]
 }

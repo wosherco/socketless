@@ -3,7 +3,7 @@ import "./external/instrument";
 import * as Sentry from "@sentry/bun";
 
 import type { PongMessage } from "@socketless/redis";
-import { and, eq, not, notInArray, or } from "@socketless/db";
+import { and, eq, notInArray } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { connectedClientsTable } from "@socketless/db/schema";
 import { getHeartbeatChannelName, PongMessageSchema } from "@socketless/redis";
