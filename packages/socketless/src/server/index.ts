@@ -8,6 +8,7 @@ import type {
   WebhookFeedsManageResponseType,
   WebhookMessageResponseSchema,
   WebhookResponseSchema,
+  WebsocketMessage,
 } from "@socketless/shared";
 import {
   ApiPostConnectResponseSchema,
@@ -15,8 +16,6 @@ import {
 } from "@socketless/shared";
 
 import { constructWebhookPayload } from "../webhook";
-
-type WebsocketMessage = string | Record<string, unknown> | unknown[];
 
 interface BuildSend<TResponse extends WebsocketMessage> {
   toFeed: (feed: string) => SenderContext<TResponse>;
