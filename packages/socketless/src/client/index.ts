@@ -12,26 +12,41 @@ export class SocketlessWebsocket<
 > {
   private url: string;
   private websocket!: WebSocket;
-  private state: "DISCONNECTED" | "CONNECTING" | "CONNECTED" = "DISCONNECTED";
-
-  private shouldRetryOnClose = true;
+  private state: "STOPPED" | "DISCONNECTED" | "CONNECTING" | "CONNECTED" =
+    "DISCONNECTED";
 
   private onMessage: OnMessageFunction<TResponse>;
   private sendQueue: TMessage[] = [];
+
+  private readonly identifier = crypto.randomUUID();
 
   constructor(url: string, onMessage: OnMessageFunction<TResponse>) {
     this.url = url;
     this.onMessage = onMessage;
 
+    console.log(this.identifier, "Constructor");
+
     this.createWebsocket();
   }
 
   private createWebsocket() {
+    if (this.state !== "DISCONNECTED") {
+      return;
+    }
+
+    console.log(this.identifier, "PRESTATE", this.state);
     const websocket = new WebSocket(this.url);
     this.state = "CONNECTING";
 
     websocket.onopen = () => {
+      if (this.state === "STOPPED") {
+        console.log(this.identifier, "onopen closing websocket");
+        websocket.close();
+        return;
+      }
+
       this.state = "CONNECTED";
+      console.log(this.identifier, "onopen opening websocket");
 
       // Send all messages in the queue
       for (const message of this.sendQueue) {
@@ -40,20 +55,20 @@ export class SocketlessWebsocket<
     };
 
     websocket.onclose = () => {
-      this.state = "DISCONNECTED";
-
-      if (this.shouldRetryOnClose) {
-        // Try to reconnect
-        this.createWebsocket();
+      if (this.state !== "STOPPED") {
+        this.state = "DISCONNECTED";
+        console.log(this.identifier, "onclose closing websocket");
+        this.retry();
       }
     };
 
-    websocket.onerror = () => {
-      this.state = "DISCONNECTED";
+    websocket.onerror = (err) => {
+      console.error(err);
 
-      if (this.shouldRetryOnClose) {
-        // Try to reconnect
-        this.createWebsocket();
+      if (this.state !== "STOPPED") {
+        this.state = "DISCONNECTED";
+        console.log(this.identifier, "error closing websocket");
+        this.retry();
       }
     };
 
@@ -79,7 +94,20 @@ export class SocketlessWebsocket<
       }
     };
 
+    console.log(this.identifier, "opening new websocket");
     this.websocket = websocket;
+  }
+
+  private retry() {
+    if (this.state === "STOPPED") {
+      return;
+    }
+
+    setTimeout(() => {
+      if (this.state === "DISCONNECTED") {
+        this.createWebsocket();
+      }
+    }, 500);
   }
 
   /**
@@ -89,6 +117,10 @@ export class SocketlessWebsocket<
    * @param appendToQueue If true, the message will be added to the send queue if the socket is not connected, and sent when the socket connects.
    */
   send(message: TMessage, appendToQueue = true) {
+    if (this.state === "STOPPED") {
+      throw new Error("Socket is stopped");
+    }
+
     if (this.state !== "CONNECTED") {
       if (appendToQueue) {
         this.sendQueue.push(message);
@@ -108,8 +140,26 @@ export class SocketlessWebsocket<
     return this.websocket;
   }
 
+  /**
+   * Closes the websocket connection. This instance cannot be used after calling this method.
+   */
   close() {
-    this.shouldRetryOnClose = false;
+    console.log(this.identifier, "Good closing websocket");
+    this.state = "STOPPED";
     this.websocket.close();
+  }
+
+  updateUrl(url: string) {
+    if (this.state === "STOPPED") {
+      throw new Error("Socket is stopped");
+    }
+
+    if (this.url === url) {
+      return;
+    }
+
+    this.url = url;
+    this.websocket.close();
+    // this.createWebsocket();
   }
 }
