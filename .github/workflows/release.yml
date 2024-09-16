@@ -18,7 +18,7 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Build Project
+      - name: Build And Check Packages
         run: turbo --filter "./packages/*" build typecheck lint
 
       - name: Create Release Pull Request
