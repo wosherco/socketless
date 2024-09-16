@@ -12,7 +12,7 @@ function SocketlessProvider<
   >,
   { url, children }: { url: string; children: React.ReactNode },
 ) {
-  const { client } = useSocketlessWebsocket<TMessage, TResponse>({ url });
+  const { client } = useSocketlessWebsocket<TMessage, TResponse>(url);
 
   return <context.Provider value={client}>{children}</context.Provider>;
 }
@@ -37,32 +37,23 @@ function useSocketless<
 export function useSocketlessWebsocket<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
->({ url }: { url: string }) {
-  const isMounted = useRef(false);
+>(url: string) {
   const [lastMessage, setLastMessage] = useState<TResponse | null>(null);
-
-  const [client, setClient] = useState<
-    SocketlessWebsocket<TMessage, TResponse>
-  >(new SocketlessWebsocket<TMessage, TResponse>(url, setLastMessage));
+  const client = useRef<SocketlessWebsocket<TMessage, TResponse> | null>(null);
 
   useEffect(() => {
-    if (isMounted.current) {
-      const client = new SocketlessWebsocket<TMessage, TResponse>(
-        url,
-        setLastMessage,
-      );
-
-      setClient(client);
-    } else {
-      isMounted.current = true;
-    }
+    client.current = new SocketlessWebsocket<TMessage, TResponse>(url, setLastMessage);
 
     return () => {
-      client.close();
+      client.current?.close();
     };
-  }, [url, setLastMessage]);
+  }, []);
 
-  return { client, lastMessage };
+  useEffect(() => {
+    client.current?.updateUrl(url)
+  }, [url, client]);
+
+  return { client: client.current, lastMessage };
 }
 
 export function generateSocketlessReact<
