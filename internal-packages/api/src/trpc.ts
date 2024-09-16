@@ -118,6 +118,21 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 /**
+ * Admin Protected procedure
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  if (ctx.user.role !== "ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+    });
+  }
+
+  return next();
+});
+
+/**
  * Protected (authenticated) procedure w/ Project Verification
  *
  * @see https://trpc.io/docs/procedures

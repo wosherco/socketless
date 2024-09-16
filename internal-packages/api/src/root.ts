@@ -1,3 +1,4 @@
+import { adminRouter } from "./router/admin";
 import { authRouter } from "./router/auth";
 import { homeRouter } from "./router/home";
 import { projectRouter } from "./router/project";
@@ -9,6 +10,7 @@ import { createTRPCRouter } from "./trpc";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   home: homeRouter,
+  admin: adminRouter,
   project: projectRouter,
   projectLogs: projectLogsRouter,
   projectToken: projectTokenRouter,
