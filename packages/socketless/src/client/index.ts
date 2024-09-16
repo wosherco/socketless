@@ -24,8 +24,6 @@ export class SocketlessWebsocket<
     this.url = url;
     this.onMessage = onMessage;
 
-    console.log(this.identifier, "Constructor");
-
     this.createWebsocket();
   }
 
@@ -34,19 +32,16 @@ export class SocketlessWebsocket<
       return;
     }
 
-    console.log(this.identifier, "PRESTATE", this.state);
     const websocket = new WebSocket(this.url);
     this.state = "CONNECTING";
 
     websocket.onopen = () => {
       if (this.state === "STOPPED") {
-        console.log(this.identifier, "onopen closing websocket");
         websocket.close();
         return;
       }
 
       this.state = "CONNECTED";
-      console.log(this.identifier, "onopen opening websocket");
 
       // Send all messages in the queue
       for (const message of this.sendQueue) {
@@ -55,21 +50,13 @@ export class SocketlessWebsocket<
     };
 
     websocket.onclose = () => {
-      if (this.state !== "STOPPED") {
-        this.state = "DISCONNECTED";
-        console.log(this.identifier, "onclose closing websocket");
-        this.retry();
-      }
+      this.onDisconnect();
     };
 
     websocket.onerror = (err) => {
       console.error(err);
 
-      if (this.state !== "STOPPED") {
-        this.state = "DISCONNECTED";
-        console.log(this.identifier, "error closing websocket");
-        this.retry();
-      }
+      this.onDisconnect();
     };
 
     websocket.onmessage = (message) => {
@@ -94,14 +81,15 @@ export class SocketlessWebsocket<
       }
     };
 
-    console.log(this.identifier, "opening new websocket");
     this.websocket = websocket;
   }
 
-  private retry() {
+  private onDisconnect() {
     if (this.state === "STOPPED") {
       return;
     }
+
+    this.state = "DISCONNECTED";
 
     setTimeout(() => {
       if (this.state === "DISCONNECTED") {
@@ -144,14 +132,17 @@ export class SocketlessWebsocket<
    * Closes the websocket connection. This instance cannot be used after calling this method.
    */
   close() {
-    console.log(this.identifier, "Good closing websocket");
+    if (this.state === "STOPPED") {
+      return;
+    }
+
     this.state = "STOPPED";
     this.websocket.close();
   }
 
   updateUrl(url: string) {
     if (this.state === "STOPPED") {
-      throw new Error("Socket is stopped");
+      return;
     }
 
     if (this.url === url) {
