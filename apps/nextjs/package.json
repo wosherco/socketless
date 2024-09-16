@@ -3,6 +3,7 @@
   "version": "0.1.6",
   "private": true,
   "type": "module",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "pnpm with-env next build",
     "clean": "git clean -xdf .cache .next .turbo node_modules",

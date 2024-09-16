@@ -39,7 +39,7 @@
       }
     }
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "bunchee --tsconfig tsconfig.json",
     "clean": "git clean -xdf .cache .turbo dist node_modules",

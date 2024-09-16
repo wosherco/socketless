@@ -12,6 +12,7 @@
     "start:cluster": "bun with-env bun run src/cluster.ts",
     "with-env": "dotenv -e ../../.env --"
   },
+  "license": "SSPL-1.0",
   "dependencies": {
     "@sentry/bun": "^8.28.0",
     "@socketless/api": "workspace:*",

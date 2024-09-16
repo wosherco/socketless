@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
+  "license": "Apache-2.0",
   "dependencies": {
     "@sentry/nextjs": "^8.28.0",
     "@socketless/api": "workspace:*",
