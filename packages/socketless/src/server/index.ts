@@ -18,15 +18,15 @@ import { constructWebhookPayload } from "../webhook";
 
 type WebsocketMessage = string | Record<string, unknown> | unknown[];
 
-interface BuildSend<TMessage extends WebsocketMessage = string> {
-  toFeed: (feed: string) => SenderContext<TMessage>;
-  toFeeds: (feeds: string[]) => SenderContext<TMessage>;
-  toClient: (identifier: string) => SenderContext<TMessage>;
-  toClients: (identifiers: string[]) => SenderContext<TMessage>;
+interface BuildSend<TResponse extends WebsocketMessage> {
+  toFeed: (feed: string) => SenderContext<TResponse>;
+  toFeeds: (feeds: string[]) => SenderContext<TResponse>;
+  toClient: (identifier: string) => SenderContext<TResponse>;
+  toClients: (identifiers: string[]) => SenderContext<TResponse>;
 }
 
-class SenderContext<TMessage extends WebsocketMessage>
-  implements BuildSend<TMessage>
+class SenderContext<TResponse extends WebsocketMessage>
+  implements BuildSend<TResponse>
 {
   private feeds: string[] = [];
   private clients: string[] = [];
@@ -60,7 +60,7 @@ class SenderContext<TMessage extends WebsocketMessage>
     return this;
   }
 
-  send(message: TMessage): void {
+  send(message: TResponse): void {
     this.messages.push({
       message,
       clients: this.clients,
@@ -69,10 +69,10 @@ class SenderContext<TMessage extends WebsocketMessage>
   }
 }
 
-type SocketlessContext<TMessage extends WebsocketMessage> =
-  BuildSend<TMessage> & {
+type SocketlessContext<TResponse extends WebsocketMessage> =
+  BuildSend<TResponse> & {
     send: (
-      message: TMessage,
+      message: TResponse,
       receivers: { identifiers?: string | string[]; feeds?: string | string[] },
     ) => void;
     buildResponse: () => z.infer<typeof WebhookResponseSchema>;
@@ -98,15 +98,18 @@ type SocketlessContext<TMessage extends WebsocketMessage> =
     leaveFeeds: (feeds: string[], clients?: string | string[]) => void;
   };
 
-type PublicSocketlessContext<TMessage extends WebsocketMessage> = Omit<
-  SocketlessContext<TMessage>,
+type PublicSocketlessContext<TResponse extends WebsocketMessage> = Omit<
+  SocketlessContext<TResponse>,
   "buildResponse"
 >;
 
-function createContext<TMessage extends WebsocketMessage>(
-  server: SocketlessServer<TMessage>,
+function createContext<
+  TMessage extends WebsocketMessage,
+  TResponse extends WebsocketMessage,
+>(
+  server: SocketlessServer<TMessage, TResponse>,
   identifier: string,
-): SocketlessContext<TMessage> {
+): SocketlessContext<TResponse> {
   const messagesToSend: z.infer<typeof WebhookMessageResponseSchema>[] = [];
   const feedsToManage: z.infer<typeof WebhookFeedsManageResponseSchema>[] = [];
 
@@ -141,7 +144,7 @@ function createContext<TMessage extends WebsocketMessage>(
      * Builder to send messages to clients or feeds
      */
     toClient(identifier) {
-      const sendContext = new SenderContext<TMessage>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend);
 
       return sendContext.toClient(identifier);
     },
@@ -149,7 +152,7 @@ function createContext<TMessage extends WebsocketMessage>(
      * Builder to send messages to clients or feeds
      */
     toClients(identifier: string[]) {
-      const sendContext = new SenderContext<TMessage>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend);
 
       return sendContext.toClients(identifier);
     },
@@ -157,7 +160,7 @@ function createContext<TMessage extends WebsocketMessage>(
      * Builder to send messages to clients or feeds
      */
     toFeed(feed: string) {
-      const sendContext = new SenderContext<TMessage>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend);
 
       return sendContext.toFeed(feed);
     },
@@ -165,7 +168,7 @@ function createContext<TMessage extends WebsocketMessage>(
      * Builder to send messages to clients or feeds
      */
     toFeeds(feeds: string[]) {
-      const sendContext = new SenderContext<TMessage>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend);
 
       return sendContext.toFeeds(feeds);
     },
@@ -207,23 +210,29 @@ function createContext<TMessage extends WebsocketMessage>(
 
 type MaybePromise<T> = T | Promise<T>;
 
-type OnConnectFunc<TMessage extends WebsocketMessage> = (
-  context: PublicSocketlessContext<TMessage>,
+type OnConnectFunc<TResponse extends WebsocketMessage> = (
+  context: PublicSocketlessContext<TResponse>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnDisconnectFunc<TMessage extends WebsocketMessage> = (
-  context: PublicSocketlessContext<TMessage>,
+type OnDisconnectFunc<TResponse extends WebsocketMessage> = (
+  context: PublicSocketlessContext<TResponse>,
   identifier: string,
 ) => MaybePromise<void>;
 
-type OnMessageFunc<TMessage extends WebsocketMessage> = (
-  context: PublicSocketlessContext<TMessage>,
+type OnMessageFunc<
+  TMessage extends WebsocketMessage,
+  TResponse extends WebsocketMessage,
+> = (
+  context: PublicSocketlessContext<TResponse>,
   identifier: string,
   message: TMessage,
 ) => MaybePromise<void>;
 
-interface SocketlessServerOptions<TMessage extends WebsocketMessage> {
+interface SocketlessServerOptions<
+  TMessage extends WebsocketMessage,
+  TResponse extends WebsocketMessage,
+> {
   clientId: string;
   token: string;
 
@@ -237,19 +246,22 @@ interface SocketlessServerOptions<TMessage extends WebsocketMessage> {
    */
   url?: string;
 
-  onConnect?: OnConnectFunc<TMessage>;
-  onDisconnect?: OnDisconnectFunc<TMessage>;
-  onMessage?: OnMessageFunc<TMessage>;
+  onConnect?: OnConnectFunc<TResponse>;
+  onDisconnect?: OnDisconnectFunc<TResponse>;
+  onMessage?: OnMessageFunc<TMessage, TResponse>;
 
   messageValidator?: z.ZodType<TMessage>;
 }
 
-class SocketlessServer<TMessage extends WebsocketMessage = string> {
-  private options: SocketlessServerOptions<TMessage>;
+class SocketlessServer<
+  TMessage extends WebsocketMessage,
+  TResponse extends WebsocketMessage,
+> {
+  private options: SocketlessServerOptions<TMessage, TResponse>;
   private url?: string;
   private baseUrl = "https://app.socketless.ws/api/v0";
 
-  constructor(options: SocketlessServerOptions<TMessage>) {
+  constructor(options: SocketlessServerOptions<TMessage, TResponse>) {
     this.options = options;
 
     if (this.options.url === undefined) {
@@ -306,7 +318,7 @@ class SocketlessServer<TMessage extends WebsocketMessage = string> {
       this.options.token,
     );
 
-    const context = createContext<TMessage>(
+    const context = createContext<TMessage, TResponse>(
       this,
       webhookPayload.data.connection.identifier,
     );
@@ -437,7 +449,7 @@ class SocketlessServer<TMessage extends WebsocketMessage = string> {
   }
 
   public async sendMessage(
-    message: TMessage,
+    message: TResponse,
     receivers: { identifiers?: string | string[]; feeds?: string | string[] },
   ) {
     if (receivers.identifiers === undefined && receivers.feeds === undefined) {
@@ -487,8 +499,9 @@ class SocketlessServer<TMessage extends WebsocketMessage = string> {
   }
 }
 
-export function createSocketless<TMessage extends WebsocketMessage = string>(
-  options: SocketlessServerOptions<TMessage>,
-) {
-  return new SocketlessServer<TMessage>(options);
+export function createSocketless<
+  TMessage extends WebsocketMessage = string,
+  TResponse extends WebsocketMessage = string,
+>(options: SocketlessServerOptions<TMessage, TResponse>) {
+  return new SocketlessServer<TMessage, TResponse>(options);
 }
