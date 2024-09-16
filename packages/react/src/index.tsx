@@ -42,7 +42,10 @@ export function useSocketlessWebsocket<
   const client = useRef<SocketlessWebsocket<TMessage, TResponse> | null>(null);
 
   useEffect(() => {
-    client.current = new SocketlessWebsocket<TMessage, TResponse>(url, setLastMessage);
+    client.current = new SocketlessWebsocket<TMessage, TResponse>(
+      url,
+      setLastMessage,
+    );
 
     return () => {
       client.current?.close();
@@ -50,7 +53,7 @@ export function useSocketlessWebsocket<
   }, []);
 
   useEffect(() => {
-    client.current?.updateUrl(url)
+    client.current?.updateUrl(url);
   }, [url, client]);
 
   return { client: client.current, lastMessage };

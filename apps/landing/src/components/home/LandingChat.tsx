@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import { useCookies } from "next-client-cookies";
 
+import { useSocketlessWebsocket } from "@socketless/react";
 import { Button } from "@socketless/ui/button";
-import { useSocketlessWebsocket } from '@socketless/react';
 import {
   Card,
   CardContent,
