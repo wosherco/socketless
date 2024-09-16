@@ -28,6 +28,16 @@
         "default": "./dist/server/index.cjs"
       }
     },
+    "./client": {
+      "import": {
+        "types": "./dist/client/index.d.ts",
+        "default": "./dist/client/index.js"
+      },
+      "require": {
+        "types": "./dist/client/index.d.cts",
+        "default": "./dist/client/index.cjs"
+      }
+    },
     "./webhook": {
       "import": {
         "types": "./dist/webhook/index.d.ts",
@@ -46,6 +56,7 @@
     "dev": "bunchee -w --tsconfig tsconfig.json --no-clean",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "prepack": "bun ../../.github/replace-workspace-protocol.ts",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
