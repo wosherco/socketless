@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import { useCookies } from "next-client-cookies";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 
 import { Button } from "@socketless/ui/button";
+import { useSocketlessWebsocket } from '@socketless/react';
 import {
   Card,
   CardContent,
@@ -47,8 +47,7 @@ export default function Chat({
 
   // Opening websocket and creating a message history
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
-  const { sendMessage, lastMessage, readyState } =
-    useWebSocket<string>(websocketUrl);
+  const { client, lastMessage } = useSocketlessWebsocket<>(websocketUrl);
 
   useEffect(() => {
     if (lastMessage !== null) {
@@ -58,9 +57,9 @@ export default function Chat({
 
   const sendMessageCallback = useCallback(
     (emoji: string) => {
-      sendMessage(emoji);
+      client.send(emoji);
     },
-    [sendMessage],
+    [client],
   );
 
   return (
@@ -73,7 +72,7 @@ export default function Chat({
           </CardDescription>
         </CardHeader>
         <CardContent className="min-h-[200px] lg:min-h-[300px]">
-          {readyState === ReadyState.OPEN ? (
+          {client.getState() === "CONNECTED" ? (
             // Socket is connected, showing messages
             <MessagesHistory messages={messageHistory} />
           ) : (
