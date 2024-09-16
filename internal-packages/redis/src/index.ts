@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 const NODES_CHANNELS_PREFIX = "nodes:";
 
 export function getMainChannelName(projectId: number, identifier: string) {
@@ -31,3 +33,17 @@ export function getProjectLimitKeyname(
 ) {
   return `${datatype}-limit:${projectId}`;
 }
+
+export const PongMessageSchema = z.object({
+  node: z.string(),
+  message: z.literal("pong"),
+  connectedClients: z.array(
+    z.object({
+      connectionId: z.number().optional(),
+      projectId: z.number(),
+      identifier: z.string(),
+    }),
+  ),
+});
+
+export type PongMessage = z.infer<typeof PongMessageSchema>;

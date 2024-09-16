@@ -379,6 +379,24 @@ export class ConnectedClient {
   }
 
   private async onClose(_: CloseEvent, __: WSContext) {
+    await this.unregisterConnection(false);
+  }
+
+  private async onError(_: Event, __: WSContext) {
+    Sentry.captureException(
+      new Error(`Websocket error ${this.projectId} ${this.identifier}`),
+    );
+
+    await this.unregisterConnection(true);
+  }
+
+  /**
+   * When a connection is closed, this method is called to clean up the connection.
+   * @param error Whether the connection was closed due to an error.
+   * @returns A promise resolving when the connection is fully cleaned up.
+   */
+  private async unregisterConnection(_: boolean) {
+    // TODO: Actually use error
     this.closing = true;
     if (this.onCloseCallback) {
       this.onCloseCallback();
@@ -438,10 +456,15 @@ export class ConnectedClient {
     return Promise.all(promises);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  private async onError(_: Event, __: WSContext) {
-    Sentry.captureException(
-      new Error(`Websocket error ${this.projectId} ${this.identifier}`),
-    );
+  public getConnectionId() {
+    return this.connectionId;
+  }
+
+  public getIdentifier() {
+    return this.identifier;
+  }
+
+  public getProjectId() {
+    return this.projectId;
   }
 }

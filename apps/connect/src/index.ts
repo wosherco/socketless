@@ -5,6 +5,7 @@ import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { createMiddleware } from "hono/factory";
 
+import type { PongMessage } from "@socketless/redis";
 import type { SimpleWebhook } from "@socketless/shared";
 import {
   InvalidTokenPayloadContents,
@@ -29,14 +30,28 @@ app.get("/", (c) =>
   ),
 );
 
-// Usage Manager
+// Contains all connected clients in this instance
+const clients: ConnectedClient[] = [];
+
+// Global Redis client for publishing and subscribing to messages to master
 const globalRedis = createRedisClient();
 const globalRedisSubscriber = createRedisClient();
 
 await globalRedisSubscriber.subscribe(getHeartbeatChannelName(NODE_NAME));
 globalRedisSubscriber.on("message", (channel, message) => {
   if (message === "ping") {
-    void globalRedis.publish(channel, "pong");
+    void globalRedis.publish(
+      channel,
+      JSON.stringify({
+        node: NODE_NAME,
+        message: "pong",
+        connectedClients: clients.map((c) => ({
+          connectionId: c.getConnectionId(),
+          projectId: c.getProjectId(),
+          identifier: c.getIdentifier(),
+        })),
+      } satisfies PongMessage),
+    );
   }
 });
 
@@ -84,8 +99,6 @@ const tokenValidationMiddleware = createMiddleware<WebsocketContext>(
     }
   },
 );
-
-const clients: ConnectedClient[] = [];
 
 app.get(
   "/:token",

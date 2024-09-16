@@ -2,10 +2,11 @@ import "./external/instrument";
 
 import * as Sentry from "@sentry/bun";
 
-import { eq } from "@socketless/db";
+import type { PongMessage } from "@socketless/redis";
+import { and, eq, not, notInArray, or } from "@socketless/db";
 import { db } from "@socketless/db/client";
 import { connectedClientsTable } from "@socketless/db/schema";
-import { getHeartbeatChannelName } from "@socketless/redis";
+import { getHeartbeatChannelName, PongMessageSchema } from "@socketless/redis";
 import { createRedisClient } from "@socketless/redis/client";
 
 async function checkNode(nodeName: string) {
@@ -22,10 +23,40 @@ async function checkNode(nodeName: string) {
   redis.on("message", (channel, message) => {
     console.log("Received message", message, "from channel", channel);
 
-    if (message === "pong") {
-      console.log(`Node ${nodeName} is responding (healthy)`);
-      isGood = true;
+    if (message === "ping") {
+      return; // Ignoring ping sent by us.
     }
+
+    let pongMessage: PongMessage;
+    // Trying to parse message
+    try {
+      pongMessage = PongMessageSchema.parse(JSON.parse(message));
+    } catch (error) {
+      console.error("Failed to parse message:", error);
+      return;
+    }
+
+    isGood = true;
+
+    console.log(
+      `Node ${nodeName} is responding (healthy). Cleaning connections...`,
+    );
+
+    // If connectionId is not present, it means that the connection is new. Next ping will probably have a connectionId
+    const connections = pongMessage.connectedClients
+      .map((c) => c.connectionId)
+      .filter((connectionId) => connectionId !== undefined);
+
+    void db
+      .delete(connectedClientsTable)
+      .where(
+        and(
+          eq(connectedClientsTable.node, pongMessage.node),
+          notInArray(connectedClientsTable.id, connections),
+        ),
+      )
+      .returning()
+      .execute();
   });
 
   // Sending message
