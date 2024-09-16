@@ -119,7 +119,10 @@ app.get(
 
 Bun.serve({
   fetch: app.fetch,
-  websocket,
+  websocket: {
+    ...websocket,
+    sendPings: true,
+  },
   port: env.PORT,
 });
 
