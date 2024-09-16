@@ -66,7 +66,6 @@ class SenderContext<TMessage = string> implements BuildSend<TMessage> {
 }
 
 type SocketlessContext<TMessage = string> = BuildSend<TMessage> & {
-  // TODO: Finish types
   send: (
     message: TMessage,
     receivers: { identifiers?: string | string[]; feeds?: string | string[] },
