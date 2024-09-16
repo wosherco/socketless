@@ -1,5 +1,16 @@
 # socketless.ws
 
+## 1.5.0
+
+### Minor Changes
+
+- 0339a83: Added SocketlessClient for easier client-side implementations
+
+### Patch Changes
+
+- Updated dependencies [0339a83]
+  - @socketless/shared@1.1.1
+
 ## 1.4.1
 
 ### Patch Changes

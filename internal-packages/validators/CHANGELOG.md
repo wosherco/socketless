@@ -1,5 +1,12 @@
 # @socketless/validators
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [0339a83]
+  - @socketless/shared@1.1.1
+
 ## 0.1.2
 
 ### Patch Changes
