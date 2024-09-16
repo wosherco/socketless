@@ -4,7 +4,7 @@
   "type": "module",
   "private": false,
   "homepage": "https://socketless.ws",
-  "main": "./dist/index.js",
+  "main": "./dist/index.jsx",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
