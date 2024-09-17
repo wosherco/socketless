@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { SocketlessWebsocket } from "socketless.ws/client";
 
 import type { WebsocketMessage } from "@socketless/shared";
