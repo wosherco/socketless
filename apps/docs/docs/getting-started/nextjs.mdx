@@ -108,16 +108,22 @@ export default async function Page() {
 ```tsx title="src/components/LiveDashboard.tsx"
 import { useSocketlessWebsocket } from "@socketless/react";
 
-export default function LiveDashboard({websocketUrl}: {websocketUrl: string}) {
+export default function LiveDashboard({
+  websocketUrl,
+}: {
+  websocketUrl: string;
+}) {
   const { client, lastMessage } = useSocketlessWebsocket(websocketUrl);
 
   useEffect(() => {
-    console.log("New Message", lastMessage)
+    console.log("New Message", lastMessage);
   }, [lastMessage]);
 
-  return <button onclick={() => client.send("Message sent from NextJS")}>
-    Send Message
-  </button>;
+  return (
+    <button onclick={() => client.send("Message sent from NextJS")}>
+      Send Message
+    </button>
+  );
 }
 ```
 

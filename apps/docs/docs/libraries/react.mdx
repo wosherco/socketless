@@ -33,7 +33,8 @@ For that, create a new file, and generate the components:
 ```tsx title="src/lib/socketless.ts"
 import { generateSocketlessReact } from "@socketless/react";
 
-export const { SocketlessProvider, useSocketless, useSocketlessWebsocket } = generateSocketlessReact<SocketlessMessage, SocketlessResponse>();
+export const { SocketlessProvider, useSocketless, useSocketlessWebsocket } =
+  generateSocketlessReact<SocketlessMessage, SocketlessResponse>();
 ```
 
 ## Components
@@ -44,7 +45,6 @@ There are three components you can use:
 - `useSocketless`: Hook to get the client and last message. Grabs the client from the provider.
 - `useSocketlessWebsocket`: Hook to get the client and last message. It's totally independent from the provider.
 
-
 ## NextJS
 
 We're considering creating a NextJS library for easier functionality. Meanwhile, you can use the provider creating a client component first.
@@ -54,7 +54,13 @@ We're considering creating a NextJS library for easier functionality. Meanwhile,
 
 import { SocketlessProvider } from "@/lib/socketless";
 
-function NextJSSocketlessProvider({ url, children }: { url: string; children: React.ReactNode }) {
+function NextJSSocketlessProvider({
+  url,
+  children,
+}: {
+  url: string;
+  children: React.ReactNode;
+}) {
   return (
     <SocketlessProvider url="ws://localhost:8080">
       {children}
