@@ -66,3 +66,9 @@ You have more information on Development and Contribution in [CONTRIBUTING.md](C
 - Docs (localhost:3002)
 - Connect (localhost:3100)
 - Master (localhost:3101)
+
+## Feature Requests
+
+If you want to request a feature, check out our [insigh.to board](https://insigh.to/b/socketless). If the feature request has already been created, just upvote it.
+
+Feature Requests that are accepted will be moved into a GitHub Issue.
