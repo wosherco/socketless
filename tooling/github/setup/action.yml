@@ -4,7 +4,6 @@ description: "Common setup steps for Actions"
 runs:
   using: composite
   steps:
-    # - uses: oven-sh/setup-bun@v2
     - uses: pnpm/action-setup@v4
     - uses: actions/setup-node@v4
       with:
@@ -12,7 +11,7 @@ runs:
         cache: "pnpm"
 
     - shell: bash
-      run: pnpm add -g turbo
+      run: pnpm add -g turbo bun@1.1.26
 
     - shell: bash
       run: pnpm install --frozen-lockfile
