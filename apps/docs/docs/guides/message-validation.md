@@ -4,7 +4,7 @@ You can validate messages sent by clients with Zod schemas by just passing a sch
 
 ## Creating schema
 
-Grabbing the example from the [Type Safety guide](/type-safety), let's create a schema for the `SocketlessMessage` type:
+Grabbing the example from the [Type Safety guide](type-safety), let's create a schema for the `SocketlessMessage` type:
 
 ```ts
 import { z } from "zod";
