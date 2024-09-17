@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.0.1
+
+### Patch Changes
+
+- b85163a: Fixed useSocketless hook missing last message
+
 ## 1.0.0
 
 ### Major Changes
