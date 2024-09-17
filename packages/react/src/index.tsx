@@ -5,16 +5,18 @@ import type { WebsocketMessage } from "@socketless/shared";
 
 interface HookReturnType<
   TMessage extends WebsocketMessage,
-  TResponse extends WebsocketMessage> {
+  TResponse extends WebsocketMessage,
+> {
   lastMessage: TResponse | null;
   client: SocketlessWebsocket<TMessage, TResponse> | null;
 }
 
 type ContextType<
   TMessage extends WebsocketMessage,
-  TResponse extends WebsocketMessage> = ReturnType<
-    typeof createContext<HookReturnType<TMessage, TResponse> | null>
-  >
+  TResponse extends WebsocketMessage,
+> = ReturnType<
+  typeof createContext<HookReturnType<TMessage, TResponse> | null>
+>;
 
 function SocketlessProvider<
   TMessage extends WebsocketMessage,
@@ -31,9 +33,7 @@ function SocketlessProvider<
 function useSocketless<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
->(
-  context: ContextType<TMessage, TResponse>,
-) {
+>(context: ContextType<TMessage, TResponse>) {
   const ctx = useContext(context);
 
   if (!ctx) {
@@ -72,16 +72,26 @@ export function generateSocketlessReact<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage = string,
 >() {
-  const context: ContextType<TMessage, TResponse> = createContext<HookReturnType<
-    TMessage,
-    TResponse
-  > | null>(null);
+  const context: ContextType<TMessage, TResponse> =
+    createContext<HookReturnType<TMessage, TResponse> | null>(null);
 
-  const bindedSocketlessProvider = SocketlessProvider.bind<null, [context: ContextType<TMessage, TResponse>], [{
-    url: string;
-    children: React.ReactNode;
-  }], React.JSX.Element>(null, context);
-  const bindedUseSocketless = useSocketless.bind<null, [context: ContextType<TMessage, TResponse>], [], HookReturnType<TMessage, TResponse>>(null, context);
+  const bindedSocketlessProvider = SocketlessProvider.bind<
+    null,
+    [context: ContextType<TMessage, TResponse>],
+    [
+      {
+        url: string;
+        children: React.ReactNode;
+      },
+    ],
+    React.JSX.Element
+  >(null, context);
+  const bindedUseSocketless = useSocketless.bind<
+    null,
+    [context: ContextType<TMessage, TResponse>],
+    [],
+    HookReturnType<TMessage, TResponse>
+  >(null, context);
 
   return {
     useSocketlessWebsocket: (
