@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.0.2
+
+### Patch Changes
+
+- 45283e0: Fixed react not being imported
+
 ## 1.0.1
 
 ### Patch Changes
