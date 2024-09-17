@@ -11,16 +11,16 @@ Before anything, you'll need to be registered in [socketless.ws](https://socketl
 
    <Tabs groupId="package-manager">
      <TabItem value="npm" label="npm">
-       ```bash npm install socketless.ws ```
+       ```bash npm install socketless.ws @socketless/react```
      </TabItem>
      <TabItem value="pnpm" label="pnpm">
-       ```bash pnpm add socketless.ws ```
+       ```bash pnpm add socketless.ws @socketless/react```
      </TabItem>
      <TabItem value="bun" label="bun">
-       ```bash bun add socketless.ws ```
+       ```bash bun add socketless.ws @socketless/react```
      </TabItem>
      <TabItem value="yarn" label="yarn">
-       ```bash yarn add socketless.ws ```
+       ```bash yarn add socketless.ws @socketless/react```
      </TabItem>
    </Tabs>
 
@@ -105,6 +105,26 @@ export default async function Page() {
 }
 ```
 
+```tsx title="src/components/LiveDashboard.tsx"
+import { useSocketlessWebsocket } from "@socketless/react";
+
+export default function LiveDashboard({websocketUrl}: {websocketUrl: string}) {
+  const { client, lastMessage } = useSocketlessWebsocket(websocketUrl);
+
+  useEffect(() => {
+    console.log("New Message", lastMessage)
+  }, [lastMessage]);
+
+  return <button onclick={() => client.send("Message sent from NextJS")}>
+    Send Message
+  </button>;
+}
+```
+
 ## Next steps
 
-Check out how to develop locally with Socketless on Next.js.
+Check out the following recommended guides:
+
+- [Local Development](/docs/guides/local-development)
+- [Type Safety](/docs/guides/type-safety)
+- [Message Validation with Zod](/docs/guides/message-validation)

@@ -1,0 +1,64 @@
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+# @socketless/react
+
+React library for [socketless.ws](https://socketless.ws).
+
+## Installation
+
+We publish packages to npm. You can install them with your favorite package manager:
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash npm install @socketless/react```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash pnpm add @socketless/react```
+  </TabItem>
+  <TabItem value="bun" label="bun">
+    ```bash bun add @socketless/react```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash yarn add @socketless/react```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+You can use `useSocketlessWebsocket()` hook directly, but we recommend generating components based on your types.
+
+For that, create a new file, and generate the components:
+
+```tsx title="src/lib/socketless.ts"
+import { generateSocketlessReact } from "@socketless/react";
+
+export const { SocketlessProvider, useSocketless, useSocketlessWebsocket } = generateSocketlessReact<SocketlessMessage, SocketlessResponse>();
+```
+
+## Components
+
+There are three components you can use:
+
+- `SocketlessProvider`: Provider for the websocket client. You can use this in a parent layout, so connection doesn't get interrupted when navigating.
+- `useSocketless`: Hook to get the client and last message. Grabs the client from the provider.
+- `useSocketlessWebsocket`: Hook to get the client and last message. It's totally independent from the provider.
+
+
+## NextJS
+
+We're considering creating a NextJS library for easier functionality. Meanwhile, you can use the provider creating a client component first.
+
+```tsx
+"use client";
+
+import { SocketlessProvider } from "@/lib/socketless";
+
+function NextJSSocketlessProvider({ url, children }: { url: string; children: React.ReactNode }) {
+  return (
+    <SocketlessProvider url="ws://localhost:8080">
+      {children}
+    </SocketlessProvider>
+  );
+}
+```
