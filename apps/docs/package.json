@@ -41,10 +41,10 @@
     "@socketless/tsconfig": "workspace:*",
     "dotenv-cli": "7.4.2",
     "eslint": "9.9.1",
-    "prettier": "3.3.3",
-    "typescript": "5.5.4",
     "postcss": "8.4.41",
-    "tailwindcss": "3.4.10"
+    "prettier": "3.3.3",
+    "tailwindcss": "3.4.10",
+    "typescript": "5.5.4"
   },
   "browserslist": {
     "production": [
