@@ -50,10 +50,10 @@ ENV HOSTNAME="0.0.0.0"
 
 CMD ["pnpm", "-F", "landing", "start"]
 
-#########################
-#      apps/nextjs      #
-#########################
-FROM build AS nextjs
+###########################
+#      apps/dashboard     #
+###########################
+FROM build AS dashboard
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 # COPY --from=prod-deps /app/node_modules /app/node_modules
@@ -63,7 +63,7 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["pnpm", "-F", "nextjs", "start"]
+CMD ["pnpm", "-F", "dashboard", "start"]
 
 ##########################
 #      apps/connect      #

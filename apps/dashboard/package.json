@@ -1,5 +1,5 @@
 {
-  "name": "@socketless/nextjs",
+  "name": "@socketless/dashboard",
   "version": "0.1.8",
   "private": true,
   "type": "module",

@@ -1,4 +1,4 @@
-# @socketless/nextjs
+# @socketless/dashboard
 
 ## 0.1.8
 

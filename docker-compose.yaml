@@ -23,12 +23,12 @@ services:
     ports:
       - 80
 
-  nextjs:
+  dashboard:
     build:
       context: .
       dockerfile: Dockerfile
-      target: nextjs
-    image: socketless/nextjs
+      target: dashboard
+    image: socketless/dashboard
     restart: always
     env_file:
       - .env
