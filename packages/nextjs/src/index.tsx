@@ -9,6 +9,8 @@ export function generateSocketlessNext<TMessage extends WebsocketMessage = strin
 
   return {
     useSocketlessWebsocket: reactComponents.useSocketlessWebsocket,
-    useSocketless: reactComponents.useSocketless
+    useSocketless: reactComponents.useSocketless,
+    SocketlessProvider: reactComponents.SocketlessProvider,
+    NextSocketlessProvider: () => { throw new Error("This component is only available on the server") }
   }
 }
