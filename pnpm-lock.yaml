@@ -84,7 +84,7 @@ importers:
         version: link:../../tooling/typescript
       '@types/bun':
         specifier: latest
-        version: 1.1.9
+        version: 1.1.10
       dotenv-cli:
         specifier: 7.4.2
         version: 7.4.2
@@ -94,6 +94,148 @@ importers:
       prettier:
         specifier: 3.3.3
         version: 3.3.3
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+
+  apps/dashboard:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.12.2
+        version: 1.12.2(hono@4.5.11)
+      '@hono/zod-openapi':
+        specifier: ^0.16.0
+        version: 0.16.0(hono@4.5.11)(zod@3.23.8)
+      '@hono/zod-validator':
+        specifier: ^0.2.2
+        version: 0.2.2(hono@4.5.11)(zod@3.23.8)
+      '@sentry/nextjs':
+        specifier: ^8.28.0
+        version: 8.30.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(next@14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.94.0(@swc/core@1.7.24(@swc/helpers@0.5.13)))
+      '@socketless/api':
+        specifier: workspace:*
+        version: link:../../internal-packages/api
+      '@socketless/auth':
+        specifier: workspace:*
+        version: link:../../internal-packages/auth
+      '@socketless/components':
+        specifier: workspace:*
+        version: link:../../internal-packages/components
+      '@socketless/db':
+        specifier: workspace:*
+        version: link:../../internal-packages/db
+      '@socketless/redis':
+        specifier: workspace:*
+        version: link:../../internal-packages/redis
+      '@socketless/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@socketless/ui':
+        specifier: workspace:*
+        version: link:../../internal-packages/ui
+      '@socketless/validators':
+        specifier: workspace:*
+        version: link:../../internal-packages/validators
+      '@t3-oss/env-nextjs':
+        specifier: 0.11.0
+        version: 0.11.0(typescript@5.5.4)(zod@3.23.8)
+      '@tanstack/react-query':
+        specifier: 5.51.23
+        version: 5.51.23(react@18.3.1)
+      '@trpc/client':
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477(@trpc/server@11.0.0-rc.477)
+      '@trpc/react-query':
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477(@tanstack/react-query@5.51.23(react@18.3.1))(@trpc/client@11.0.0-rc.477(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@trpc/server':
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477
+      geist:
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      hono:
+        specifier: ^4.5.10
+        version: 4.5.11
+      lucide-react:
+        specifier: 0.394.0
+        version: 0.394.0(react@18.3.1)
+      next:
+        specifier: 14.2.12
+        version: 14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      numbro:
+        specifier: ^2.5.0
+        version: 2.5.0
+      posthog-js:
+        specifier: 1.160.3
+        version: 1.160.3
+      posthog-node:
+        specifier: 4.2.0
+        version: 4.2.0
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-code-blocks:
+        specifier: ^0.1.6
+        version: 0.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-dom:
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-use-websocket:
+        specifier: ^4.8.1
+        version: 4.8.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      sharp:
+        specifier: ^0.33.5
+        version: 0.33.5
+      socketless.ws:
+        specifier: workspace:*
+        version: link:../../packages/socketless
+      stripe:
+        specifier: ^16.9.0
+        version: 16.10.0
+      superjson:
+        specifier: 2.2.1
+        version: 2.2.1
+      zod:
+        specifier: 3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@socketless/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@socketless/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@socketless/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
+      '@socketless/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/node':
+        specifier: 20.14.15
+        version: 20.14.15
+      '@types/react':
+        specifier: 18.3.3
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
+      dotenv-cli:
+        specifier: 7.4.2
+        version: 7.4.2
+      eslint:
+        specifier: 9.9.1
+        version: 9.9.1(jiti@1.21.6)
+      jiti:
+        specifier: 1.21.6
+        version: 1.21.6
+      prettier:
+        specifier: 3.3.3
+        version: 3.3.3
+      tailwindcss:
+        specifier: 3.4.10
+        version: 3.4.10(ts-node@10.9.2(@swc/core@1.7.24(@swc/helpers@0.5.13))(@types/node@20.14.15)(typescript@5.5.4))
       typescript:
         specifier: 5.5.4
         version: 5.5.4
@@ -327,7 +469,7 @@ importers:
         version: link:../../tooling/typescript
       '@types/bun':
         specifier: latest
-        version: 1.1.9
+        version: 1.1.10
       dotenv-cli:
         specifier: 7.4.2
         version: 7.4.2
@@ -337,148 +479,6 @@ importers:
       prettier:
         specifier: 3.3.3
         version: 3.3.3
-      typescript:
-        specifier: 5.5.4
-        version: 5.5.4
-
-  apps/nextjs:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^1.12.2
-        version: 1.12.2(hono@4.5.11)
-      '@hono/zod-openapi':
-        specifier: ^0.16.0
-        version: 0.16.0(hono@4.5.11)(zod@3.23.8)
-      '@hono/zod-validator':
-        specifier: ^0.2.2
-        version: 0.2.2(hono@4.5.11)(zod@3.23.8)
-      '@sentry/nextjs':
-        specifier: ^8.28.0
-        version: 8.30.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(next@14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.94.0(@swc/core@1.7.24(@swc/helpers@0.5.13)))
-      '@socketless/api':
-        specifier: workspace:*
-        version: link:../../internal-packages/api
-      '@socketless/auth':
-        specifier: workspace:*
-        version: link:../../internal-packages/auth
-      '@socketless/components':
-        specifier: workspace:*
-        version: link:../../internal-packages/components
-      '@socketless/db':
-        specifier: workspace:*
-        version: link:../../internal-packages/db
-      '@socketless/redis':
-        specifier: workspace:*
-        version: link:../../internal-packages/redis
-      '@socketless/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@socketless/ui':
-        specifier: workspace:*
-        version: link:../../internal-packages/ui
-      '@socketless/validators':
-        specifier: workspace:*
-        version: link:../../internal-packages/validators
-      '@t3-oss/env-nextjs':
-        specifier: 0.11.0
-        version: 0.11.0(typescript@5.5.4)(zod@3.23.8)
-      '@tanstack/react-query':
-        specifier: 5.51.23
-        version: 5.51.23(react@18.3.1)
-      '@trpc/client':
-        specifier: 11.0.0-rc.477
-        version: 11.0.0-rc.477(@trpc/server@11.0.0-rc.477)
-      '@trpc/react-query':
-        specifier: 11.0.0-rc.477
-        version: 11.0.0-rc.477(@tanstack/react-query@5.51.23(react@18.3.1))(@trpc/client@11.0.0-rc.477(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@trpc/server':
-        specifier: 11.0.0-rc.477
-        version: 11.0.0-rc.477
-      geist:
-        specifier: 1.3.1
-        version: 1.3.1(next@14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      hono:
-        specifier: ^4.5.10
-        version: 4.5.11
-      lucide-react:
-        specifier: 0.394.0
-        version: 0.394.0(react@18.3.1)
-      next:
-        specifier: 14.2.12
-        version: 14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      numbro:
-        specifier: ^2.5.0
-        version: 2.5.0
-      posthog-js:
-        specifier: 1.160.3
-        version: 1.160.3
-      posthog-node:
-        specifier: 4.2.0
-        version: 4.2.0
-      react:
-        specifier: 18.3.1
-        version: 18.3.1
-      react-code-blocks:
-        specifier: ^0.1.6
-        version: 0.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-dom:
-        specifier: 18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-use-websocket:
-        specifier: ^4.8.1
-        version: 4.8.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      sharp:
-        specifier: ^0.33.5
-        version: 0.33.5
-      socketless.ws:
-        specifier: workspace:*
-        version: link:../../packages/socketless
-      stripe:
-        specifier: ^16.9.0
-        version: 16.10.0
-      superjson:
-        specifier: 2.2.1
-        version: 2.2.1
-      zod:
-        specifier: 3.23.8
-        version: 3.23.8
-    devDependencies:
-      '@socketless/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@socketless/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@socketless/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
-      '@socketless/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@types/node':
-        specifier: 20.14.15
-        version: 20.14.15
-      '@types/react':
-        specifier: 18.3.3
-        version: 18.3.3
-      '@types/react-dom':
-        specifier: 18.3.0
-        version: 18.3.0
-      dotenv-cli:
-        specifier: 7.4.2
-        version: 7.4.2
-      eslint:
-        specifier: 9.9.1
-        version: 9.9.1(jiti@1.21.6)
-      jiti:
-        specifier: 1.21.6
-        version: 1.21.6
-      prettier:
-        specifier: 3.3.3
-        version: 3.3.3
-      tailwindcss:
-        specifier: 3.4.10
-        version: 3.4.10(ts-node@10.9.2(@swc/core@1.7.24(@swc/helpers@0.5.13))(@types/node@20.14.15)(typescript@5.5.4))
       typescript:
         specifier: 5.5.4
         version: 5.5.4
@@ -662,10 +662,10 @@ importers:
         version: 0.11.0(typescript@5.5.4)(zod@3.23.8)
       drizzle-orm:
         specifier: 0.33.0
-        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.27)(postgres@3.4.4)(react@18.3.1)
+        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.29)(postgres@3.4.4)(react@18.3.1)
       drizzle-zod:
         specifier: 0.5.1
-        version: 0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.27)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.29)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8)
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
@@ -923,6 +923,55 @@ importers:
         specifier: 5.5.4
         version: 5.5.4
 
+  packages/nextjs:
+    dependencies:
+      '@socketless/react':
+        specifier: workspace:*
+        version: link:../react
+      '@socketless/shared':
+        specifier: workspace:*
+        version: link:../shared
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      socketless.ws:
+        specifier: workspace:*
+        version: link:../socketless
+      zod:
+        specifier: 3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@socketless/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@socketless/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@socketless/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/react':
+        specifier: 18.3.3
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
+      eslint:
+        specifier: 9.9.1
+        version: 9.9.1(jiti@1.21.6)
+      next:
+        specifier: 14.2.12
+        version: 14.2.12(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      prettier:
+        specifier: 3.3.3
+        version: 3.3.3
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+
   packages/react:
     dependencies:
       '@socketless/shared':
@@ -1035,7 +1084,7 @@ importers:
         version: 7.35.0(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-react-hooks:
         specifier: rc
-        version: 5.1.0-rc-5dcb0097-20240918(eslint@9.9.1(jiti@1.21.6))
+        version: 5.1.0-rc-e4953922-20240919(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-turbo:
         specifier: 2.0.13
         version: 2.0.13(eslint@9.9.1(jiti@1.21.6))
@@ -4314,8 +4363,8 @@ packages:
   '@types/bonjour@3.5.13':
     resolution: {integrity: sha512-z9fJ5Im06zvUL548KvYNecEVlA7cVDkGUi6kZusb04mpyEFKCIZJvloCcmpmLaIahDpOQGHaHmG6imtPMmPXGQ==}
 
-  '@types/bun@1.1.9':
-    resolution: {integrity: sha512-SXJRejXpmAc3qxyN/YS4/JGWEzLf4dDBa5fLtRDipQXHqNccuMU4EUYCooXNTsylG0DmwFQsGgEDHxZF+3DqRw==}
+  '@types/bun@1.1.10':
+    resolution: {integrity: sha512-76KYVSwrHwr9zsnk6oLXOGs9KvyBg3U066GLO4rk6JZk1ypEPGCUDZ5yOiESyIHWs9cx9iC8r01utYN32XdmgA==}
 
   '@types/connect-history-api-fallback@1.5.4':
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
@@ -4939,8 +4988,8 @@ packages:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
 
-  bun-types@1.1.27:
-    resolution: {integrity: sha512-rHXAiIDefeMS/fleNM1rRDYqolJGNRdch3+AuCRwcZWaqTa1vjGBNsahH/HVV7Y82frllYhJomCVSEiHzLzkgg==}
+  bun-types@1.1.29:
+    resolution: {integrity: sha512-En3/TzSPMPyl5UlUB1MHzHpcrZDakTm7mS203eLoX1fBoEa3PW+aSS8GAqVJ7Is/m34Z5ogL+ECniLY0uDaCPw==}
 
   bun@1.1.27:
     resolution: {integrity: sha512-FLnMaOuVVuhjPIfmlRtAE42B2x+oSWO6jW8MZ/Ss179qokN//nzIhuj/07bdA016U6d11HyLvvGb6eaH0HKhBQ==}
@@ -6007,8 +6056,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@5.1.0-rc-5dcb0097-20240918:
-    resolution: {integrity: sha512-Kx+m5yAm0w1RSpzo0vQ4aN7kIlM9bcAvWyCRWqS5HjxxnzChMAYg4a3fQlwxFvwZ3WkoHA9HecJUBRTf49L5ew==}
+  eslint-plugin-react-hooks@5.1.0-rc-e4953922-20240919:
+    resolution: {integrity: sha512-W/CJVTs49Wn34P3RTMGb5jx7JW8ftUIUzNqYDsWqO/tz26DU3fXrou44jxAvu1HR5VH9DutXgxq7DCgDM2MBGQ==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -9202,6 +9251,9 @@ packages:
   serve-static@1.16.0:
     resolution: {integrity: sha512-pDLK8zwl2eKaYrs8mrPZBJua4hMplRWJ1tIFksVC3FtBEBnl8dxgeHtsaMS8DhS9i4fLObaon6ABoc4/hQGdPA==}
     engines: {node: '>= 0.8.0'}
+
+  server-only@0.0.1:
+    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -14330,9 +14382,9 @@ snapshots:
     dependencies:
       '@types/node': 20.14.15
 
-  '@types/bun@1.1.9':
+  '@types/bun@1.1.10':
     dependencies:
-      bun-types: 1.1.27
+      bun-types: 1.1.29
 
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
@@ -15110,7 +15162,7 @@ snapshots:
 
   builtin-modules@3.3.0: {}
 
-  bun-types@1.1.27:
+  bun-types@1.1.29:
     dependencies:
       '@types/node': 20.12.14
       '@types/ws': 8.5.12
@@ -15978,18 +16030,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.27)(postgres@3.4.4)(react@18.3.1):
+  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.29)(postgres@3.4.4)(react@18.3.1):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/pg': 8.6.1
       '@types/react': 18.3.3
-      bun-types: 1.1.27
+      bun-types: 1.1.29
       postgres: 3.4.4
       react: 18.3.1
 
-  drizzle-zod@0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.27)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8):
+  drizzle-zod@0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.29)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8):
     dependencies:
-      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.27)(postgres@3.4.4)(react@18.3.1)
+      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.3)(bun-types@1.1.29)(postgres@3.4.4)(react@18.3.1)
       zod: 3.23.8
 
   duplexer@0.1.2: {}
@@ -16334,7 +16386,7 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
-  eslint-plugin-react-hooks@5.1.0-rc-5dcb0097-20240918(eslint@9.9.1(jiti@1.21.6)):
+  eslint-plugin-react-hooks@5.1.0-rc-e4953922-20240919(eslint@9.9.1(jiti@1.21.6)):
     dependencies:
       eslint: 9.9.1(jiti@1.21.6)
 
@@ -20165,6 +20217,8 @@ snapshots:
       send: 0.18.0
     transitivePeerDependencies:
       - supports-color
+
+  server-only@0.0.1: {}
 
   set-function-length@1.2.2:
     dependencies:

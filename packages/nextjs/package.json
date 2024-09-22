@@ -13,6 +13,10 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
+      "react-server": {
+        "types": "./dist/server/index.d.ts",
+        "default": "./dist/server/index.js"
+      },
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
@@ -36,6 +40,7 @@
   "dependencies": {
     "@socketless/react": "workspace:*",
     "@socketless/shared": "workspace:*",
+    "server-only": "^0.0.1",
     "socketless.ws": "workspace:*",
     "zod": "3.23.8"
   },
@@ -43,12 +48,12 @@
     "@socketless/eslint-config": "workspace:*",
     "@socketless/prettier-config": "workspace:*",
     "@socketless/tsconfig": "workspace:*",
-    "react": "18.3.1",
-    "next": "14.2.12",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "eslint": "9.9.1",
+    "next": "14.2.12",
     "prettier": "3.3.3",
+    "react": "18.3.1",
     "typescript": "5.5.4"
   },
   "prettier": "@socketless/prettier-config",
