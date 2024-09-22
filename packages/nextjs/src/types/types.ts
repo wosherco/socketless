@@ -4,4 +4,7 @@ import type { WebsocketMessage } from "@socketless/shared";
 export type GeneratedNextComponents<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
-> = Omit<"SocketlessProvider", ReturnType<typeof generateSocketlessReact>>;
+> = Omit<
+  ReturnType<typeof generateSocketlessReact<TMessage, TResponse>>,
+  "SocketlessProvider"
+>;
