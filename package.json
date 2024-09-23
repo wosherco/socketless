@@ -2,6 +2,7 @@
   "name": "socketless",
   "version": "0.1.1",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=20.16.0"
   },
