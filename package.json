@@ -25,6 +25,8 @@
     "bun": "1.1.27"
   },
   "devDependencies": {
+    "@actions/github": "^6.0.0",
+    "@prettier/sync": "^0.5.2",
     "@changesets/cli": "^2.27.7",
     "@socketless/prettier-config": "workspace:*",
     "@turbo/gen": "2.1.1",
