@@ -26,5 +26,5 @@ export type GeneratedNextComponents<
 > = ReturnType<typeof generateSocketlessReact<TMessage, TResponse>> & {
   NextSocketlessProvider: (
     props: NextSocketlessProviderProps<TMessage, TResponse>,
-  ) => Promise<React.ReactNode>;
+  ) => Promise<JSX.Element>;
 };
