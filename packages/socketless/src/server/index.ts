@@ -498,6 +498,8 @@ class SocketlessServer<
   }
 }
 
+export type { SocketlessServer };
+
 export function createSocketless<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,

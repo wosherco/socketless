@@ -1,13 +1,8 @@
 import type React from "react";
-import type { createSocketless } from "socketless.ws/server";
+import type { SocketlessServer } from "socketless.ws/server";
 
 import type { generateSocketlessReact } from "@socketless/react";
 import type { WebsocketMessage } from "@socketless/shared";
-
-export type SocketlessServer<
-  TMessage extends WebsocketMessage,
-  TResponse extends WebsocketMessage,
-> = ReturnType<typeof createSocketless<TMessage, TResponse>>;
 
 export interface NextSocketlessProviderProps<
   TMessage extends WebsocketMessage,
