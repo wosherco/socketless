@@ -1,5 +1,7 @@
 import "server-only";
 
+import React from "react";
+
 import type { WebsocketMessage } from "@socketless/shared";
 
 import type {
