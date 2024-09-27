@@ -9,7 +9,7 @@ import { SocketlessWebsocket } from "socketless.ws/client";
 
 import type { WebsocketMessage } from "@socketless/shared";
 
-interface HookReturnType<
+export interface HookReturnType<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
 > {
