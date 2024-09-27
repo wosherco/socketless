@@ -8,7 +8,7 @@ import type {
   GeneratedNextComponents,
   NextSocketlessProviderProps,
 } from "./types";
-import { generateSocketlessReactClientProxy } from "./client-providers.react-server";
+import { generateSocketlessReact } from "@socketless/react";
 
 async function NextSocketlessProvider<
   TMessage extends WebsocketMessage,
@@ -20,7 +20,7 @@ async function NextSocketlessProvider<
   overrideFeeds,
   children,
 }: NextSocketlessProviderProps<TMessage, TResponse>) {
-  const { SocketlessProvider } = generateSocketlessReactClientProxy<
+  const { SocketlessProvider } = generateSocketlessReact<
     TMessage,
     TResponse
   >();
@@ -40,7 +40,7 @@ export function generateSocketlessNext<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
 >(): GeneratedNextComponents<TMessage, TResponse> {
-  const reactComponents = generateSocketlessReactClientProxy<
+  const reactComponents = generateSocketlessReact<
     TMessage,
     TResponse
   >();
