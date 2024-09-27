@@ -9,24 +9,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      },
-      "react-server": {
-        "import": {
-          "types": "./dist/server.d.ts",
-          "default": "./dist/server.js"
-        },
-        "require": {
-          "types": "./dist/server.d.cts",
-          "default": "./dist/server.cjs"
-        }
-      }
+      "types": "./dist/index.d.ts",
+      "react-server": "./dist/index.react-server.js",
+      "default": "./dist/index.js"
     }
   },
   "license": "Apache-2.0",

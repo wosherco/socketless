@@ -36,7 +36,7 @@ async function NextSocketlessProvider<
   );
 }
 
-function generateSocketlessNext<
+export function generateSocketlessNext<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
 >(): GeneratedNextComponents<TMessage, TResponse> {
@@ -54,5 +54,3 @@ function generateSocketlessNext<
     ) => NextSocketlessProvider<TMessage, TResponse>(...args),
   };
 }
-
-export { generateSocketlessNext };
