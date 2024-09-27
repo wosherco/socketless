@@ -1,16 +1,14 @@
 import "server-only";
 
-import React from "react";
-
 import type { WebsocketMessage } from "@socketless/shared";
 
 import type {
   GeneratedNextComponents,
   NextSocketlessProviderProps,
-} from "../types/types";
+} from "./types/types";
 import { generateSocketlessReactClientProxy } from "./client-providers";
 
-export async function NextSocketlessProvider<
+async function NextSocketlessProvider<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
 >({
@@ -36,7 +34,7 @@ export async function NextSocketlessProvider<
   );
 }
 
-export function generateSocketlessNext<
+function generateSocketlessNext<
   TMessage extends WebsocketMessage = string,
   TResponse extends WebsocketMessage = string,
 >(): GeneratedNextComponents<TMessage, TResponse> {
@@ -54,3 +52,5 @@ export function generateSocketlessNext<
     ) => NextSocketlessProvider<TMessage, TResponse>(...args),
   };
 }
+
+export { generateSocketlessNext };

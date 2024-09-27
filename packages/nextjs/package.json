@@ -13,13 +13,19 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
-      "react-server": {
-        "types": "./dist/server/index.d.ts",
-        "default": "./dist/server/index.js"
-      },
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
+      },
+      "react-server": {
+        "import": {
+          "types": "./dist/server.d.ts",
+          "default": "./dist/server.js"
+        },
+        "require": {
+          "types": "./dist/server.d.cts",
+          "default": "./dist/server.cjs"
+        }
       }
     }
   },

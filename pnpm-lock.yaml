@@ -29,7 +29,7 @@ importers:
         version: 2.1.1(@swc/core@1.7.24(@swc/helpers@0.5.13))(@types/node@20.14.15)(typescript@5.5.4)
       bunchee:
         specifier: ^5.4.0
-        version: 5.4.0(typescript@5.5.4)
+        version: 5.5.0(typescript@5.5.4)
       prettier:
         specifier: 3.3.3
         version: 3.3.3
@@ -1090,7 +1090,7 @@ importers:
         version: 7.35.0(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-react-hooks:
         specifier: rc
-        version: 5.1.0-rc-e4953922-20240919(eslint@9.9.1(jiti@1.21.6))
+        version: 5.1.0-rc-3edc000d-20240926(eslint@9.9.1(jiti@1.21.6))
       eslint-plugin-turbo:
         specifier: 2.0.13
         version: 2.0.13(eslint@9.9.1(jiti@1.21.6))
@@ -5069,8 +5069,8 @@ packages:
     os: [darwin, linux, win32]
     hasBin: true
 
-  bunchee@5.4.0:
-    resolution: {integrity: sha512-7R1Y5l5js3a+l7dlOVClQ54JnNSUmsU661dLiQyyfxEfM1BnlfmaLSdVkfNXaU+zmgkTK7F3/XEl97YSBpVjhQ==}
+  bunchee@5.5.0:
+    resolution: {integrity: sha512-lzR0h4wSToQaBqJx0EGTJftOQ+iX90MLmEPG1G0cEBlW4r13MB9qbeAol9ZQu8KRWqjIxJzklDMIekSgAUsZZA==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
@@ -6131,8 +6131,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@5.1.0-rc-e4953922-20240919:
-    resolution: {integrity: sha512-W/CJVTs49Wn34P3RTMGb5jx7JW8ftUIUzNqYDsWqO/tz26DU3fXrou44jxAvu1HR5VH9DutXgxq7DCgDM2MBGQ==}
+  eslint-plugin-react-hooks@5.1.0-rc-3edc000d-20240926:
+    resolution: {integrity: sha512-9E3TnhvxK6OWwG8EQyGlb2V9n0NQ+e1euW3Jj+t3M+6CkoBAKX25OPOn6QLK9Ylxib3xd4houOOUmrvwCSa8Jw==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -15346,7 +15346,7 @@ snapshots:
       '@oven/bun-windows-x64': 1.1.27
       '@oven/bun-windows-x64-baseline': 1.1.27
 
-  bunchee@5.4.0(typescript@5.5.4):
+  bunchee@5.5.0(typescript@5.5.4):
     dependencies:
       '@rollup/plugin-commonjs': 26.0.1(rollup@4.21.2)
       '@rollup/plugin-json': 6.1.0(rollup@4.21.2)
@@ -16556,7 +16556,7 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
-  eslint-plugin-react-hooks@5.1.0-rc-e4953922-20240919(eslint@9.9.1(jiti@1.21.6)):
+  eslint-plugin-react-hooks@5.1.0-rc-3edc000d-20240926(eslint@9.9.1(jiti@1.21.6)):
     dependencies:
       eslint: 9.9.1(jiti@1.21.6)
 
