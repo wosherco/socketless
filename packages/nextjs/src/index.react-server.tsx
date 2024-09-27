@@ -5,7 +5,7 @@ import type { WebsocketMessage } from "@socketless/shared";
 import type {
   GeneratedNextComponents,
   NextSocketlessProviderProps,
-} from "./types/types";
+} from "./types";
 import { generateSocketlessReactClientProxy } from "./client-providers";
 
 async function NextSocketlessProvider<

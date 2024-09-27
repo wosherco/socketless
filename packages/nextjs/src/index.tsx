@@ -3,7 +3,7 @@
 import type { WebsocketMessage } from "@socketless/shared";
 import { generateSocketlessReact } from "@socketless/react";
 
-import type { GeneratedNextComponents } from "./types/types";
+import type { GeneratedNextComponents } from "./types";
 
 export function generateSocketlessNext<
   TMessage extends WebsocketMessage = string,
