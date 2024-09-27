@@ -8,7 +8,7 @@ import type {
   GeneratedNextComponents,
   NextSocketlessProviderProps,
 } from "./types";
-import { generateSocketlessReactClientProxy } from "./client-providers";
+import { generateSocketlessReactClientProxy } from "./client-providers.shared-runtime";
 
 async function NextSocketlessProvider<
   TMessage extends WebsocketMessage,
