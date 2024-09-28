@@ -518,7 +518,7 @@ class SocketlessServer<
         );
       }
 
-      this.manageFeeds([
+      void this.manageFeeds([
         {
           feeds: feeds,
           action: action,
@@ -527,12 +527,14 @@ class SocketlessServer<
       ]);
     };
 
-    const send = this.sendMessage.bind(this);
+    const send = (...args: Parameters<typeof this.sendMessage>) => {
+      void this.sendMessage(...args);
+    };
 
     const sendMessageContext = (
       message: z.infer<typeof WebhookMessageResponseSchema>,
     ) => {
-      send(message.message, {
+      void send(message.message as unknown as TResponse, {
         identifiers: message.clients,
         feeds: message.feeds,
       });
