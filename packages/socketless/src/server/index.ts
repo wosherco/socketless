@@ -29,10 +29,16 @@ class SenderContext<TResponse extends WebsocketMessage>
 {
   private feeds: string[] = [];
   private clients: string[] = [];
-  private messages: z.infer<typeof WebhookMessageResponseSchema>[];
+  private sendMessage: (
+    message: z.infer<typeof WebhookMessageResponseSchema>,
+  ) => void;
 
-  constructor(messages: z.infer<typeof WebhookMessageResponseSchema>[]) {
-    this.messages = messages;
+  constructor(
+    sendMessage: (
+      message: z.infer<typeof WebhookMessageResponseSchema>,
+    ) => void,
+  ) {
+    this.sendMessage = sendMessage;
   }
 
   toFeed(feed: string) {
@@ -60,7 +66,7 @@ class SenderContext<TResponse extends WebsocketMessage>
   }
 
   send(message: TResponse): void {
-    this.messages.push({
+    this.sendMessage({
       message,
       clients: this.clients,
       feeds: this.feeds,
@@ -143,7 +149,7 @@ function createContext<
      * Builder to send messages to clients or feeds
      */
     toClient(identifier) {
-      const sendContext = new SenderContext<TResponse>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend.push);
 
       return sendContext.toClient(identifier);
     },
@@ -151,7 +157,7 @@ function createContext<
      * Builder to send messages to clients or feeds
      */
     toClients(identifier: string[]) {
-      const sendContext = new SenderContext<TResponse>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend.push);
 
       return sendContext.toClients(identifier);
     },
@@ -159,7 +165,7 @@ function createContext<
      * Builder to send messages to clients or feeds
      */
     toFeed(feed: string) {
-      const sendContext = new SenderContext<TResponse>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend.push);
 
       return sendContext.toFeed(feed);
     },
@@ -167,7 +173,7 @@ function createContext<
      * Builder to send messages to clients or feeds
      */
     toFeeds(feeds: string[]) {
-      const sendContext = new SenderContext<TResponse>(messagesToSend);
+      const sendContext = new SenderContext<TResponse>(messagesToSend.push);
 
       return sendContext.toFeeds(feeds);
     },
@@ -495,6 +501,73 @@ class SocketlessServer<
     if (!req.ok) {
       throw new Error(`Failed to send message ${req.status} ${req.statusText}`);
     }
+  }
+
+  public createContext(): PublicSocketlessContext<TResponse> {
+    const manageFeedsSimplified = (
+      feeds: string | string[],
+      clients: string | string[] | undefined,
+      action: WebhookFeedsManageResponseType["action"],
+    ) => {
+      if (
+        clients === undefined ||
+        (Array.isArray(clients) && clients.length === 0)
+      ) {
+        throw new Error(
+          "You must specify at least one client to join the feed",
+        );
+      }
+
+      this.manageFeeds([
+        {
+          feeds: feeds,
+          action: action,
+          clients: clients,
+        },
+      ]);
+    };
+
+    const send = this.sendMessage.bind(this);
+
+    const sendMessageContext = (
+      message: z.infer<typeof WebhookMessageResponseSchema>,
+    ) => {
+      send(message.message, {
+        identifiers: message.clients,
+        feeds: message.feeds,
+      });
+    };
+
+    return {
+      send: send,
+      joinFeed: (feed, clients) => manageFeedsSimplified(feed, clients, "join"),
+      joinFeeds: (feeds, clients) =>
+        manageFeedsSimplified(feeds, clients, "join"),
+      leaveFeed: (feed, clients) =>
+        manageFeedsSimplified(feed, clients, "leave"),
+      leaveFeeds: (feeds, clients) =>
+        manageFeedsSimplified(feeds, clients, "leave"),
+      toClient: (identifier) => {
+        const sendContext = new SenderContext<TResponse>(sendMessageContext);
+
+        return sendContext.toClient(identifier);
+      },
+      toClients: (identifiers) => {
+        const sendContext = new SenderContext<TResponse>(sendMessageContext);
+
+        return sendContext.toClients(identifiers);
+      },
+      toFeed: (feed) => {
+        const sendContext = new SenderContext<TResponse>(sendMessageContext);
+
+        return sendContext.toFeed(feed);
+      },
+      toFeeds: (feeds) => {
+        const sendContext = new SenderContext<TResponse>(sendMessageContext);
+
+        return sendContext.toFeeds(feeds);
+      },
+    };
   }
 }
 
