@@ -256,65 +256,65 @@ class SocketlessServer<
   TMessage extends WebsocketMessage,
   TResponse extends WebsocketMessage,
 > {
-  private options: SocketlessServerOptions<TMessage, TResponse>;
-  private url?: string;
-  private baseUrl = "https://app.socketless.ws/api/v0";
+  #options: SocketlessServerOptions<TMessage, TResponse>;
+  #url?: string;
+  #baseUrl = "https://app.socketless.ws/api/v0";
 
   constructor(options: SocketlessServerOptions<TMessage, TResponse>) {
-    this.options = options;
+    this.#options = options;
 
-    if (this.options.url === undefined) {
+    if (this.#options.url === undefined) {
       if (process.env.VERCEL_URL !== undefined) {
-        this.url = `https://${process.env.VERCEL_URL}/api/socketless`;
+        this.#url = `https://${process.env.VERCEL_URL}/api/socketless`;
       }
     } else {
-      this.url = this.options.url;
+      this.#url = this.#options.url;
     }
 
-    if (this.url !== undefined) {
-      if (this.url.includes("localhost")) {
+    if (this.#url !== undefined) {
+      if (this.#url.includes("localhost")) {
         console.warn(
           "You are using a localhost URL. Currently Socketless does not support localhost URLs, so you won't be able to receive messages from the server. More info on https://docs.socketless.ws/local-development",
         );
       } else {
-        const parsedUrl = z.string().url().safeParse(this.options.url);
+        const parsedUrl = z.string().url().safeParse(this.#options.url);
         if (parsedUrl.success) {
-          this.url = this.options.url;
+          this.#url = this.#options.url;
         }
       }
     }
 
-    if (this.url === undefined) {
+    if (this.#url === undefined) {
       console.error(
         "Socketless: You must specify a valid URL for the server. Automatic Webhook disabled.",
       );
     }
 
     // Checking socketless_url
-    if (this.options.socketless_url !== undefined) {
+    if (this.#options.socketless_url !== undefined) {
       const parsedSocketlessURL = z
         .string()
         .url()
-        .safeParse(this.options.socketless_url);
+        .safeParse(this.#options.socketless_url);
 
       if (!parsedSocketlessURL.success) {
         throw new Error("Invalid socketless_url");
       }
 
-      this.baseUrl = this.options.socketless_url;
+      this.#baseUrl = this.#options.socketless_url;
     }
   }
 
   public generateRoutes() {
     return {
-      POST: this.POST.bind(this),
+      POST: this.#POST.bind(this),
     };
   }
 
-  private async POST(req: Request): Promise<Response> {
+  async #POST(req: Request): Promise<Response> {
     const webhookPayload = await constructWebhookPayload(
       req,
-      this.options.token,
+      this.#options.token,
     );
 
     const context = createContext<TMessage, TResponse>(
@@ -325,8 +325,8 @@ class SocketlessServer<
     switch (webhookPayload.action) {
       case EWebhookActions.CONNECTION_OPEN:
         {
-          if (this.options.onConnect !== undefined) {
-            await this.options.onConnect(
+          if (this.#options.onConnect !== undefined) {
+            await this.#options.onConnect(
               context,
               webhookPayload.data.connection.identifier,
             );
@@ -335,7 +335,7 @@ class SocketlessServer<
         break;
       case EWebhookActions.MESSAGE:
         {
-          if (this.options.onMessage !== undefined) {
+          if (this.#options.onMessage !== undefined) {
             // Parsing message
             let message: TMessage;
 
@@ -360,10 +360,10 @@ class SocketlessServer<
             }
 
             // Validating message
-            if (this.options.messageValidator !== undefined) {
+            if (this.#options.messageValidator !== undefined) {
               // Using validator
               const safeParse =
-                await this.options.messageValidator.safeParseAsync(message);
+                await this.#options.messageValidator.safeParseAsync(message);
 
               // If unsuccessful, log and ignore
               if (!safeParse.success) {
@@ -378,7 +378,7 @@ class SocketlessServer<
               }
             }
 
-            await this.options.onMessage(
+            await this.#options.onMessage(
               context,
               webhookPayload.data.connection.identifier,
               message,
@@ -388,8 +388,8 @@ class SocketlessServer<
         break;
       case EWebhookActions.CONNECTION_CLOSE:
         {
-          if (this.options.onDisconnect !== undefined) {
-            await this.options.onDisconnect(
+          if (this.#options.onDisconnect !== undefined) {
+            await this.#options.onDisconnect(
               context,
               webhookPayload.data.connection.identifier,
             );
@@ -401,7 +401,7 @@ class SocketlessServer<
     return new Response(JSON.stringify(context.buildResponse()), {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.options.token}`,
+        Authorization: `Bearer ${this.#options.token}`,
       },
     });
   }
@@ -411,23 +411,23 @@ class SocketlessServer<
     feeds?: string[],
     overrideFeeds = true,
   ) {
-    const req = await fetch(`${this.baseUrl}/connection`, {
+    const req = await fetch(`${this.#baseUrl}/connection`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.options.token}`,
+        Authorization: `Bearer ${this.#options.token}`,
       },
       body: JSON.stringify({
         identifier,
         webhook:
-          this.url !== undefined
+          this.#url !== undefined
             ? {
-                url: this.url,
-                secret: this.options.token,
+                url: this.#url,
+                secret: this.#options.token,
                 options: {
-                  sendOnConnect: this.options.onConnect !== undefined,
-                  sendOnMessage: this.options.onMessage !== undefined,
-                  sendOnDisconnect: this.options.onDisconnect !== undefined,
+                  sendOnConnect: this.#options.onConnect !== undefined,
+                  sendOnMessage: this.#options.onMessage !== undefined,
+                  sendOnDisconnect: this.#options.onDisconnect !== undefined,
                 },
               }
             : undefined,
@@ -458,11 +458,11 @@ class SocketlessServer<
     const messagePayload =
       typeof message === "string" ? message : JSON.stringify(message);
 
-    const req = await fetch(`${this.baseUrl}/message`, {
+    const req = await fetch(`${this.#baseUrl}/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.options.token}`,
+        Authorization: `Bearer ${this.#options.token}`,
       },
       body: JSON.stringify({
         messages: {
@@ -481,11 +481,11 @@ class SocketlessServer<
   public async manageFeeds(
     actions: WebhookFeedsManageResponseType | WebhookFeedsManageResponseType[],
   ) {
-    const req = await fetch(`${this.baseUrl}/feeds`, {
+    const req = await fetch(`${this.#baseUrl}/feeds`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.options.token}`,
+        Authorization: `Bearer ${this.#options.token}`,
       },
       body: JSON.stringify({
         actions,
