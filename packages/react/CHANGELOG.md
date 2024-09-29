@@ -1,5 +1,12 @@
 # socketless.ws
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [ca2d385]
+  - socketless.ws@1.5.2
+
 ## 1.0.2
 
 ### Patch Changes

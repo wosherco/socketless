@@ -1,5 +1,12 @@
 # @socketless/nextjs
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies [ca2d385]
+  - socketless.ws@1.5.2
+
 ## 0.1.8
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@socketless/react",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "private": false,
   "homepage": "https://socketless.ws",
@@ -31,7 +31,7 @@
   },
   "peerDependencies": {
     "react": "^17.0.2 || ^18.0.0",
-    "socketless.ws": "^1.5.1"
+    "socketless.ws": "^1.5.2"
   },
   "dependencies": {
     "@socketless/shared": "workspace:*",
