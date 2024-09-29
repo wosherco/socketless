@@ -1,5 +1,5 @@
 name: socketless_dart
-description: A starting point for Dart libraries or applications.
+description: Socketless client for Dart and Flutter applications.
 version: 1.0.0
 repository: https://github.com/wosherco/socketless
 
