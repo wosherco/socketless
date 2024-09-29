@@ -1,0 +1,14 @@
+{
+  "name": "@socketless/dart",
+  "type": "module",
+  "private": true,
+  "homepage": "https://socketless.ws",
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "format:fix": "dart format",
+    "lint": "bun run scripts/lint.ts",
+    "test": "dart test",
+    "publish": "dart pub publish"
+  }
+}

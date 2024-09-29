@@ -16,4 +16,8 @@ runs:
     - shell: bash
       run: pnpm install --frozen-lockfile
 
-    # - uses: dopplerhq/cli-action@v3
+    - name: Setup Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        flavor: release
+        # flutter-version-file: packages/dart/pubspec.yaml
