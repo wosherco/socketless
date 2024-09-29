@@ -1,6 +1,5 @@
 {
   "name": "@socketless/dart",
-  "version": "0.0.1",
   "type": "module",
   "private": true,
   "homepage": "https://socketless.ws",
@@ -8,8 +7,7 @@
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "format:fix": "dart format",
-    "lint": "dart analyze",
-    "lint:fix": "dart fix",
+    "lint": "bun run scripts/lint.ts",
     "test": "dart test",
     "publish": "dart pub publish"
   }
