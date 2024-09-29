@@ -68,6 +68,11 @@ class SocketlessClient {
 
   void _onMessage(dynamic message) {
     if (message is String) {
+      if (message == "") {
+        this._channel.sink.add("");
+        return;
+      }
+
       onMessage?.call(message);
     }
   }
