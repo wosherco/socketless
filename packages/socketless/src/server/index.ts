@@ -257,34 +257,34 @@ class SocketlessServer<
   TResponse extends WebsocketMessage,
 > {
   #options: SocketlessServerOptions<TMessage, TResponse>;
-  private url?: string;
-  private _baseUrl = "https://app.socketless.ws/api/v0";
+  #url?: string;
+  #baseUrl = "https://app.socketless.ws/api/v0";
 
   constructor(options: SocketlessServerOptions<TMessage, TResponse>) {
     this.#options = options;
 
     if (this.#options.url === undefined) {
       if (process.env.VERCEL_URL !== undefined) {
-        this.url = `https://${process.env.VERCEL_URL}/api/socketless`;
+        this.#url = `https://${process.env.VERCEL_URL}/api/socketless`;
       }
     } else {
-      this.url = this.#options.url;
+      this.#url = this.#options.url;
     }
 
-    if (this.url !== undefined) {
-      if (this.url.includes("localhost")) {
+    if (this.#url !== undefined) {
+      if (this.#url.includes("localhost")) {
         console.warn(
           "You are using a localhost URL. Currently Socketless does not support localhost URLs, so you won't be able to receive messages from the server. More info on https://docs.socketless.ws/local-development",
         );
       } else {
         const parsedUrl = z.string().url().safeParse(this.#options.url);
         if (parsedUrl.success) {
-          this.url = this.#options.url;
+          this.#url = this.#options.url;
         }
       }
     }
 
-    if (this.url === undefined) {
+    if (this.#url === undefined) {
       console.error(
         "Socketless: You must specify a valid URL for the server. Automatic Webhook disabled.",
       );
@@ -301,7 +301,7 @@ class SocketlessServer<
         throw new Error("Invalid socketless_url");
       }
 
-      this._baseUrl = this.#options.socketless_url;
+      this.#baseUrl = this.#options.socketless_url;
     }
   }
 
@@ -411,7 +411,7 @@ class SocketlessServer<
     feeds?: string[],
     overrideFeeds = true,
   ) {
-    const req = await fetch(`${this._baseUrl}/connection`, {
+    const req = await fetch(`${this.#baseUrl}/connection`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -420,9 +420,9 @@ class SocketlessServer<
       body: JSON.stringify({
         identifier,
         webhook:
-          this.url !== undefined
+          this.#url !== undefined
             ? {
-                url: this.url,
+                url: this.#url,
                 secret: this.#options.token,
                 options: {
                   sendOnConnect: this.#options.onConnect !== undefined,
@@ -458,7 +458,7 @@ class SocketlessServer<
     const messagePayload =
       typeof message === "string" ? message : JSON.stringify(message);
 
-    const req = await fetch(`${this._baseUrl}/message`, {
+    const req = await fetch(`${this.#baseUrl}/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -481,7 +481,7 @@ class SocketlessServer<
   public async manageFeeds(
     actions: WebhookFeedsManageResponseType | WebhookFeedsManageResponseType[],
   ) {
-    const req = await fetch(`${this._baseUrl}/feeds`, {
+    const req = await fetch(`${this.#baseUrl}/feeds`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -495,14 +495,6 @@ class SocketlessServer<
     if (!req.ok) {
       throw new Error(`Failed to send message ${req.status} ${req.statusText}`);
     }
-  }
-
-  get webhookUrl() {
-    return this.url;
-  }
-
-  get socketlessUrl() {
-    return this._baseUrl;
   }
 }
 
