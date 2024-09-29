@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.5.2
+
+### Patch Changes
+
+- ca2d385: Fixed typescript private fields
+
 ## 1.5.1
 
 ### Patch Changes
