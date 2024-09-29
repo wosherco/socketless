@@ -7,11 +7,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "bunchee -w --tsconfig tsconfig.json --no-clean",
     "format:fix": "dart format",
     "lint": "dart analyze",
     "lint:fix": "dart fix",
     "test": "dart test",
-    "publish": ""
+    "publish": "dart pub publish"
   }
 }
