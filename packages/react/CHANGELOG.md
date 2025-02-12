@@ -1,5 +1,11 @@
 # socketless.ws
 
+## 1.0.4
+
+### Patch Changes
+
+- 8646039: Added react 19 as peerDependency
+
 ## 1.0.3
 
 ### Patch Changes
