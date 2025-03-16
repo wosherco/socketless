@@ -1,6 +1,8 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "ui": "stream",
+  "ui": "tui",
+  "globalDependencies": ["**/.env"],
+  "envMode": "loose",
   "tasks": {
     "topo": {
       "dependsOn": ["^topo"]

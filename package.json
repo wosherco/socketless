@@ -12,7 +12,8 @@
     "clean:workspaces": "turbo run clean",
     "db:push": "turbo -F @socketless/db push",
     "db:studio": "turbo -F @socketless/db studio",
-    "dev": "turbo dev",
+    "dev": "PUBLIC_ENVIRONMENT=development infisical run --env dev -- turbo watch dev --continue --concurrency 30",
+    "dev:dotenv": "PUBLIC_ENVIRONMENT=development dotenv -e ./.env -- turbo watch dev --continue --concurrency 30",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
@@ -23,7 +24,7 @@
     "ui-add": "turbo run ui-add"
   },
   "dependencies": {
-    "bun": "1.1.27"
+    "bun": "1.2.4"
   },
   "devDependencies": {
     "@actions/github": "^6.0.0",
