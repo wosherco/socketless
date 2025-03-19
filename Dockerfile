@@ -30,11 +30,6 @@ FROM dev-deps AS build
 ENV CI=1
 RUN pnpm run build
 
-FROM dev-deps AS build-docs
-ENV CI=1
-RUN pnpm -F docs build:cf
-
-
 ##########################
 #      apps/landing      #
 ##########################
@@ -96,17 +91,9 @@ CMD ["pnpm", "-F", "master", "start"]
 #########################
 #       apps/docs       #
 #########################
-# Use the official Nginx image as the base image
-FROM nginx:alpine AS docs
+FROM caddy:2-alpine AS docs
+COPY --from=build /app/apps/docs/build /usr/share/caddy
+COPY ./infra/Caddyfile /etc/caddy/Caddyfile
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the build-docs files from apps/docs/build to Nginx's html directory
-COPY --from=build-docs /app/apps/docs/build /usr/share/nginx/html
-
-# Expose port 80 to the outside world
 EXPOSE 80
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 443
