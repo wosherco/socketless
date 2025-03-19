@@ -30,15 +30,15 @@
   },
   "devDependencies": {
     "@actions/github": "^6.0.0",
+    "@changesets/cli": "^2.28.1",
     "@prettier/sync": "^0.5.2",
-    "@changesets/cli": "^2.27.7",
     "@socketless/prettier-config": "workspace:*",
     "@turbo/gen": "2.1.1",
-    "bunchee": "^5.4.0",
+    "bunchee": "^5.6.2",
     "prettier": "3.3.3",
-    "turbo": "^2.3.1",
+    "turbo": "^2.4.4",
     "typescript": "5.5.4",
-    "wait-on": "^8.0.0"
+    "wait-on": "^8.0.3"
   },
   "prettier": "@socketless/prettier-config",
   "packageManager": "pnpm@9.10.0",
