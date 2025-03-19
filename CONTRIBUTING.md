@@ -55,7 +55,7 @@ For little changes you won't need this, but if you're planning to make a big cha
 3. Start necessary services for development, such as postgres and dragonfly (redis):
 
    ```bash
-   docker compose -f docker-comopse.db.yaml up
+   docker compose up
    ```
 
 4. Start the project:

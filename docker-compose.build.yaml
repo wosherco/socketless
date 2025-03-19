@@ -1,0 +1,64 @@
+services:
+  landing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: landing
+    image: socketless/landing
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3000
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: docs
+    image: socketless/docs
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 80
+
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nextjs
+    image: socketless/nextjs
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3000
+
+  connect:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: connect
+    image: socketless/connect
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3000
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+
+  master:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: master
+    image: socketless/master
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3000
