@@ -1,4 +1,4 @@
-name: Release - Canary
+name: Release Canary
 
 on:
   pull_request:
@@ -6,28 +6,33 @@ on:
     branches:
       - main
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   release:
     if: contains(github.event.pull_request.labels.*.name, 'release canary')
     timeout-minutes: 10
-    name: Build & Publish a canary release
+    name: Release
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Check packages for common errors
+      - name: Build and check packages for common errors
         run: pnpm turbo --filter "./packages/*" build
 
-      - name: Authenticate to npm
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+      # pkg-pr-new does not support prepublish, since it does "npm pack"
+      - name: Prepublishing
+        run: pnpm -F cli prepublish
 
-      - name: Publish canary releases
-        run: node .github/release-canary.js
+      - name: Create pkg.pr.new build
+        run: pnpm dlx pkg-pr-new publish --comment=create ./packages/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: TODO: Send a Discord notification if a publish happens
+      #   if: steps.changesets.outputs.published == 'true'
+      #   # You can do something when a publish happens.
+      #   run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
