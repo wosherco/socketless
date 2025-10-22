@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Due to lack of time and focus on other projects, I've decided to discontinue Socketless. The software by itself works, but I won't be maintaining it anymore for now.
+
 <div align="center">
 
 # Socketless
