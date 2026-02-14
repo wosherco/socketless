@@ -5,9 +5,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "pnpm with-env docusaurus start",
-    "dev": "pnpm with-env docusaurus start -p 3002",
-    "build:cf": "pnpm with-env docusaurus build",
+    "start": "docusaurus start",
+    "dev": "docusaurus start -p 3002 --no-open",
+    "build": "docusaurus build",
+    "build:cf": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -17,24 +18,22 @@
     "clean": "git clean -xdf .cache .next .turbo node_modules build .docusaurus",
     "lint": "eslint",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@docusaurus/core": "3.5.2",
-    "@docusaurus/preset-classic": "3.5.2",
+    "@docusaurus/core": "3.7.0",
+    "@docusaurus/preset-classic": "3.7.0",
     "@mdx-js/react": "^3.0.0",
-    "autoprefixer": "^10.4.20",
-    "clsx": "^2.0.0",
+    "clsx": "2.1.1",
     "prism-react-renderer": "^2.3.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "redocusaurus": "^2.1.1"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "redocusaurus": "^2.2.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.5.2",
-    "@docusaurus/tsconfig": "3.5.2",
-    "@docusaurus/types": "3.5.2",
+    "@docusaurus/module-type-aliases": "3.7.0",
+    "@docusaurus/tsconfig": "3.7.0",
+    "@docusaurus/types": "3.7.0",
     "@socketless/eslint-config": "workspace:*",
     "@socketless/prettier-config": "workspace:*",
     "@socketless/tailwind-config": "workspace:*",
